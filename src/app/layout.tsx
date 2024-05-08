@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
+import { Kumbh_Sans } from 'next/font/google'
 
-const inter = Inter({ subsets: ["latin"] });
+const kumbh_Sans = Kumbh_Sans({ weight:'300', subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "tworkout",
@@ -17,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={kumbh_Sans.className}>
         <Providers>{children}</Providers>
       </body>
     </html>
