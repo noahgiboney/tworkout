@@ -1,0 +1,10 @@
+# Ignore artifacts:
+frontend/tsconfig.json
+frontend/vite.config.ts
+frontend/.eslintrc.cjs
+frontend/src/vite-env.d.ts
+frontend/tsconfig.node.json
+frontend/package.json
+frontend/package-lock.json
+backend/package.json
+backend/package-lock.json
