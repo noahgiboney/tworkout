@@ -5,15 +5,18 @@ interface IExercise {
   type: "Cardio" | "Weights";
 }
 
-interface ICardioExercise extends IExercise {
-  duration: number;
-  distance: number;
+interface IExerciseSet {
+  reps: number;
+  weight: number;
 }
 
 interface IWeightExercise extends IExercise {
-  sets: number;
-  reps: number;
-  weight: number;
+  sets: IExerciseSet[];
+}
+
+interface ICardioExercise extends IExercise {
+  duration: number;
+  distance: number;
 }
 
 interface IWorkout {
@@ -23,19 +26,22 @@ interface IWorkout {
   date: Date;
 }
 
-const cardioExerciseSchema = new mongoose.Schema<ICardioExercise>({
-  name: { type: String, required: true },
-  type: { type: String, required: true, enum: ["Cardio"] },
-  duration: { type: Number, required: true },
-  distance: { type: Number, required: true },
+const exerciseSetSchema = new mongoose.Schema<IExerciseSet>({
+  reps: { type: Number, required: true },
+  weight: { type: Number, required: true },
 });
 
 const weightExerciseSchema = new mongoose.Schema<IWeightExercise>({
   name: { type: String, required: true },
   type: { type: String, required: true, enum: ["Weights"] },
-  sets: { type: Number, required: true },
-  reps: { type: Number, required: true },
-  weight: { type: Number, required: true },
+  sets: [exerciseSetSchema], // Array of set details
+});
+
+const cardioExerciseSchema = new mongoose.Schema<ICardioExercise>({
+  name: { type: String, required: true },
+  type: { type: String, required: true, enum: ["Cardio"] },
+  duration: { type: Number, required: true },
+  distance: { type: Number, required: true },
 });
 
 const exerciseSchema = new mongoose.Schema<IExercise>(
