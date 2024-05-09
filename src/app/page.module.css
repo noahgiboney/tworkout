@@ -5,22 +5,7 @@
   align-items: center;
   padding: 6rem;
   min-height: 100vh;
-
   background-color: #130030;
-}
-
-.landingButton {
-  border-radius: 600px;
-  margin-top: 5px;
-  margin-bottom: 5px;
-  width: 100px;
-  height: 100px;
-  color: #600086;
-}
-
-.header {
-  text-align: center;
-  color: white;
 }
 
 /* Enable hover only on non-touch devices */
