@@ -19,7 +19,7 @@ interface ICardioExercise extends IExercise {
   distance: number;
 }
 
-interface IWorkout {
+export interface IWorkout {
   userId: mongoose.Schema.Types.ObjectId;
   name: string;
   exercises: (ICardioExercise | IWeightExercise)[];

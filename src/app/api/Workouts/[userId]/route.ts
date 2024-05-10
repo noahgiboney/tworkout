@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import Workout from "@/database/workoutSchema";
 import { NextResponse, NextRequest } from "next/server";
 
+// get all workouts beloning to userId
 export async function GET(
   request: NextRequest,
   { params }: { params: { userId: string } }
