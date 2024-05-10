@@ -55,3 +55,28 @@ export async function PATCH(
   }
 }
 
+// delete a workout from the db 
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const workoutId = new mongoose.Types.ObjectId(params.id);
+
+    const result = await Workout.findByIdAndDelete(workoutId);
+
+    if (!result) {
+      return NextResponse.json(
+        { error: "No workout found with this id" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json("Workout Deleted", { status: 200 });
+  } catch (error) {
+    return NextResponse.json(
+      { error: (error as Error).message },
+      { status: 500 }
+    );
+  }
+}
