@@ -6,6 +6,7 @@ let connection: typeof mongoose;
 const connectDB = async () => {
   if (!connection) {
     connection = await mongoose.connect(url);
+    console.log("Connected to the db")
     return connection;
   }
 };

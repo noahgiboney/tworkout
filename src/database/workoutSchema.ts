@@ -34,7 +34,7 @@ const exerciseSetSchema = new mongoose.Schema<IExerciseSet>({
 const weightExerciseSchema = new mongoose.Schema<IWeightExercise>({
   name: { type: String, required: true },
   type: { type: String, required: true, enum: ["Weights"] },
-  sets: [exerciseSetSchema], // Array of set details
+  sets: [exerciseSetSchema],
 });
 
 const cardioExerciseSchema = new mongoose.Schema<ICardioExercise>({
@@ -44,21 +44,25 @@ const cardioExerciseSchema = new mongoose.Schema<ICardioExercise>({
   distance: { type: Number, required: true },
 });
 
-const exerciseSchema = new mongoose.Schema<IExercise>(
-  { type: String },
-  { discriminatorKey: "type" }
-);
-const Exercise = mongoose.model<IExercise>("Exercise", exerciseSchema);
-Exercise.discriminator("Cardio", cardioExerciseSchema);
-Exercise.discriminator("Weights", weightExerciseSchema);
-
 const workoutSchema = new mongoose.Schema<IWorkout>({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   name: { type: String, required: true },
-  exercises: [{ type: mongoose.Schema.Types.ObjectId, ref: "Exercise" }],
+  exercises: [new mongoose.Schema({
+    name: { type: String, required: true },
+    type: { type: String, required: true, enum: ["Cardio", "Weights"] },
+    duration: { type: Number },
+    distance: { type: Number },
+    sets: [exerciseSetSchema]
+  }, { discriminatorKey: "type" })], 
   date: { type: Date, default: Date.now },
 });
 
-const Workout = mongoose.model<IWorkout>("Workout", workoutSchema);
+const Workout = mongoose.models.Workout || mongoose.model("Workout", workoutSchema)
+if (!Workout.discriminators || !Workout.discriminators.Cardio) {
+  Workout.discriminator("Cardio", cardioExerciseSchema);
+}
+if (!Workout.discriminators || !Workout.discriminators.Weights) {
+  Workout.discriminator("Weights", weightExerciseSchema);
+}
 
 export default Workout;
