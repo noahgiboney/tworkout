@@ -70,8 +70,8 @@ const Login = () => {
                 fontSize={18}
                 marginTop={6}
                 padding="25px"
-                paddingLeft="81px"
-                paddingRight="81px"
+                paddingLeft="86px"
+                paddingRight="86px"
               >
                 Sign in
               </Button>
