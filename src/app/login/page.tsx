@@ -68,6 +68,7 @@ const Login = () => {
               <Button
                 type="submit"
                 fontSize={18}
+                marginTop={6}
                 padding="25px"
                 paddingLeft="81px"
                 paddingRight="81px"
