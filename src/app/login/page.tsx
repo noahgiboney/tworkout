@@ -1,5 +1,5 @@
 "use client";
-import React, { FormEvent } from "react";
+import React, { FormEvent, useState } from "react";
 import styles from "./login.module.css";
 import {
   Button,
@@ -16,13 +16,33 @@ import {
 import NextLink from "next/link";
 import Image from "next/image";
 import SignInButton from "../components/SignInButton";
-
-const handleSubmit = (e: FormEvent<HTMLDivElement>) => {
-  e.preventDefault();
-  console.log("submitted");
-};
+import { useRouter } from "next/router";
 
 const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSubmit = async (e: FormEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Login successful. Token:", data.token);
+      } else {
+        console.error("Login failed:", await response.text());
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+    }
+  };
+
   return (
     <div className={styles.main}>
       <Card bgColor="#E9E4F2" display="flex" flexDirection="row">
@@ -49,6 +69,8 @@ const Login = () => {
                   marginBottom={5}
                   fontSize={15}
                   padding={25}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </FormControl>
               <FormControl>
@@ -63,6 +85,8 @@ const Login = () => {
                   marginBottom={5}
                   fontSize={15}
                   padding={25}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                 />
               </FormControl>
               <Button
