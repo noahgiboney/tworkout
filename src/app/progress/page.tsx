@@ -1,7 +1,7 @@
 import React from "react";
 import SideBar from "../components/SideBar";
 
-const Homepage = () => {
+const Progress = () => {
   return (
     <div>
       <SideBar />
@@ -9,4 +9,4 @@ const Homepage = () => {
   );
 };
 
-export default Homepage;
+export default Progress;
