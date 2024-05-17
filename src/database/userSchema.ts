@@ -15,9 +15,14 @@ const userSchema = new mongoose.Schema({
     type: Number,
     required: false
   },
-  height: {
+  heightFeet: {
+    type: Number,
+    required: false,
+  },
+
+  heightInches: {
     type: Number, 
-    required: false
+    required: false,
   }
 });
 
