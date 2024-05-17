@@ -10,6 +10,14 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true
+  },
+  weight: {
+    type: number,
+    required: false
+  },
+  height: {
+    type: number, 
+    required: false
   }
 });
 
