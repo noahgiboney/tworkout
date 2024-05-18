@@ -27,3 +27,58 @@ export async function GET(
     );
   }
 }
+
+// update a user in the db
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: { userId: string } }
+) {
+  try {
+    await connectDB();
+
+    const userId = new mongoose.Types.ObjectId(params.userId);
+
+    const updatedDoc = await User.findOneAndUpdate(
+      { _id: userId },
+      { $set: await req.json() },
+      { new: true }
+    );
+
+    if (!updatedDoc) {
+      return new NextResponse("No user found with this ID", { status: 404 });
+    }
+
+    return NextResponse.json("User updated", { status: 200 });
+  } catch (error) {
+    return NextResponse.json(
+      { error: (error as Error).message },
+      { status: 500 }
+    );
+  }
+}
+
+// delete a user from the db
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { userId: string } }
+) {
+  try {
+    const userId = new mongoose.Types.ObjectId(params.userId);
+
+    const result = await User.findByIdAndDelete(userId);
+
+    if (!result) {
+      return NextResponse.json(
+        { error: "No user found with this id" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json("User Deleted", { status: 200 });
+  } catch (error) {
+    return NextResponse.json(
+      { error: (error as Error).message },
+      { status: 500 }
+    );
+  }
+}
