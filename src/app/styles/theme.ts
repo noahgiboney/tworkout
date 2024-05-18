@@ -1,4 +1,5 @@
 import { extendTheme } from "@chakra-ui/react";
+import { avatarTheme } from "./avatarTheme";
 
 const customTheme = extendTheme({
   components: {
@@ -11,6 +12,7 @@ const customTheme = extendTheme({
         },
       },
     },
+    Avatar: avatarTheme
   },
   brand: {
     50: "#E9E4F2",
@@ -18,7 +20,7 @@ const customTheme = extendTheme({
     300: "#CB5BFF",
     800: "#600086",
     900: "#130030",
-  }
+  },
 });
 
 export default customTheme;
