@@ -36,10 +36,10 @@ export async function PATCH(
   try {
     await connectDB();
 
-    const userId = new mongoose.Types.ObjectId(params.userId);
+    const id = new mongoose.Types.ObjectId(params.userId);
 
     const updatedDoc = await User.findOneAndUpdate(
-      { _id: userId },
+      { _id: id },
       { $set: await req.json() },
       { new: true }
     );
@@ -63,9 +63,9 @@ export async function DELETE(
   { params }: { params: { userId: string } }
 ) {
   try {
-    const userId = new mongoose.Types.ObjectId(params.userId);
+    const id = new mongoose.Types.ObjectId(params.userId);
 
-    const result = await User.findByIdAndDelete(userId);
+    const result = await User.findByIdAndDelete(id);
 
     if (!result) {
       return NextResponse.json(
