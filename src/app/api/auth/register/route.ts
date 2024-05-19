@@ -45,7 +45,10 @@ export async function POST(req: NextRequest) {
     await newUser.save();
 
     const token = await generateAccessToken(email);
-    return NextResponse.json({ token: token }, { status: 201 });
+    const response = NextResponse.json({ message: "Login successful" }, { status: 200 });
+    response.headers.set('Set-Cookie', `token=${token}; HttpOnly; Path=/; Secure; SameSite=lax; Max-Age=86400`);
+    return response;
+
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
