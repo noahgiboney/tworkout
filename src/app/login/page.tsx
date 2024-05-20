@@ -16,7 +16,6 @@ import {
 import NextLink from "next/link";
 import Image from "next/image";
 import SignInButton from "../components/SignInButton";
-import { useRouter } from "next/router";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -33,10 +32,10 @@ const Login = () => {
         body: JSON.stringify({ email, password }),
       });
       if (response.ok) {
-        const data = await response.json();
-        console.log("Login successful. Token:", data.token);
+        console.log("Login successful");
+        // Handle successful login, e.g., redirect to another page
       } else {
-        console.error("Login failed:", await response.text());
+        console.error("Login failed:", await response.json());
       }
     } catch (error) {
       console.error("Login error:", error);

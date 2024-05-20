@@ -30,8 +30,7 @@ const Signup = () => {
         body: JSON.stringify({ email, password }),
       });
       if (response.ok) {
-        const data = await response.json();
-        console.log("Signup successful. Token:", data.token);
+        console.log("Signup successful");
       } else {
         console.error("Signup failed:", await response.text());
       }

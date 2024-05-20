@@ -12,11 +12,11 @@ const userSchema = new mongoose.Schema({
     required: true
   },
   weight: {
-    type: number,
+    type: Number,
     required: false
   },
   height: {
-    type: number, 
+    type: Number, 
     required: false
   }
 });
