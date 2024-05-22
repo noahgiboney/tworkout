@@ -1,6 +1,5 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import { setCookie } from 'nookies';
 import jwt from "jsonwebtoken";
 import connectDB from "@/database/db";
 import User from "@/database/userSchema";

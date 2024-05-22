@@ -4,7 +4,7 @@ import Link from "next/link";
 
 const SideBar = () => {
   return (
-    <div>
+    <>
       <Box h="100vh" bg="#5A457F" w="300px">
         <VStack>
           <Avatar marginTop="30px" marginBottom="30px" size="superLg" />
@@ -46,7 +46,7 @@ const SideBar = () => {
           </Button>
         </VStack>
       </Box>
-    </div>
+    </>
   );
 };
 
