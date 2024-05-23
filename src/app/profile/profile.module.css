@@ -8,12 +8,14 @@
   justify-content: space-between;
   background-color: #130030;
   gap: 20px;
+  height: 100vh;
+  overflow-y: auto;
 }
 
 .avatar {
-  width: 25%;
-  margin: 0 auto;
-  padding: 1rem;
+  display: grid;
+  place-items: center;
+  padding-bottom: 1rem;
 }
 
 .title {
@@ -27,5 +29,19 @@
 .cards {
   width: 70%;
   margin: 0 auto;
+}
+
+.nameCards {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.firstName {
+  width: 50%;
+}
+
+.lastName {
+  width: 50%;
 }
   
