@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Providers from "./components/Providers";
 import { Kumbh_Sans } from "next/font/google";
+import { UserProvider } from "../context/userContext";
 
 const kumbh_Sans = Kumbh_Sans({ weight: "300", subsets: ["latin"] });
 
@@ -18,7 +19,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={kumbh_Sans.className}>
-        <Providers>{children}</Providers>
+        <Providers>
+          <UserProvider> {/* Wrap the children with UserProvider */}
+            {children}
+          </UserProvider>
+          </Providers>
       </body>
     </html>
   );

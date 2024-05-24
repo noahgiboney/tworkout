@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import Workout from "@/database/workoutSchema";
 import { NextResponse, NextRequest } from "next/server";
 
-// get all workouts beloning to userId
+// get all workouts or unique exercises for a user
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -11,13 +11,30 @@ export async function GET(
   try {
     await connectDB();
     const userId = new mongoose.Types.ObjectId(params.id);
-    const workouts = await Workout.find({ userId: userId });
 
-    if (workouts.length === 0) {
-      return NextResponse.json({ error: "No Workouts Found" }, { status: 404 });
+    const url = new URL(request.url);
+    const fetchExercises = url.searchParams.get("fetch") === "exercises";
+
+    if (fetchExercises) {
+      // Fetch all unique exercises for the user
+      const workouts = await Workout.find({ userId });
+
+      const exercises = workouts.reduce((acc: Set<string>, workout) => {
+        workout.exercises.forEach((exercise: any) => acc.add(exercise.name));
+        return acc;
+      }, new Set<string>());
+
+      return NextResponse.json(Array.from(exercises));
+    } else {
+      // Fetch all workouts for the user
+      const workouts = await Workout.find({ userId });
+
+      if (workouts.length === 0) {
+        return NextResponse.json({ error: "No Workouts Found" }, { status: 404 });
+      }
+
+      return NextResponse.json(workouts);
     }
-
-    return NextResponse.json(workouts);
   } catch (error) {
     return NextResponse.json(
       { error: (error as Error).message },

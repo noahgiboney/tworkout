@@ -1,6 +1,6 @@
-"use client";
+"use client"
 import React, { FormEvent, useState } from "react";
-import styles from "./login.module.css";
+import { useRouter } from "next/navigation";
 import {
   Button,
   Card,
@@ -16,10 +16,14 @@ import {
 import NextLink from "next/link";
 import Image from "next/image";
 import SignInButton from "../components/SignInButton";
+import { useUser } from "@/context/userContext";
+import styles from "./login.module.css";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter();
+  const { setUserId } = useUser();
 
   const handleSubmit = async (e: FormEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -32,8 +36,11 @@ const Login = () => {
         body: JSON.stringify({ email, password }),
       });
       if (response.ok) {
+        const data = await response.json();
+        setUserId(data.userId); // Assume the API response contains the userId
+        console.log(localStorage.getItem("userId"));
         console.log("Login successful");
-        // Handle successful login, e.g., redirect to another page
+        router.push("/homepage");
       } else {
         console.error("Login failed:", await response.json());
       }
