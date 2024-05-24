@@ -79,7 +79,7 @@ const Profile = () => {
               </Text>
               <Card bgColor="#C7B3DC">
                 <CardHeader>
-                  6'0"
+                  6&apos;0&quot;
                 </CardHeader>
               </Card>
               <Text paddingTop="1rem" fontSize={18} color="black">
