@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@chakra-ui/icons": "^2.1.1",
     "@chakra-ui/next-js": "^2.2.0",
     "@chakra-ui/react": "^2.8.2",
     "@emotion/react": "^11.11.4",
@@ -27,7 +28,6 @@
     "next-connect": "^1.0.0",
     "next-cookies": "^2.0.3",
     "nookies": "^2.5.2",
-    "prettier": "^3.2.5",
     "react": "^18",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18"
@@ -40,6 +40,7 @@
     "@types/react-dom": "^18",
     "eslint": "^8.57.0",
     "eslint-config-next": "14.2.3",
+    "prettier": "3.2.5",
     "typescript": "^5"
   }
 }

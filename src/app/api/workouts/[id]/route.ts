@@ -30,7 +30,10 @@ export async function GET(
       const workouts = await Workout.find({ userId });
 
       if (workouts.length === 0) {
-        return NextResponse.json({ error: "No Workouts Found" }, { status: 404 });
+        return NextResponse.json(
+          { error: "No Workouts Found" },
+          { status: 404 }
+        );
       }
 
       return NextResponse.json(workouts);
@@ -72,7 +75,7 @@ export async function PATCH(
   }
 }
 
-// delete a workout from the db 
+// delete a workout from the db
 export async function DELETE(
   req: NextRequest,
   { params }: { params: { id: string } }

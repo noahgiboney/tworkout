@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -38,7 +38,6 @@ const Login = () => {
       if (response.ok) {
         const data = await response.json();
         setUserId(data.userId); // Assume the API response contains the userId
-        console.log(localStorage.getItem("userId"));
         console.log("Login successful");
         router.push("/homepage");
       } else {

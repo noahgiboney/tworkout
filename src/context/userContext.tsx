@@ -1,5 +1,11 @@
-"use client"
-import React, { createContext, useState, useContext, ReactNode, useEffect } from "react";
+"use client";
+import React, {
+  createContext,
+  useState,
+  useContext,
+  ReactNode,
+  useEffect,
+} from "react";
 
 interface UserContextType {
   userId: string;
@@ -11,13 +17,11 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [userId, setUserIdState] = useState<string>(() => {
     // Load userId from localStorage if available
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       return localStorage.getItem("userId") || "";
-    }
-    else {
+    } else {
       return "";
     }
-
   });
 
   useEffect(() => {
@@ -29,7 +33,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   }, []); // Empty dependency array ensures this effect runs only once on mount
 
   const setUserId = (userId: string) => {
-      localStorage.setItem("userId", userId);
+    localStorage.setItem("userId", userId);
     setUserIdState(userId);
   };
 

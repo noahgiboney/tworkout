@@ -7,6 +7,7 @@ import {
   VStack,
   useColorModeValue,
 } from "@chakra-ui/react";
+import { TriangleDownIcon } from "@chakra-ui/icons";
 import { Line } from "react-chartjs-2";
 import { useState, useEffect } from "react";
 import SideBar from "../components/SideBar";
@@ -23,7 +24,15 @@ import {
 } from "chart.js";
 import { useRouter } from "next/router";
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 interface Workout {
   date: string;
@@ -52,7 +61,7 @@ const Progress = () => {
       {
         label: "Weight",
         data: [],
-        borderColor: "rgba(136, 62, 227, 1)",
+        borderColor: "#600086",
         backgroundColor: "rgba(136, 62, 227, 0.2)",
       },
     ],
@@ -63,14 +72,14 @@ const Progress = () => {
 
   const { userId } = useUser();
   console.log(userId);
-  console.log("TEST");
-
 
   useEffect(() => {
     const fetchExercises = async () => {
       if (userId) {
         try {
-          const response = await fetch(`/api/workouts/${userId}?fetch=exercises`);
+          const response = await fetch(
+            `/api/workouts/${userId}?fetch=exercises`
+          );
           if (response.ok) {
             const exerciseList: string[] = await response.json();
             setExercises(exerciseList);
@@ -103,31 +112,52 @@ const Progress = () => {
     fetchWorkouts();
   }, [userId]);
 
-  const handleExerciseChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleExerciseChange = async (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     const selectedExercise = e.target.value;
     setExercise(selectedExercise);
 
     if (selectedExercise) {
-      const selectedWorkouts = workouts.filter(workout =>
-        workout.exercises.some(ex => ex.name === selectedExercise)
+      const selectedWorkouts = workouts.filter((workout) =>
+        workout.exercises.some((ex) => ex.name === selectedExercise)
       );
 
-      const dates = selectedWorkouts.map(workout => new Date(workout.date).toLocaleDateString());
-      const stats = selectedWorkouts.map(workout => {
-        const exerciseData = workout.exercises.find(ex => ex.name === selectedExercise);
-        if (exerciseData) {
-          return exerciseData.type === "Weights" ? exerciseData.sets![0].weight : exerciseData.distance;
-        }
-        return 0; // Default to 0 if exerciseData is not found
-      }).map(value => value ?? 0); // Ensure all values are numbers
+      const dates = selectedWorkouts.map((workout) =>
+        new Date(workout.date).toLocaleDateString()
+      );
+      const stats = selectedWorkouts
+        .map((workout) => {
+          const exerciseData = workout.exercises.find(
+            (ex) => ex.name === selectedExercise
+          );
+          if (exerciseData) {
+            return exerciseData.type === "Weights"
+              ? exerciseData.sets![0].weight
+              : exerciseData.distance;
+          }
+          return 0; // Default to 0 if exerciseData is not found
+        })
+        .map((value) => value ?? 0); // Ensure all values are numbers
 
+      const type = selectedWorkouts.map((workout) => {
+        const exerciseData = workout.exercises.find(
+          (ex) => ex.name === selectedExercise
+        );
+        if (exerciseData) {
+          return exerciseData.type === "Weights"
+            ? ("Weight" as string)
+            : ("Distance" as string);
+        }
+        return "" as string;
+      });
       setData({
         labels: dates,
         datasets: [
           {
-            label: "Weight",
+            label: type[0],
             data: stats,
-            borderColor: "rgba(136, 62, 227, 1)",
+            borderColor: "#600086",
             backgroundColor: "rgba(136, 62, 227, 0.2)",
           },
         ],
@@ -135,18 +165,18 @@ const Progress = () => {
     }
   };
 
-  const backgroundColor = useColorModeValue("gray.800", "gray.700");
+  const backgroundColor = useColorModeValue("#130030", "#130030");
   const textColor = useColorModeValue("white", "gray.200");
   const chartOptions = {
     maintainAspectRatio: false, // Allows resizing
     responsive: true,
     plugins: {
       legend: {
-        position: 'top' as const,
+        position: "top" as const,
       },
       title: {
         display: true,
-        text: 'Progress Over Time',
+        text: "Progress Over Time",
       },
     },
   };
@@ -155,10 +185,12 @@ const Progress = () => {
     <Flex h="100vh" bg={backgroundColor} color={textColor}>
       <SideBar />
       <Box flex="1" p="4">
-        <Text fontSize="2xl" mb="4">Track Progress</Text>
+        <Text fontSize="2xl" mb="4">
+          Track Progress
+        </Text>
         <VStack spacing={4} align="stretch">
           <Select
-            placeholder="Select Exercise"
+            icon={<TriangleDownIcon />}
             onChange={handleExerciseChange}
             bg="#600086"
             color="white"
@@ -167,12 +199,24 @@ const Progress = () => {
             _focus={{ borderColor: "purple.500" }}
           >
             {exercises.map((exercise, index) => (
-              <option key={index} value={exercise} style={{ color: "black" }}>
+              <option
+                key={index}
+                value={exercise}
+                style={{ background: "#600086", color: "white" }}
+              >
                 {exercise}
               </option>
             ))}
           </Select>
-          <Box mt="4" bg="white" p="4" borderRadius="md" shadow="md" w="100%" h="500px">
+          <Box
+            mt="4"
+            bg="white"
+            p="4"
+            borderRadius="md"
+            shadow="md"
+            w="100%"
+            h="700px"
+          >
             <Line data={data} options={chartOptions} />
           </Box>
         </VStack>

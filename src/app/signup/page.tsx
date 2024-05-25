@@ -1,5 +1,6 @@
 "use client";
 import React, { FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
 import styles from "./signup.module.css";
 import {
   Button,
@@ -14,10 +15,13 @@ import {
 } from "@chakra-ui/react";
 import Image from "next/image";
 import SignInButton from "../components/SignInButton";
+import { useUser } from "@/context/userContext";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter();
+  const { setUserId } = useUser();
 
   const handleSubmit = async (e: FormEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -30,7 +34,10 @@ const Signup = () => {
         body: JSON.stringify({ email, password }),
       });
       if (response.ok) {
+        const data = await response.json();
+        setUserId(data.userId);
         console.log("Signup successful");
+        router.push("/homepage");
       } else {
         console.error("Signup failed:", await response.text());
       }
@@ -47,9 +54,7 @@ const Signup = () => {
             <Text fontSize={40} fontWeight="extrabold">
               WELCOME
             </Text>
-            <Text color="#636364">
-              Welcome! Please enter your details.
-            </Text>
+            <Text color="#636364">Welcome! Please enter your details.</Text>
           </CardHeader>
           <CardBody>
             <VStack as="form" onSubmit={handleSubmit}>
@@ -110,5 +115,5 @@ const Signup = () => {
     </div>
   );
 };
- 
+
 export default Signup;
