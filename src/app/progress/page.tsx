@@ -29,9 +29,9 @@ interface Workout {
   date: string;
   exercises: {
     name: string;
-    sets: {
-      weight: number;
-    }[];
+    type: "Cardio" | "Weights";
+    sets?: { weight: number }[];
+    distance?: number;
   }[];
 }
 
@@ -113,17 +113,20 @@ const Progress = () => {
       );
 
       const dates = selectedWorkouts.map(workout => new Date(workout.date).toLocaleDateString());
-      const weights = selectedWorkouts.map(workout => {
+      const stats = selectedWorkouts.map(workout => {
         const exerciseData = workout.exercises.find(ex => ex.name === selectedExercise);
-        return exerciseData ? exerciseData.sets.map(set => set.weight) : [];
-      }).flat();
+        if (exerciseData) {
+          return exerciseData.type === "Weights" ? exerciseData.sets![0].weight : exerciseData.distance;
+        }
+        return 0; // Default to 0 if exerciseData is not found
+      }).map(value => value ?? 0); // Ensure all values are numbers
 
       setData({
         labels: dates,
         datasets: [
           {
             label: "Weight",
-            data: weights,
+            data: stats,
             borderColor: "rgba(136, 62, 227, 1)",
             backgroundColor: "rgba(136, 62, 227, 0.2)",
           },
@@ -134,6 +137,20 @@ const Progress = () => {
 
   const backgroundColor = useColorModeValue("gray.800", "gray.700");
   const textColor = useColorModeValue("white", "gray.200");
+  const chartOptions = {
+    maintainAspectRatio: false, // Allows resizing
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top' as const,
+      },
+      title: {
+        display: true,
+        text: 'Progress Over Time',
+      },
+    },
+  };
+
   return (
     <Flex h="100vh" bg={backgroundColor} color={textColor}>
       <SideBar />
@@ -155,8 +172,8 @@ const Progress = () => {
               </option>
             ))}
           </Select>
-          <Box mt="4" bg="white" p="4" borderRadius="md" shadow="md">
-            <Line data={data} />
+          <Box mt="4" bg="white" p="4" borderRadius="md" shadow="md" w="100%" h="500px">
+            <Line data={data} options={chartOptions} />
           </Box>
         </VStack>
       </Box>
