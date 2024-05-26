@@ -1,18 +1,17 @@
 .main {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    padding: 7rem;
-    min-height: 100vh;
-    background-color: #130030;
-  }
-  
-  .signupContainer {
-    padding: 50px;
-  }
-  .signupImage {
-    border-top-right-radius: 10px;
-    border-bottom-right-radius: 10px;
-  }
-  
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 7rem;
+  min-height: 100vh;
+  background-color: #130030;
+}
+
+.signupContainer {
+  padding: 50px;
+}
+.signupImage {
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+}

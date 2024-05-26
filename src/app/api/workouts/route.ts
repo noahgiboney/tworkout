@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
     await connectDB();
 
     const workout: IWorkout = await req.json();
-    const newWorkout = new Workout(workout)
+    const newWorkout = new Workout(workout);
 
     await newWorkout.save();
     return NextResponse.json("Workout added", {
