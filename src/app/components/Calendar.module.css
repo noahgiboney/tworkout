@@ -3,14 +3,14 @@
   width: 100%;
   border-radius: 20px;
   box-sizing: border-box !important;
-  background-color: #E9E4F2;
+  background-color: #e9e4f2;
   padding: 30px;
   margin-left: 20px;
   margin-right: 50px;
 }
 
 .reactCalendar__tile {
-  background-color: #E9E4F2;
+  background-color: #e9e4f2;
   border: 3px solid #600086 !important;
   box-sizing: border-box !important;
   margin: -1.5px !important;
@@ -22,10 +22,15 @@
 }
 
 .reactCalendar__navigation {
-    border-radius: 8px; /* Apply border-radius to the navigation section */
-    box-sizing: border-box; /* Include border in element's total width and height */
-  }
+  border-radius: 8px; 
+  box-sizing: border-box; 
+}
 
+  
+.reactCalendar__navigation__label {
+  font-size: 1.5em; 
+  font-weight: bold; 
+}
 .reactCalendar__tile:hover {
-    background: #C7B3DC !important;
-  }
+  background: #c7b3dc !important;
+}

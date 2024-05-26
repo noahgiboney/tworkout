@@ -2,18 +2,24 @@ import Calendar from "react-calendar";
 import React, { useState } from "react";
 import "react-calendar/dist/Calendar.css";
 import styles from "./Calendar.module.css";
+import { Text } from "@chakra-ui/react";
 
 type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece];
 
 const CustomCalendar = () => {
   const [value, onChange] = useState<Value>(new Date());
+  const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
   return (
     <div>
       <Calendar
         className={styles.reactCalendar}
         onChange={onChange}
         value={value}
+        navigationLabel={({ date, locale, view }) => {
+            return <Text  fontSize="40px">{monthNames[date.getMonth()]} {date.getFullYear()}</Text>
+        }}
         tileClassName={({ date, view}) => {
             if (view === 'month') {
                 return styles.reactCalendar__tile;
