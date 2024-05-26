@@ -4,6 +4,7 @@ import "react-calendar/dist/Calendar.css";
 import styles from "./Calendar.module.css";
 import { Text } from "@chakra-ui/react";
 import { Kumbh_Sans } from "next/font/google";
+import { FaAngleDoubleLeft, FaAngleDoubleRight, FaAngleRight, FaAngleLeft  } from "react-icons/fa";
 
 const kumbhSans = Kumbh_Sans({ subsets: ["latin"] });
 type ValuePiece = Date | null;
@@ -42,12 +43,15 @@ const CustomCalendar = () => {
         tileDisabled={({ activeStartDate, date, view }) => {
           return date.getMonth() !== activeStartDate.getMonth();
         }}
-        tileClassName={({ date, view, activeStartDate }) => {
+        tileClassName={({ view }) => {
           if (view === "month") {
-
             return styles.reactCalendar__tile;
           }
         }}
+        nextLabel={<FaAngleRight />}
+        next2Label={<FaAngleDoubleRight  />}
+        prevLabel={<FaAngleLeft />}
+        prev2Label={<FaAngleDoubleLeft />}
       />
     </div>
   );
