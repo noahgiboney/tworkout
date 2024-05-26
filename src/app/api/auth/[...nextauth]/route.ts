@@ -1,10 +1,10 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import { setCookie } from 'nookies';
+import { setCookie } from "nookies";
 import jwt from "jsonwebtoken";
 import connectDB from "@/database/db";
 import User from "@/database/userSchema";
-import { cookies } from 'next/headers'
+import { cookies } from "next/headers";
 
 async function generateAccessToken(email: string): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -32,7 +32,6 @@ const options: NextAuthOptions = {
   ],
   callbacks: {
     async signIn({ user, account, profile }) {
-
       await connectDB();
 
       let dbUser = await User.findOne({ email: user.email });
@@ -46,27 +45,30 @@ const options: NextAuthOptions = {
 
       const token = await generateAccessToken(user.email);
       user.token = token; // Attach the token to the user object
+      user.id = dbUser._id.toString();
       cookies().set({
-        name: 'token',
+        name: "token",
         value: user.token,
         httpOnly: true,
         maxAge: 30 * 24 * 24, // 1 day
-        sameSite: "lax"
+        sameSite: "lax",
       });
       return true;
     },
     async jwt({ token, user }) {
       if (user) {
         token.accessToken = user.token as string; // Ensure token is a string
+        token.id = user.id as string;
       }
       return token;
     },
     async session({ session, token }) {
       if (token && token.accessToken) {
-        session.accessToken = token.accessToken as string; 
+        session.accessToken = token.accessToken as string;
+        session.id = token.id as string;
       }
       return session;
-    }
+    },
   },
   secret: process.env.TOKEN_SECRET,
 };
