@@ -22,6 +22,8 @@ import { useUser } from "@/context/userContext";
 
 interface User {
   email: string;
+  firstName: string;
+  lastName: string;
   weight?: number;
   heightFeet?: number;
   heightInches?: number;
@@ -30,15 +32,15 @@ interface User {
 
 const Profile: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
+  const [firstName, setFirstName] = useState<string>("");
+  const [lastName, setLastName] = useState<string>("");
   const [weight, setWeight] = useState<number | undefined>(undefined);
   const [heightFeet, setHeightFeet] = useState<number | undefined>(undefined);
   const [heightInches, setHeightInches] = useState<number | undefined>(
     undefined
   );
   const [age, setAge] = useState<number | undefined>(undefined);
-  const [isEditingWeight, setIsEditingWeight] = useState(false);
-  const [isEditingHeight, setIsEditingHeight] = useState(false);
-  const [isEditingAge, setIsEditingAge] = useState(false);
+  const [isEditingField, setIsEditingField] = useState<string | null>(null);
   const currentUser = useUser();
 
   useEffect(() => {
@@ -51,6 +53,8 @@ const Profile: React.FC = () => {
           }
           const data: User = await response.json();
           setUser(data);
+          setFirstName(data.firstName || "");
+          setLastName(data.lastName || "");
           setWeight(data.weight);
           setHeightFeet(data.heightFeet);
           setHeightInches(data.heightInches);
@@ -66,55 +70,107 @@ const Profile: React.FC = () => {
 
   const handleWeightChange = (e: ChangeEvent<HTMLInputElement>) => {
     setWeight(parseFloat(e.target.value));
+    setIsEditingField("weight");
   };
 
   const handleHeightFeetChange = (value: string) => {
     setHeightFeet(parseInt(value, 10));
+    setIsEditingField("height");
   };
 
   const handleHeightInchesChange = (value: string) => {
     setHeightInches(parseInt(value, 10));
+    setIsEditingField("height");
   };
 
   const handleAgeChange = (e: ChangeEvent<HTMLInputElement>) => {
     setAge(parseFloat(e.target.value));
+    setIsEditingField("age");
   };
 
-  const handleCancel = () => {
+  const handleFirstNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setFirstName(e.target.value);
+    setIsEditingField("firstName");
+  };
+
+  const handleLastNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setLastName(e.target.value);
+    setIsEditingField("lastName");
+  };
+
+  const handleCancel = (field: string) => {
     if (user) {
-      setWeight(user.weight);
-      setHeightFeet(user.heightFeet);
-      setHeightInches(user.heightInches);
-      setAge(user.age);
+      switch (field) {
+        case "firstName":
+          setFirstName(user.firstName || "");
+          setIsEditingField(null);
+          break;
+        case "lastName":
+          setLastName(user.lastName || "");
+          setIsEditingField(null);
+          break;
+        case "weight":
+          setWeight(user.weight);
+          setIsEditingField(null);
+          break;
+        case "height":
+          setHeightFeet(user.heightFeet);
+          setHeightInches(user.heightInches);
+          setIsEditingField(null);
+          break;
+        case "age":
+          setAge(user.age);
+          setIsEditingField(null);
+          break;
+        default:
+          break;
+      }
     }
-    setIsEditingWeight(false);
-    setIsEditingHeight(false);
-    setIsEditingAge(false);
   };
 
   const handleSubmit = async () => {
-    if (currentUser) {
+    if (currentUser && isEditingField) {
       try {
+        const updates: Partial<User> = {};
+        switch (isEditingField) {
+          case "firstName":
+            updates.firstName = firstName;
+            break;
+          case "lastName":
+            updates.lastName = lastName;
+            break;
+          case "weight":
+            updates.weight = weight;
+            break;
+          case "height":
+            updates.heightFeet = heightFeet;
+            updates.heightInches = heightInches;
+            break;
+          case "age":
+            updates.age = age;
+            break;
+          default:
+            break;
+        }
+
         const response = await fetch(`/api/user/${currentUser.userId}`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            weight,
-            heightFeet,
-            heightInches,
-            age,
-          }),
+          body: JSON.stringify(updates),
         });
+
         if (!response.ok) {
           throw new Error(`Error: ${response.statusText}`);
         }
+
         const data = await response.json();
-        setUser(data);
-        setIsEditingWeight(false);
-        setIsEditingHeight(false);
-        setIsEditingAge(false);
+        setUser((prevUser) => ({
+          ...prevUser,
+          ...data,
+        }));
+        setIsEditingField(null);
       } catch (error) {
         console.error("Error updating user data:", error);
       }
@@ -139,13 +195,116 @@ const Profile: React.FC = () => {
               </Text>
             </CardHeader>
             <CardBody>
-              <Card paddingTop="0rem" bgColor="#C7B3DC">
+              <Text paddingTop="1rem" fontSize={18} color="black">
+                Email
+              </Text>
+              <Card bgColor="#C7B3DC">
                 <CardHeader>
                   <Text fontSize={18} color="black">
                     {user?.email || "Error displaying your email"}
                   </Text>
                 </CardHeader>
               </Card>
+              <div className={styles.nameCards}>
+                <div className={styles.firstName}>
+                  <Text fontSize={18} color="black">
+                    First Name
+                    <IconButton
+                      aria-label="Edit first name"
+                      icon={<EditIcon />}
+                      size="sm"
+                      ml={2}
+                      bg="#E9E4F2"
+                      color="#130030"
+                      onClick={() => setIsEditingField("firstName")}
+                    />
+                  </Text>
+                  {isEditingField === "firstName" ? (
+                    <Card bgColor="#C7B3DC">
+                      <CardHeader>
+                        <Input
+                          type="text"
+                          value={firstName}
+                          onChange={handleFirstNameChange}
+                          placeholder="Enter your first name"
+                        />
+                        <Button
+                          colorScheme="blue"
+                          mt={2}
+                          onClick={handleSubmit}
+                        >
+                          Save
+                        </Button>
+                        <Button
+                          colorScheme="red"
+                          mt={2}
+                          onClick={() => handleCancel("firstName")}
+                          marginLeft="5"
+                        >
+                          Cancel
+                        </Button>
+                      </CardHeader>
+                    </Card>
+                  ) : (
+                    <Card bgColor="#C7B3DC">
+                      <CardHeader>
+                        <Text fontSize={18} color="black">
+                          {firstName || "Update your first name"}
+                        </Text>
+                      </CardHeader>
+                    </Card>
+                  )}
+                </div>
+                <div className={styles.lastName}>
+                  <Text fontSize={18} color="black">
+                    Last Name
+                    <IconButton
+                      aria-label="Edit last name"
+                      icon={<EditIcon />}
+                      size="sm"
+                      ml={2}
+                      bg="#E9E4F2"
+                      color="#130030"
+                      onClick={() => setIsEditingField("lastName")}
+                    />
+                  </Text>
+                  {isEditingField === "lastName" ? (
+                    <Card bgColor="#C7B3DC">
+                      <CardHeader>
+                        <Input
+                          type="text"
+                          value={lastName}
+                          onChange={handleLastNameChange}
+                          placeholder="Enter your last name"
+                        />
+                        <Button
+                          colorScheme="blue"
+                          mt={2}
+                          onClick={handleSubmit}
+                        >
+                          Save
+                        </Button>
+                        <Button
+                          colorScheme="red"
+                          mt={2}
+                          onClick={() => handleCancel("lastName")}
+                          marginLeft="5"
+                        >
+                          Cancel
+                        </Button>
+                      </CardHeader>
+                    </Card>
+                  ) : (
+                    <Card bgColor="#C7B3DC">
+                      <CardHeader>
+                        <Text fontSize={18} color="black">
+                          {lastName || "Update your last name"}
+                        </Text>
+                      </CardHeader>
+                    </Card>
+                  )}
+                </div>
+              </div>
             </CardBody>
           </Card>
           <Card marginTop="1rem" marginBottom="1rem" bgColor="#E9E4F2">
@@ -164,10 +323,10 @@ const Profile: React.FC = () => {
                   ml={2}
                   bg="#E9E4F2"
                   color="#130030"
-                  onClick={() => setIsEditingWeight(true)}
+                  onClick={() => setIsEditingField("weight")}
                 />
               </Text>
-              {isEditingWeight ? (
+              {isEditingField === "weight" ? (
                 <Card bgColor="#C7B3DC">
                   <CardHeader>
                     <Input
@@ -182,7 +341,7 @@ const Profile: React.FC = () => {
                     <Button
                       colorScheme="red"
                       mt={2}
-                      onClick={handleCancel}
+                      onClick={() => handleCancel("weight")}
                       marginLeft="5"
                     >
                       Cancel
@@ -209,10 +368,10 @@ const Profile: React.FC = () => {
                   ml={2}
                   bg="#E9E4F2"
                   color="#130030"
-                  onClick={() => setIsEditingHeight(true)}
+                  onClick={() => setIsEditingField("height")}
                 />
               </Text>
-              {isEditingHeight ? (
+              {isEditingField === "height" ? (
                 <Card bgColor="#C7B3DC">
                   <CardHeader>
                     <Text fontSize={18} color="black">
@@ -251,7 +410,7 @@ const Profile: React.FC = () => {
                     <Button
                       colorScheme="red"
                       mt={2}
-                      onClick={handleCancel}
+                      onClick={() => handleCancel("height")}
                       marginLeft="5"
                     >
                       Cancel
@@ -263,7 +422,7 @@ const Profile: React.FC = () => {
                   <CardHeader>
                     <Text fontSize={18} color="black">
                       {heightFeet !== undefined && heightInches !== undefined
-                        ? `${heightFeet}' ${heightInches}"`
+                        ? `${heightFeet}' ${heightInches}`
                         : "Not provided"}
                     </Text>
                   </CardHeader>
@@ -278,10 +437,10 @@ const Profile: React.FC = () => {
                   ml={2}
                   bg="#E9E4F2"
                   color="#130030"
-                  onClick={() => setIsEditingAge(true)}
+                  onClick={() => setIsEditingField("age")}
                 />
               </Text>
-              {isEditingAge ? (
+              {isEditingField === "age" ? (
                 <Card bgColor="#C7B3DC">
                   <CardHeader>
                     <Input
@@ -296,7 +455,7 @@ const Profile: React.FC = () => {
                     <Button
                       colorScheme="red"
                       mt={2}
-                      onClick={handleCancel}
+                      onClick={() => handleCancel("age")}
                       marginLeft="5"
                     >
                       Cancel
