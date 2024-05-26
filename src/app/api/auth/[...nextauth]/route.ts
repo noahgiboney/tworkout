@@ -38,7 +38,8 @@ const options: NextAuthOptions = {
       if (!dbUser) {
         dbUser = new User({
           email: user.email,
-          password: "NULL", // Password is not relevant for Google sign-in
+          name: user.name,
+          password: "NULL" // Password is not relevant for Google sign-in
         });
         await dbUser.save();
       }

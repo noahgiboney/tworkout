@@ -22,8 +22,7 @@ import { useUser } from "@/context/userContext";
 
 interface User {
   email: string;
-  firstName: string;
-  lastName: string;
+  name: string;
   weight?: number;
   heightFeet?: number;
   heightInches?: number;
@@ -32,8 +31,7 @@ interface User {
 
 const Profile: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
-  const [firstName, setFirstName] = useState<string>("");
-  const [lastName, setLastName] = useState<string>("");
+  const [name, setName] = useState<string>("");
   const [weight, setWeight] = useState<number | undefined>(undefined);
   const [heightFeet, setHeightFeet] = useState<number | undefined>(undefined);
   const [heightInches, setHeightInches] = useState<number | undefined>(
@@ -53,8 +51,7 @@ const Profile: React.FC = () => {
           }
           const data: User = await response.json();
           setUser(data);
-          setFirstName(data.firstName || "");
-          setLastName(data.lastName || "");
+          setName(data.name || "");
           setWeight(data.weight);
           setHeightFeet(data.heightFeet);
           setHeightInches(data.heightInches);
@@ -88,25 +85,16 @@ const Profile: React.FC = () => {
     setIsEditingField("age");
   };
 
-  const handleFirstNameChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setFirstName(e.target.value);
-    setIsEditingField("firstName");
-  };
-
-  const handleLastNameChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setLastName(e.target.value);
-    setIsEditingField("lastName");
+  const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value);
+    setIsEditingField("name");
   };
 
   const handleCancel = (field: string) => {
     if (user) {
       switch (field) {
-        case "firstName":
-          setFirstName(user.firstName || "");
-          setIsEditingField(null);
-          break;
-        case "lastName":
-          setLastName(user.lastName || "");
+        case "name":
+          setName(user.name || "");
           setIsEditingField(null);
           break;
         case "weight":
@@ -133,11 +121,8 @@ const Profile: React.FC = () => {
       try {
         const updates: Partial<User> = {};
         switch (isEditingField) {
-          case "firstName":
-            updates.firstName = firstName;
-            break;
-          case "lastName":
-            updates.lastName = lastName;
+          case "name":
+            updates.name = name;
             break;
           case "weight":
             updates.weight = weight;
@@ -205,106 +190,51 @@ const Profile: React.FC = () => {
                   </Text>
                 </CardHeader>
               </Card>
-              <div className={styles.nameCards}>
-                <div className={styles.firstName}>
-                  <Text fontSize={18} color="black">
-                    First Name
-                    <IconButton
-                      aria-label="Edit first name"
-                      icon={<EditIcon />}
-                      size="sm"
-                      ml={2}
-                      bg="#E9E4F2"
-                      color="#130030"
-                      onClick={() => setIsEditingField("firstName")}
+              <Text paddingTop="1rem" fontSize={18} color="black">
+                Name
+                <IconButton
+                  aria-label="Edit Name"
+                  icon={<EditIcon />}
+                  size="sm"
+                  ml={2}
+                  bg="#E9E4F2"
+                  color="#130030"
+                  onClick={() => setIsEditingField("name")}
+                />
+              </Text>
+              {isEditingField === "name" ? (
+                <Card bgColor="#C7B3DC">
+                  <CardHeader>
+                    <Input
+                      type="text"
+                      value={name}
+                      onChange={handleNameChange}
+                      placeholder="Update your name"
                     />
-                  </Text>
-                  {isEditingField === "firstName" ? (
-                    <Card bgColor="#C7B3DC">
-                      <CardHeader>
-                        <Input
-                          type="text"
-                          value={firstName}
-                          onChange={handleFirstNameChange}
-                          placeholder="Enter your first name"
-                        />
-                        <Button
-                          colorScheme="blue"
-                          mt={2}
-                          onClick={handleSubmit}
-                        >
-                          Save
-                        </Button>
-                        <Button
-                          colorScheme="red"
-                          mt={2}
-                          onClick={() => handleCancel("firstName")}
-                          marginLeft="5"
-                        >
-                          Cancel
-                        </Button>
-                      </CardHeader>
-                    </Card>
-                  ) : (
-                    <Card bgColor="#C7B3DC">
-                      <CardHeader>
-                        <Text fontSize={18} color="black">
-                          {firstName || "Update your first name"}
-                        </Text>
-                      </CardHeader>
-                    </Card>
-                  )}
-                </div>
-                <div className={styles.lastName}>
-                  <Text fontSize={18} color="black">
-                    Last Name
-                    <IconButton
-                      aria-label="Edit last name"
-                      icon={<EditIcon />}
-                      size="sm"
-                      ml={2}
-                      bg="#E9E4F2"
-                      color="#130030"
-                      onClick={() => setIsEditingField("lastName")}
-                    />
-                  </Text>
-                  {isEditingField === "lastName" ? (
-                    <Card bgColor="#C7B3DC">
-                      <CardHeader>
-                        <Input
-                          type="text"
-                          value={lastName}
-                          onChange={handleLastNameChange}
-                          placeholder="Enter your last name"
-                        />
-                        <Button
-                          colorScheme="blue"
-                          mt={2}
-                          onClick={handleSubmit}
-                        >
-                          Save
-                        </Button>
-                        <Button
-                          colorScheme="red"
-                          mt={2}
-                          onClick={() => handleCancel("lastName")}
-                          marginLeft="5"
-                        >
-                          Cancel
-                        </Button>
-                      </CardHeader>
-                    </Card>
-                  ) : (
-                    <Card bgColor="#C7B3DC">
-                      <CardHeader>
-                        <Text fontSize={18} color="black">
-                          {lastName || "Update your last name"}
-                        </Text>
-                      </CardHeader>
-                    </Card>
-                  )}
-                </div>
-              </div>
+                    <Button colorScheme="blue" mt={2} onClick={handleSubmit}>
+                      Save
+                    </Button>
+                    <Button
+                      colorScheme="red"
+                      mt={2}
+                      onClick={() => handleCancel("name")}
+                      marginLeft="5"
+                    >
+                      Cancel
+                    </Button>
+                  </CardHeader>
+                </Card>
+              ) : (
+                <Card bgColor="#C7B3DC">
+                  <CardHeader>
+                    <Text fontSize={18} color="black">
+                      {name !== undefined
+                        ? `${name}`
+                        : "Update your name"}
+                    </Text>
+                  </CardHeader>
+                </Card>
+              )}
             </CardBody>
           </Card>
           <Card marginTop="1rem" marginBottom="1rem" bgColor="#E9E4F2">
@@ -423,7 +353,7 @@ const Profile: React.FC = () => {
                     <Text fontSize={18} color="black">
                       {heightFeet !== undefined && heightInches !== undefined
                         ? `${heightFeet}' ${heightInches}`
-                        : "Not provided"}
+                        : "Update your height"}
                     </Text>
                   </CardHeader>
                 </Card>
