@@ -2,6 +2,10 @@ import React from "react";
 import { Box, VStack, Button, Avatar } from "@chakra-ui/react";
 import Link from "next/link";
 
+interface SideBarProps {
+  userId: string;
+}
+
 const SideBar = () => {
   return (
     <>
@@ -33,7 +37,7 @@ const SideBar = () => {
             width="13rem"
             margin={1}
           >
-            <Link href="/progress">Track Progress</Link>
+            <Link href={`/progress`}>Track Progress</Link>
           </Button>
           <Button
             bg="#C7B3DC"
