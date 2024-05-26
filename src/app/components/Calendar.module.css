@@ -21,16 +21,7 @@
   transition: background 0.3s ease;
 }
 
-.reactCalendar__navigation {
-  border-radius: 8px; 
-  box-sizing: border-box; 
-}
 
-  
-.reactCalendar__navigation__label {
-  font-size: 1.5em; 
-  font-weight: bold; 
-}
 .reactCalendar__tile:hover {
   background: #c7b3dc !important;
 }

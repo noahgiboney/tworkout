@@ -3,7 +3,9 @@ import React, { useState } from "react";
 import "react-calendar/dist/Calendar.css";
 import styles from "./Calendar.module.css";
 import { Text } from "@chakra-ui/react";
+import { Kumbh_Sans } from 'next/font/google';
 
+const kumbhSans = Kumbh_Sans({ subsets: ['latin'] });
 type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece];
 
@@ -18,7 +20,7 @@ const CustomCalendar = () => {
         onChange={onChange}
         value={value}
         navigationLabel={({ date, locale, view }) => {
-            return <Text  fontSize="40px">{monthNames[date.getMonth()]} {date.getFullYear()}</Text>
+            return <Text fontFamily={kumbhSans.style.fontFamily} fontSize="40px">{monthNames[date.getMonth()]} {date.getFullYear()}</Text>
         }}
         tileClassName={({ date, view}) => {
             if (view === 'month') {
