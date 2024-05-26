@@ -1,24 +1,18 @@
-import React from 'react'
-import SideBar from '../components/SideBar'
+import React from "react";
+import SideBar from "../components/SideBar";
 import styles from "./profile.module.css";
-import {
-  Card,
-  CardBody,
-  CardHeader,
-  Text, 
-  Avatar
-} from "@chakra-ui/react";
+import { Card, CardBody, CardHeader, Text, Avatar } from "@chakra-ui/react";
 
 const Profile = () => {
   return (
     <div className={styles.main}>
-      <div><SideBar /></div>
+      <div>
+        <SideBar />
+      </div>
       <div className={styles.body}>
-        <div className={styles.title}>
-          My Profile
-        </div>
+        <div className={styles.title}>My Profile</div>
         <div className={styles.avatar}>
-          <Avatar size="2xl"/>
+          <Avatar size="2xl" />
         </div>
         <div className={styles.cards}>
           <Card marginTop="1rem" marginBottom="1rem" bgColor="#E9E4F2">
@@ -50,9 +44,7 @@ const Profile = () => {
                     First Name
                   </Text>
                   <Card paddingTop="0rem" bgColor="#C7B3DC">
-                    <CardHeader>
-                      John
-                    </CardHeader>
+                    <CardHeader>John</CardHeader>
                   </Card>
                 </div>
                 <div className={styles.lastName}>
@@ -60,9 +52,7 @@ const Profile = () => {
                     Last Name
                   </Text>
                   <Card paddingTop="0rem" bgColor="#C7B3DC">
-                    <CardHeader>
-                      Doe
-                    </CardHeader>
+                    <CardHeader>Doe</CardHeader>
                   </Card>
                 </div>
               </div>
@@ -70,34 +60,26 @@ const Profile = () => {
                 Weight
               </Text>
               <Card bgColor="#C7B3DC">
-                <CardHeader>
-                  500 lbs
-                </CardHeader>
+                <CardHeader>500 lbs</CardHeader>
               </Card>
               <Text paddingTop="1rem" fontSize={18} color="black">
                 Height
               </Text>
               <Card bgColor="#C7B3DC">
-                <CardHeader>
-                  6&apos;0&quot;
-                </CardHeader>
+                <CardHeader>6&apos;0&quot;</CardHeader>
               </Card>
               <Text paddingTop="1rem" fontSize={18} color="black">
                 Age
               </Text>
               <Card bgColor="#C7B3DC">
-                <CardHeader>
-                  45
-                </CardHeader>
+                <CardHeader>45</CardHeader>
               </Card>
             </CardBody>
           </Card>
         </div>
-        
       </div>
-      
     </div>
-  )
-}
+  );
+};
 
-export default Profile
+export default Profile;
