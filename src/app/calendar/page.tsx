@@ -1,12 +1,17 @@
+"use client"
 import React from "react";
-
+import CustomCalendar from "../components/Calendar";
 import SideBar from "../components/SideBar";
+import { Box, flexbox } from "@chakra-ui/react";
 
 const Calendar = () => {
   return (
-    <div>
+    <Box bgColor="#130030" display="flex" flexDirection="row" paddingRight="20px">
       <SideBar />
-    </div>
+      <Box alignItems="center" justifyContent="center" padding="50px">
+        <CustomCalendar />
+      </Box>
+    </Box>
   );
 };
 
