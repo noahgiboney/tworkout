@@ -8,7 +8,7 @@ interface SideBarProps {
 
 const SideBar = () => {
   return (
-    <Box h="1000px" bg="#5A457F" w="300px" padding="20px" marginRight="20px">
+    <Box h="100vh" bg="#5A457F" w="300px" padding="20px" marginRight="20px">
       <VStack>
         <Avatar marginTop="30px" marginBottom="30px" size="superLg" />
         <Button

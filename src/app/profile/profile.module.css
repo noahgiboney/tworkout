@@ -1,6 +1,7 @@
 .main {
   display: flex;
   background-color: #130030;
+  height: 100vh;
 }
 
 .body {
