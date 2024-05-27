@@ -1,5 +1,8 @@
 import { extendTheme } from "@chakra-ui/react";
 import { avatarTheme } from "./avatarTheme";
+import { Kumbh_Sans } from 'next/font/google';
+
+const kumbhSans = Kumbh_Sans({ subsets: ['latin'] });
 
 const customTheme = extendTheme({
   components: {
@@ -21,6 +24,10 @@ const customTheme = extendTheme({
     800: "#600086",
     900: "#130030",
   },
+  fonts: {
+    heading: kumbhSans.style.fontFamily,
+    body: kumbhSans.style.fontFamily
+  }
 });
 
 export default customTheme;

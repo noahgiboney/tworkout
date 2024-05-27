@@ -19,12 +19,17 @@ import SignInButton from "../components/SignInButton";
 import { useUser } from "@/context/userContext";
 import styles from "./login.module.css";
 
+
+
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loginFailed, setLoginFailed] = useState(false);
+  const [error, setError] = useState("");
   const router = useRouter();
   const { setUserId } = useUser();
 
+  
   const handleSubmit = async (e: FormEvent<HTMLDivElement>) => {
     e.preventDefault();
     try {
@@ -41,10 +46,14 @@ const Login = () => {
         console.log("Login successful");
         router.push("/homepage");
       } else {
-        console.error("Login failed:", await response.json());
+        const errorData = await response.json();
+        setError(errorData.error || "Login failed");
+        console.error("Login failed:", errorData);
+        setLoginFailed(true);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Login error:", error);
+      setLoginFailed(true);
     }
   };
 
@@ -104,6 +113,7 @@ const Login = () => {
               >
                 Sign in
               </Button>
+              {loginFailed  && <Text fontWeight="bold" color="red.500">{error}</Text>}
               <SignInButton />
               <Link
                 margin={3}
