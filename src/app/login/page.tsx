@@ -18,7 +18,6 @@ import Image from "next/image";
 import SignInButton from "../components/SignInButton";
 import { useUser } from "@/context/userContext";
 import styles from "./login.module.css";
-import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 
 
 
@@ -115,7 +114,7 @@ const Login = () => {
               >
                 Sign in
               </Button>
-              {loginFailed  && <Text color="red">{error}</Text>}
+              {loginFailed  && <Text fontWeight="bold" color="red.500">{error}</Text>}
               <SignInButton />
               <Link
                 margin={3}
