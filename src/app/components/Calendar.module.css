@@ -22,8 +22,10 @@
 }
 
 .reactCalendar__tile:disabled {
-    background-color: #5a457fac !important; 
-  }
+  background-color: #5a457fac !important;
+}
+
+
 
 .reactCalendar__tile:hover {
   background: #c7b3dc !important;

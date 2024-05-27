@@ -2,15 +2,25 @@ import Calendar from "react-calendar";
 import React, { useState } from "react";
 import "react-calendar/dist/Calendar.css";
 import styles from "./Calendar.module.css";
-import { Text } from "@chakra-ui/react";
+import { Text, VStack } from "@chakra-ui/react";
 import { Kumbh_Sans } from "next/font/google";
-import { FaAngleDoubleLeft, FaAngleDoubleRight, FaAngleRight, FaAngleLeft  } from "react-icons/fa";
+import {
+  FaAngleDoubleLeft,
+  FaAngleDoubleRight,
+  FaAngleRight,
+  FaAngleLeft,
+} from "react-icons/fa";
 
+import { Workout } from "../calendar/page";
 const kumbhSans = Kumbh_Sans({ subsets: ["latin"] });
 type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece];
 
-const CustomCalendar = () => {
+interface Props {
+  getWorkoutForDate: (date: Date) => Workout | null;
+}
+
+const CustomCalendar = ({ getWorkoutForDate }: Props) => {
   const [value, onChange] = useState<Value>(new Date());
   const monthNames = [
     "January",
@@ -33,6 +43,7 @@ const CustomCalendar = () => {
         className={styles.reactCalendar}
         onChange={onChange}
         value={value}
+        view="month"
         navigationLabel={({ date, locale, view }) => {
           return (
             <Text fontFamily={kumbhSans.style.fontFamily} fontSize="40px">
@@ -48,8 +59,12 @@ const CustomCalendar = () => {
             return styles.reactCalendar__tile;
           }
         }}
+        tileContent={({ date }) => {
+          const workoutForDate = getWorkoutForDate(date);
+          return <Text>{workoutForDate ? workoutForDate.name : ""}</Text>;
+        }}
         nextLabel={<FaAngleRight />}
-        next2Label={<FaAngleDoubleRight  />}
+        next2Label={<FaAngleDoubleRight />}
         prevLabel={<FaAngleLeft />}
         prev2Label={<FaAngleDoubleLeft />}
       />
