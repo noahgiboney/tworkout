@@ -85,9 +85,10 @@ const Calendar = () => {
       display="flex"
       flexDirection="row"
       paddingRight="20px"
+      height="100vh"
     >
       <SideBar />
-      <Box alignItems="center" justifyContent="center" padding="50px">
+      <Box alignItems="center" justifyContent="center" padding="50px" marginBottom="20px">
         <CustomCalendar getWorkoutForDate={getWorkoutsForDate} />
       </Box>
     </Box>

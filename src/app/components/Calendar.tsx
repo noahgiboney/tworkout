@@ -44,7 +44,7 @@ const CustomCalendar = ({ getWorkoutForDate }: Props) => {
   }
 
   return (
-    <div>
+    <Box>
       <Calendar
         className={styles.reactCalendar}
         onChange={onChange}
@@ -85,7 +85,7 @@ const CustomCalendar = ({ getWorkoutForDate }: Props) => {
         prevLabel={<FaAngleLeft />}
         prev2Label={<FaAngleDoubleLeft />}
       />
-    </div>
+    </Box>
   );
 };
 
