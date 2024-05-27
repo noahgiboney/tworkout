@@ -16,6 +16,8 @@ import {
   NumberIncrementStepper,
   NumberDecrementStepper,
   Button,
+  CircularProgress,
+  Box,
 } from "@chakra-ui/react";
 import { EditIcon } from "@chakra-ui/icons";
 import { useUser } from "@/context/userContext";
@@ -39,6 +41,7 @@ const Profile: React.FC = () => {
   );
   const [age, setAge] = useState<number | undefined>(undefined);
   const [isEditingField, setIsEditingField] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const currentUser = useUser();
 
   useEffect(() => {
@@ -58,6 +61,8 @@ const Profile: React.FC = () => {
           setAge(data.age);
         } catch (error) {
           console.error("Error fetching user data:", error);
+        } finally {
+          setIsLoading(false);
         }
       }
     };
@@ -169,243 +174,251 @@ const Profile: React.FC = () => {
       </div>
       <div className={styles.body}>
         <div className={styles.title}>My Profile</div>
-        <div className={styles.avatar}>
-          <Avatar size="2xl" />
-        </div>
-        <div className={styles.cards}>
-          <Card marginTop="1rem" marginBottom="1rem" bgColor="#E9E4F2">
-            <CardHeader paddingBottom="0rem">
-              <Text fontSize={24} color="black">
-                Personal Information
-              </Text>
-            </CardHeader>
-            <CardBody>
-              <Text paddingTop="1rem" fontSize={18} color="black">
-                Email
-              </Text>
-              <Card bgColor="#C7B3DC">
-                <CardHeader>
-                  <Text fontSize={18} color="black">
-                    {user?.email || "Error displaying your email"}
+        {isLoading ? (
+          <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+            <CircularProgress isIndeterminate color="purple.500" />
+          </Box>
+        ) : (
+          <>
+            <div className={styles.avatar}>
+              <Avatar size="2xl" />
+            </div>
+            <div className={styles.cards}>
+              <Card marginTop="1rem" marginBottom="1rem" bgColor="#E9E4F2">
+                <CardHeader paddingBottom="0rem">
+                  <Text fontSize={24} color="black">
+                    Personal Information
                   </Text>
                 </CardHeader>
+                <CardBody>
+                  <Text paddingTop="1rem" fontSize={18} color="black">
+                    Email
+                  </Text>
+                  <Card bgColor="#C7B3DC">
+                    <CardHeader>
+                      <Text fontSize={18} color="black">
+                        {user?.email || "Error displaying your email"}
+                      </Text>
+                    </CardHeader>
+                  </Card>
+                  <Text paddingTop="1rem" fontSize={18} color="black">
+                    Name
+                    <IconButton
+                      aria-label="Edit Name"
+                      icon={<EditIcon />}
+                      size="sm"
+                      ml={2}
+                      bg="#E9E4F2"
+                      color="#130030"
+                      onClick={() => setIsEditingField("name")}
+                    />
+                  </Text>
+                  {isEditingField === "name" ? (
+                    <Card bgColor="#C7B3DC">
+                      <CardHeader>
+                        <Input
+                          type="text"
+                          value={name}
+                          onChange={handleNameChange}
+                          placeholder="Update your name"
+                        />
+                        <Button colorScheme="blue" mt={2} onClick={handleSubmit}>
+                          Save
+                        </Button>
+                        <Button
+                          colorScheme="red"
+                          mt={2}
+                          onClick={() => handleCancel("name")}
+                          marginLeft="5"
+                        >
+                          Cancel
+                        </Button>
+                      </CardHeader>
+                    </Card>
+                  ) : (
+                    <Card bgColor="#C7B3DC">
+                      <CardHeader>
+                        <Text fontSize={18} color="black">
+                          {name !== undefined
+                            ? `${name}`
+                            : "Update your name"}
+                        </Text>
+                      </CardHeader>
+                    </Card>
+                  )}
+                </CardBody>
               </Card>
-              <Text paddingTop="1rem" fontSize={18} color="black">
-                Name
-                <IconButton
-                  aria-label="Edit Name"
-                  icon={<EditIcon />}
-                  size="sm"
-                  ml={2}
-                  bg="#E9E4F2"
-                  color="#130030"
-                  onClick={() => setIsEditingField("name")}
-                />
-              </Text>
-              {isEditingField === "name" ? (
-                <Card bgColor="#C7B3DC">
-                  <CardHeader>
-                    <Input
-                      type="text"
-                      value={name}
-                      onChange={handleNameChange}
-                      placeholder="Update your name"
+              <Card marginTop="1rem" marginBottom="1rem" bgColor="#E9E4F2">
+                <CardHeader paddingBottom="0rem">
+                  <Text fontSize={24} color="black">
+                    Physical Information
+                  </Text>
+                </CardHeader>
+                <CardBody>
+                  <Text paddingTop="1rem" fontSize={18} color="black">
+                    Weight
+                    <IconButton
+                      aria-label="Edit weight"
+                      icon={<EditIcon />}
+                      size="sm"
+                      ml={2}
+                      bg="#E9E4F2"
+                      color="#130030"
+                      onClick={() => setIsEditingField("weight")}
                     />
-                    <Button colorScheme="blue" mt={2} onClick={handleSubmit}>
-                      Save
-                    </Button>
-                    <Button
-                      colorScheme="red"
-                      mt={2}
-                      onClick={() => handleCancel("name")}
-                      marginLeft="5"
-                    >
-                      Cancel
-                    </Button>
-                  </CardHeader>
-                </Card>
-              ) : (
-                <Card bgColor="#C7B3DC">
-                  <CardHeader>
-                    <Text fontSize={18} color="black">
-                      {name !== undefined
-                        ? `${name}`
-                        : "Update your name"}
-                    </Text>
-                  </CardHeader>
-                </Card>
-              )}
-            </CardBody>
-          </Card>
-          <Card marginTop="1rem" marginBottom="1rem" bgColor="#E9E4F2">
-            <CardHeader paddingBottom="0rem">
-              <Text fontSize={24} color="black">
-                Physical Information
-              </Text>
-            </CardHeader>
-            <CardBody>
-              <Text paddingTop="1rem" fontSize={18} color="black">
-                Weight
-                <IconButton
-                  aria-label="Edit weight"
-                  icon={<EditIcon />}
-                  size="sm"
-                  ml={2}
-                  bg="#E9E4F2"
-                  color="#130030"
-                  onClick={() => setIsEditingField("weight")}
-                />
-              </Text>
-              {isEditingField === "weight" ? (
-                <Card bgColor="#C7B3DC">
-                  <CardHeader>
-                    <Input
-                      type="number"
-                      value={weight !== undefined ? weight.toString() : ""}
-                      onChange={handleWeightChange}
-                      placeholder="Enter your weight"
+                  </Text>
+                  {isEditingField === "weight" ? (
+                    <Card bgColor="#C7B3DC">
+                      <CardHeader>
+                        <Input
+                          type="number"
+                          value={weight !== undefined ? weight.toString() : ""}
+                          onChange={handleWeightChange}
+                          placeholder="Enter your weight"
+                        />
+                        <Button colorScheme="blue" mt={2} onClick={handleSubmit}>
+                          Save
+                        </Button>
+                        <Button
+                          colorScheme="red"
+                          mt={2}
+                          onClick={() => handleCancel("weight")}
+                          marginLeft="5"
+                        >
+                          Cancel
+                        </Button>
+                      </CardHeader>
+                    </Card>
+                  ) : (
+                    <Card bgColor="#C7B3DC">
+                      <CardHeader>
+                        <Text fontSize={18} color="black">
+                          {weight !== undefined
+                            ? `${weight} lbs`
+                            : "Update your weight"}
+                        </Text>
+                      </CardHeader>
+                    </Card>
+                  )}
+                  <Text paddingTop="1rem" fontSize={18} color="black">
+                    Height
+                    <IconButton
+                      aria-label="Edit height"
+                      icon={<EditIcon />}
+                      size="sm"
+                      ml={2}
+                      bg="#E9E4F2"
+                      color="#130030"
+                      onClick={() => setIsEditingField("height")}
                     />
-                    <Button colorScheme="blue" mt={2} onClick={handleSubmit}>
-                      Save
-                    </Button>
-                    <Button
-                      colorScheme="red"
-                      mt={2}
-                      onClick={() => handleCancel("weight")}
-                      marginLeft="5"
-                    >
-                      Cancel
-                    </Button>
-                  </CardHeader>
-                </Card>
-              ) : (
-                <Card bgColor="#C7B3DC">
-                  <CardHeader>
-                    <Text fontSize={18} color="black">
-                      {weight !== undefined
-                        ? `${weight} lbs`
-                        : "Update your weight"}
-                    </Text>
-                  </CardHeader>
-                </Card>
-              )}
-              <Text paddingTop="1rem" fontSize={18} color="black">
-                Height
-                <IconButton
-                  aria-label="Edit height"
-                  icon={<EditIcon />}
-                  size="sm"
-                  ml={2}
-                  bg="#E9E4F2"
-                  color="#130030"
-                  onClick={() => setIsEditingField("height")}
-                />
-              </Text>
-              {isEditingField === "height" ? (
-                <Card bgColor="#C7B3DC">
-                  <CardHeader>
-                    <Text fontSize={18} color="black">
-                      Feet
-                    </Text>
-                    <NumberInput
-                      value={heightFeet}
-                      onChange={handleHeightFeetChange}
-                      min={0}
-                      max={8}
-                    >
-                      <NumberInputField />
-                      <NumberInputStepper>
-                        <NumberIncrementStepper />
-                        <NumberDecrementStepper />
-                      </NumberInputStepper>
-                    </NumberInput>
-                    <Text fontSize={18} color="black">
-                      Inches
-                    </Text>
-                    <NumberInput
-                      value={heightInches}
-                      onChange={handleHeightInchesChange}
-                      min={0}
-                      max={11}
-                    >
-                      <NumberInputField />
-                      <NumberInputStepper>
-                        <NumberIncrementStepper />
-                        <NumberDecrementStepper />
-                      </NumberInputStepper>
-                    </NumberInput>
-                    <Button colorScheme="blue" mt={2} onClick={handleSubmit}>
-                      Save
-                    </Button>
-                    <Button
-                      colorScheme="red"
-                      mt={2}
-                      onClick={() => handleCancel("height")}
-                      marginLeft="5"
-                    >
-                      Cancel
-                    </Button>
-                  </CardHeader>
-                </Card>
-              ) : (
-                <Card bgColor="#C7B3DC">
-                  <CardHeader>
-                    <Text fontSize={18} color="black">
-                      {heightFeet !== undefined && heightInches !== undefined
-                        ? `${heightFeet}' ${heightInches}`
-                        : "Update your height"}
-                    </Text>
-                  </CardHeader>
-                </Card>
-              )}
-              <Text paddingTop="1rem" fontSize={18} color="black">
-                Age
-                <IconButton
-                  aria-label="Edit Age"
-                  icon={<EditIcon />}
-                  size="sm"
-                  ml={2}
-                  bg="#E9E4F2"
-                  color="#130030"
-                  onClick={() => setIsEditingField("age")}
-                />
-              </Text>
-              {isEditingField === "age" ? (
-                <Card bgColor="#C7B3DC">
-                  <CardHeader>
-                    <Input
-                      type="number"
-                      value={age !== undefined ? age.toString() : ""}
-                      onChange={handleAgeChange}
-                      placeholder="Update your age"
+                  </Text>
+                  {isEditingField === "height" ? (
+                    <Card bgColor="#C7B3DC">
+                      <CardHeader>
+                        <Text fontSize={18} color="black">
+                          Feet
+                        </Text>
+                        <NumberInput
+                          value={heightFeet}
+                          onChange={handleHeightFeetChange}
+                          min={0}
+                          max={8}
+                        >
+                          <NumberInputField />
+                          <NumberInputStepper>
+                            <NumberIncrementStepper />
+                            <NumberDecrementStepper />
+                          </NumberInputStepper>
+                        </NumberInput>
+                        <Text fontSize={18} color="black">
+                          Inches
+                        </Text>
+                        <NumberInput
+                          value={heightInches}
+                          onChange={handleHeightInchesChange}
+                          min={0}
+                          max={11}
+                        >
+                          <NumberInputField />
+                          <NumberInputStepper>
+                            <NumberIncrementStepper />
+                            <NumberDecrementStepper />
+                          </NumberInputStepper>
+                        </NumberInput>
+                        <Button colorScheme="blue" mt={2} onClick={handleSubmit}>
+                          Save
+                        </Button>
+                        <Button
+                          colorScheme="red"
+                          mt={2}
+                          onClick={() => handleCancel("height")}
+                          marginLeft="5"
+                        >
+                          Cancel
+                        </Button>
+                      </CardHeader>
+                    </Card>
+                  ) : (
+                    <Card bgColor="#C7B3DC">
+                      <CardHeader>
+                        <Text fontSize={18} color="black">
+                          {heightFeet !== undefined && heightInches !== undefined
+                            ? `${heightFeet}' ${heightInches}`
+                            : "Update your height"}
+                        </Text>
+                      </CardHeader>
+                    </Card>
+                  )}
+                  <Text paddingTop="1rem" fontSize={18} color="black">
+                    Age
+                    <IconButton
+                      aria-label="Edit Age"
+                      icon={<EditIcon />}
+                      size="sm"
+                      ml={2}
+                      bg="#E9E4F2"
+                      color="#130030"
+                      onClick={() => setIsEditingField("age")}
                     />
-                    <Button colorScheme="blue" mt={2} onClick={handleSubmit}>
-                      Save
-                    </Button>
-                    <Button
-                      colorScheme="red"
-                      mt={2}
-                      onClick={() => handleCancel("age")}
-                      marginLeft="5"
-                    >
-                      Cancel
-                    </Button>
-                  </CardHeader>
-                </Card>
-              ) : (
-                <Card bgColor="#C7B3DC">
-                  <CardHeader>
-                    <Text fontSize={18} color="black">
-                      {age !== undefined
-                        ? `${age} years old`
-                        : "Update your age"}
-                    </Text>
-                  </CardHeader>
-                </Card>
-              )}
-            </CardBody>
-          </Card>
-        </div>
+                  </Text>
+                  {isEditingField === "age" ? (
+                    <Card bgColor="#C7B3DC">
+                      <CardHeader>
+                        <Input
+                          type="number"
+                          value={age !== undefined ? age.toString() : ""}
+                          onChange={handleAgeChange}
+                          placeholder="Update your age"
+                        />
+                        <Button colorScheme="blue" mt={2} onClick={handleSubmit}>
+                          Save
+                        </Button>
+                        <Button
+                          colorScheme="red"
+                          mt={2}
+                          onClick={() => handleCancel("age")}
+                          marginLeft="5"
+                        >
+                          Cancel
+                        </Button>
+                      </CardHeader>
+                    </Card>
+                  ) : (
+                    <Card bgColor="#C7B3DC">
+                      <CardHeader>
+                        <Text fontSize={18} color="black">
+                          {age !== undefined
+                            ? `${age} years old`
+                            : "Update your age"}
+                        </Text>
+                      </CardHeader>
+                    </Card>
+                  )}
+                </CardBody>
+              </Card>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
