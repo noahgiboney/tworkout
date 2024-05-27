@@ -10,43 +10,55 @@ const SideBar = () => {
   return (
     <Box h="1000px" bg="#5A457F" w="300px" padding="20px" marginRight="20px">
       <VStack>
-        <Avatar marginTop="30px" marginBottom="30px" size="superLg" />
-        <Button
-          bg="#C7B3DC"
-          color="black"
-          padding={30}
-          width="13rem"
-          margin={1}
-        >
-          <Link href="/homepage">Today&apos;s View</Link>
-        </Button>
-        <Button
-          bg="#C7B3DC"
-          color="black"
-          padding={30}
-          width="13rem"
-          margin={1}
-        >
-          <Link href="/calendar">Calendar</Link>
-        </Button>
-        <Button
-          bg="#C7B3DC"
-          color="black"
-          padding={30}
-          width="13rem"
-          margin={1}
-        >
-          <Link href={`/progress`}>Track Progress</Link>
-        </Button>
-        <Button
-          bg="#C7B3DC"
-          color="black"
-          padding={30}
-          width="13rem"
-          margin={1}
-        >
-          <Link href="/profile">My Profile</Link>
-        </Button>
+        <Avatar marginTop="30px" marginBottom="30px" size="2xl" />
+        <Link href="/homepage" passHref>
+          <Button
+            as="a"
+            bg="#C7B3DC"
+            color="black"
+            padding={30}
+            width="13rem"
+            margin={1}
+          >
+            Today&apos;s View
+          </Button>
+        </Link>
+        <Link href="/calendar" passHref>
+          <Button
+            as="a"
+            bg="#C7B3DC"
+            color="black"
+            padding={30}
+            width="13rem"
+            margin={1}
+          >
+            Calendar
+          </Button>
+        </Link>
+        <Link href="/progress" passHref>
+          <Button
+            as="a"
+            bg="#C7B3DC"
+            color="black"
+            padding={30}
+            width="13rem"
+            margin={1}
+          >
+            Track Progress
+          </Button>
+        </Link>
+        <Link href="/profile" passHref>
+          <Button
+            as="a"
+            bg="#C7B3DC"
+            color="black"
+            padding={30}
+            width="13rem"
+            margin={1}
+          >
+            My Profile
+          </Button>
+        </Link>
       </VStack>
     </Box>
   );
