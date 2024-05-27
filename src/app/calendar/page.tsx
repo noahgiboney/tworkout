@@ -4,6 +4,7 @@ import CustomCalendar from "../components/Calendar";
 import SideBar from "../components/SideBar";
 import { Box } from "@chakra-ui/react";
 import { useUser } from "@/context/userContext";
+import styles from "./calendar.module.css";
 
 export interface Workout {
   Id: string;
@@ -80,25 +81,14 @@ const Calendar = () => {
   };
 
   return (
-    <Box
-      bgColor="#130030"
-      display="flex"
-      flexDirection="row"
-      height="fit-content"
-      paddingRight="20px"
-      maxHeight="1000px"
-    >
-      <SideBar />
-      <Box
-        alignItems="center"
-        justifyContent="center"
-        padding="50px"
-        marginBottom="20px"
-        marginTop="20px"
-      >
+    <div className={styles.main}>
+      <div>
+        <SideBar />
+      </div>
+      <div className={styles.body}>
         <CustomCalendar getWorkoutForDate={getWorkoutsForDate} />
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 };
 
