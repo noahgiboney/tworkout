@@ -94,6 +94,7 @@ const Calendar = () => {
         justifyContent="center"
         padding="50px"
         marginBottom="20px"
+        marginTop="20px"
       >
         <CustomCalendar getWorkoutForDate={getWorkoutsForDate} />
       </Box>
