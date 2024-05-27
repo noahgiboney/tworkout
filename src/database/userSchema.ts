@@ -5,15 +5,19 @@ const userSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
   },
-  password: {
+  name: {
     type: String,
     required: true
   },
+  password: {
+    type: String,
+    required: true,
+  },
   weight: {
     type: Number,
-    required: false
+    required: false,
   },
   heightFeet: {
     type: Number,
@@ -21,12 +25,17 @@ const userSchema = new mongoose.Schema({
   },
 
   heightInches: {
-    type: Number, 
+    type: Number,
     required: false,
-  }
+  },
+
+  age: {
+    type: Number,
+    require: false,
+  },
 });
 
 // Create a model from the schema
-const User = mongoose.models.User || mongoose.model('User', userSchema);
+const User = mongoose.models.User || mongoose.model("User", userSchema);
 
 export default User;
