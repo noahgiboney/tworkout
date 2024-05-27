@@ -1,10 +1,13 @@
 import React from "react";
 import { Box, VStack, Button, Avatar } from "@chakra-ui/react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 interface SideBarProps {
   userId: string;
 }
+
+
 
 const SideBar = () => {
   return (
