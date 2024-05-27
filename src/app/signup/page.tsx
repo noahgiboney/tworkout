@@ -25,7 +25,7 @@ const Signup = () => {
   const [signupFailed, setSignupFailed] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
-  const { setUserId } = useUser();
+  const { userId, setUserId } = useUser();
 
   const handleSubmit = async (e: FormEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -39,6 +39,7 @@ const Signup = () => {
       });
       if (response.ok) {
         const data = await response.json();
+        //console.log("mongodb id", data.userId);
         setUserId(data.userId);
         console.log("Signup successful");
         router.push("/homepage");

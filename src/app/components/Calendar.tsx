@@ -44,7 +44,7 @@ const CustomCalendar = ({ getWorkoutForDate }: Props) => {
   }
 
   return (
-    <Box>
+    <Box height="100vh">
       <Calendar
         className={styles.reactCalendar}
         onChange={onChange}

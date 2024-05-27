@@ -84,11 +84,17 @@ const Calendar = () => {
       bgColor="#130030"
       display="flex"
       flexDirection="row"
+      height="fit-content"
       paddingRight="20px"
-      height="100vh"
+      maxHeight="1000px"
     >
       <SideBar />
-      <Box alignItems="center" justifyContent="center" padding="50px" marginBottom="20px">
+      <Box
+        alignItems="center"
+        justifyContent="center"
+        padding="50px"
+        marginBottom="20px"
+      >
         <CustomCalendar getWorkoutForDate={getWorkoutsForDate} />
       </Box>
     </Box>
