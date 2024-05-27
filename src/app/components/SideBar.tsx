@@ -7,8 +7,6 @@ interface SideBarProps {
   userId: string;
 }
 
-
-
 const SideBar = () => {
   return (
     <Box h="100vh" bg="#5A457F" w="300px" padding="20px" marginRight="20px">
@@ -16,7 +14,6 @@ const SideBar = () => {
         <Avatar marginTop="30px" marginBottom="30px" size="2xl" />
         <Link href="/homepage" passHref>
           <Button
-            as="a"
             bg="#C7B3DC"
             color="black"
             padding={30}
@@ -28,7 +25,6 @@ const SideBar = () => {
         </Link>
         <Link href="/calendar" passHref>
           <Button
-            as="a"
             bg="#C7B3DC"
             color="black"
             padding={30}
@@ -40,7 +36,6 @@ const SideBar = () => {
         </Link>
         <Link href="/progress" passHref>
           <Button
-            as="a"
             bg="#C7B3DC"
             color="black"
             padding={30}
@@ -52,7 +47,6 @@ const SideBar = () => {
         </Link>
         <Link href="/profile" passHref>
           <Button
-            as="a"
             bg="#C7B3DC"
             color="black"
             padding={30}
