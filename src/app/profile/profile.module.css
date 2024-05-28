@@ -39,10 +39,8 @@
   padding-top: 20px;
 }
 
-.firstName {
-  width: 50%;
-}
-
-.lastName {
-  width: 50%;
+.avatarCards {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
 }

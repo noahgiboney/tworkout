@@ -10,6 +10,7 @@ import {
   Avatar,
   IconButton,
   Input,
+  Image,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
@@ -21,6 +22,7 @@ import {
 } from "@chakra-ui/react";
 import { EditIcon } from "@chakra-ui/icons";
 import { useUser } from "@/context/userContext";
+import { px } from "framer-motion";
 
 interface User {
   email: string;
@@ -182,6 +184,97 @@ const Profile: React.FC = () => {
           <>
             <div className={styles.avatar}>
               <Avatar size="2xl" />
+              <IconButton
+                aria-label="Edit Avatar"
+                icon={<EditIcon />}
+                size="sm"
+                mt={2}
+                color="#E9E4F2"
+                onClick={() => setIsEditingField("avatar")}
+              />
+              {isEditingField === "avatar" && (
+                <Card mt={2} width="auto" bgColor="#C7B3DC">
+                  <CardHeader paddingBottom={0} className={styles.avatarCards}>
+                    <Button
+                      _hover={{ bg: "#600086" }}
+                      _active={{ bg: "#600086" }}
+                      bg="#E9E4F2"
+                      p="0"
+                      width="50px"
+                      height="50px"
+                    >
+                      <Image
+                        className={styles.avatars}
+                        src="/images/avatar-alien.png"
+                        alt="alien"
+                        boxSize="45px"
+                      />
+                    </Button>
+                    <Button
+                      _hover={{ bg: "#600086" }}
+                      _active={{ bg: "#600086" }}
+                      bg="#E9E4F2"
+                      p="0"
+                      width="50px"
+                      height="50px"
+                    >
+                      <Image
+                        className={styles.avatars}
+                        src="/images/avatar-cowboy.png"
+                        alt="cowboy"
+                        boxSize="45px"
+                      />
+                    </Button>
+                    <Button
+                      _hover={{ bg: "#600086" }}
+                      _active={{ bg: "#600086" }}
+                      bg="#E9E4F2"
+                      p="0"
+                      width="50px"
+                      height="50px"
+                    >
+                      <Image
+                        className={styles.avatars}
+                        src="/images/avatar-dolphin.png"
+                        alt="dolphin"
+                        boxSize="45px"
+                      />
+                    </Button>
+                    <Button
+                      _hover={{ bg: "#600086" }}
+                      _active={{ bg: "#600086" }}
+                      bg="#E9E4F2"
+                      p="0"
+                      width="50px"
+                      height="50px"
+                    >
+                      <Image
+                        className={styles.avatars}
+                        src="/images/avatar-dino.png"
+                        alt="dino"
+                        boxSize="45px"
+                      />
+                    </Button>
+                  </CardHeader>
+                  <CardBody display="flex" justifyContent="center">
+                    <Button 
+                        colorScheme="blue" 
+                        mt={2} 
+                        onClick={handleSubmit}
+                      >
+                        Save
+                      </Button>
+                      <Button
+                        colorScheme="red"
+                        mt={2}
+                        onClick={() => handleCancel("name")}
+                        marginLeft="5"
+                      >
+                        Cancel
+                    </Button>
+                  </CardBody>
+                </Card>
+              ) }
             </div>
             <div className={styles.cards}>
               <Card marginTop="1rem" marginBottom="1rem" bgColor="#E9E4F2">
