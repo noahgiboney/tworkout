@@ -22,7 +22,6 @@ import {
 } from "@chakra-ui/react";
 import { EditIcon } from "@chakra-ui/icons";
 import { useUser } from "@/context/userContext";
-import { px } from "framer-motion";
 
 interface User {
   email: string;
@@ -31,7 +30,20 @@ interface User {
   heightFeet?: number;
   heightInches?: number;
   age?: number;
+  avatarId?: number;
 }
+
+type Avatar = {
+  id: number;
+  path: string;
+};
+
+const avatars: Avatar[] = [
+    { id: 1, path: "/images/avatar-alien.png" },
+    { id: 2, path: "/images/avatar-cowboy.png" },
+    { id: 3, path: "/images/avatar-dolphin.png" },
+    { id: 4, path: "/images/avatar-dino.png" }
+];
 
 const Profile: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -39,13 +51,124 @@ const Profile: React.FC = () => {
   const [weight, setWeight] = useState<number | undefined>(undefined);
   const [heightFeet, setHeightFeet] = useState<number | undefined>(undefined);
   const [heightInches, setHeightInches] = useState<number | undefined>(
-    undefined
+  undefined
   );
   const [age, setAge] = useState<number | undefined>(undefined);
+  const [avatarId, setAvatarId] = useState<number | undefined>(undefined);
+  const [selectedAvatarId, setSelectedAvatarId] = useState<number | undefined>(undefined);
+  const getAvatarPathById = (id: number): string | undefined => {
+    const avatar = avatars.find(avatar => avatar.id === id);
+    return avatar ? avatar.path : undefined;
+  };
+
   const [isEditingField, setIsEditingField] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const currentUser = useUser();
 
+    const handleWeightChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setWeight(parseFloat(e.target.value));
+    setIsEditingField("weight");
+    };
+    
+    const handleHeightFeetChange = (value: string) => {
+    setHeightFeet(parseInt(value, 10));
+    setIsEditingField("height");
+    };
+    
+    const handleHeightInchesChange = (value: string) => {
+    setHeightInches(parseInt(value, 10));
+    setIsEditingField("height");
+    };
+    
+    const handleAgeChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setAge(parseFloat(e.target.value));
+    setIsEditingField("age");
+    };
+    
+    const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value);
+    setIsEditingField("name");
+    };
+    
+    const handleAvatarSelection = (id: number) => { 
+        setSelectedAvatarId(id);
+        setIsEditingField("avatar");
+    };
+    
+    const handleCancel = (field: string) => {
+        if (user) {
+            switch (field) {
+            case "name":
+                setName(user.name || "");
+                setIsEditingField(null);
+                break;
+            case "weight":
+                setWeight(user.weight);
+                setIsEditingField(null);
+                break;
+            case "height":
+                setHeightFeet(user.heightFeet);
+                setHeightInches(user.heightInches);
+                setIsEditingField(null);
+                break;
+            case "age":
+                setAge(user.age);
+                setIsEditingField(null);
+                break;
+            default:
+                break;
+            }
+        }
+    };
+    
+    const handleSubmit = async () => {
+        if (currentUser && isEditingField) {
+            try {
+                const updates: Partial<User> = {};
+                switch (isEditingField) {
+                    case "name":
+                      updates.name = name;
+                    break;
+                    case "weight":
+                      updates.weight = weight;
+                    break;
+                    case "height":
+                      updates.heightFeet = heightFeet;
+                      updates.heightInches = heightInches;
+                    break;
+                    case "age":
+                      updates.age = age;
+                    break;
+                    case "avatar":
+                      updates.avatarId = selectedAvatarId;
+                    default:
+                    break;
+                }
+    
+                const response = await fetch(`/api/user/${currentUser.userId}`, {
+                    method: "PATCH",
+                    headers: {
+                    "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(updates),
+                });
+    
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.statusText}`);
+                }
+    
+                const data = await response.json();
+                setUser((prevUser) => ({
+                    ...prevUser,
+                    ...data,
+                }));
+                setIsEditingField(null);
+                } catch (error) {
+                console.error("Error updating user data:", error);
+            }
+        }
+    };
+  
   useEffect(() => {
     const fetchUserData = async () => {
       if (currentUser) {
@@ -61,6 +184,7 @@ const Profile: React.FC = () => {
           setHeightFeet(data.heightFeet);
           setHeightInches(data.heightInches);
           setAge(data.age);
+          setAvatarId(data.avatarId);
         } catch (error) {
           console.error("Error fetching user data:", error);
         } finally {
@@ -72,102 +196,7 @@ const Profile: React.FC = () => {
     fetchUserData();
   }, [currentUser]);
 
-  const handleWeightChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setWeight(parseFloat(e.target.value));
-    setIsEditingField("weight");
-  };
-
-  const handleHeightFeetChange = (value: string) => {
-    setHeightFeet(parseInt(value, 10));
-    setIsEditingField("height");
-  };
-
-  const handleHeightInchesChange = (value: string) => {
-    setHeightInches(parseInt(value, 10));
-    setIsEditingField("height");
-  };
-
-  const handleAgeChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setAge(parseFloat(e.target.value));
-    setIsEditingField("age");
-  };
-
-  const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setName(e.target.value);
-    setIsEditingField("name");
-  };
-
-  const handleCancel = (field: string) => {
-    if (user) {
-      switch (field) {
-        case "name":
-          setName(user.name || "");
-          setIsEditingField(null);
-          break;
-        case "weight":
-          setWeight(user.weight);
-          setIsEditingField(null);
-          break;
-        case "height":
-          setHeightFeet(user.heightFeet);
-          setHeightInches(user.heightInches);
-          setIsEditingField(null);
-          break;
-        case "age":
-          setAge(user.age);
-          setIsEditingField(null);
-          break;
-        default:
-          break;
-      }
-    }
-  };
-
-  const handleSubmit = async () => {
-    if (currentUser && isEditingField) {
-      try {
-        const updates: Partial<User> = {};
-        switch (isEditingField) {
-          case "name":
-            updates.name = name;
-            break;
-          case "weight":
-            updates.weight = weight;
-            break;
-          case "height":
-            updates.heightFeet = heightFeet;
-            updates.heightInches = heightInches;
-            break;
-          case "age":
-            updates.age = age;
-            break;
-          default:
-            break;
-        }
-
-        const response = await fetch(`/api/user/${currentUser.userId}`, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(updates),
-        });
-
-        if (!response.ok) {
-          throw new Error(`Error: ${response.statusText}`);
-        }
-
-        const data = await response.json();
-        setUser((prevUser) => ({
-          ...prevUser,
-          ...data,
-        }));
-        setIsEditingField(null);
-      } catch (error) {
-        console.error("Error updating user data:", error);
-      }
-    }
-  };
+  
 
   return (
     <div className={styles.main}>
@@ -183,7 +212,22 @@ const Profile: React.FC = () => {
         ) : (
           <>
             <div className={styles.avatar}>
-              <Avatar size="2xl" />
+              {avatarId !== undefined
+                ? <Box 
+                  boxSize={130}
+                  borderRadius="full"
+                  overflow="hidden"
+                  bg="white"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  > 
+                    <Image
+                      src={getAvatarPathById(avatarId)}
+                      boxSize={110}/>
+                  </Box>
+                  : <Avatar size="2xl" />}
+              
               <IconButton
                 aria-label="Edit Avatar"
                 icon={<EditIcon />}
@@ -193,87 +237,45 @@ const Profile: React.FC = () => {
                 onClick={() => setIsEditingField("avatar")}
               />
               {isEditingField === "avatar" && (
-                <Card mt={2} width="auto" bgColor="#C7B3DC">
-                  <CardHeader paddingBottom={0} className={styles.avatarCards}>
-                    <Button
-                      _hover={{ bg: "#600086" }}
-                      _active={{ bg: "#600086" }}
-                      bg="#E9E4F2"
-                      p="0"
-                      width="50px"
-                      height="50px"
-                    >
-                      <Image
-                        className={styles.avatars}
-                        src="/images/avatar-alien.png"
-                        alt="alien"
-                        boxSize="45px"
-                      />
-                    </Button>
-                    <Button
-                      _hover={{ bg: "#600086" }}
-                      _active={{ bg: "#600086" }}
-                      bg="#E9E4F2"
-                      p="0"
-                      width="50px"
-                      height="50px"
-                    >
-                      <Image
-                        className={styles.avatars}
-                        src="/images/avatar-cowboy.png"
-                        alt="cowboy"
-                        boxSize="45px"
-                      />
-                    </Button>
-                    <Button
-                      _hover={{ bg: "#600086" }}
-                      _active={{ bg: "#600086" }}
-                      bg="#E9E4F2"
-                      p="0"
-                      width="50px"
-                      height="50px"
-                    >
-                      <Image
-                        className={styles.avatars}
-                        src="/images/avatar-dolphin.png"
-                        alt="dolphin"
-                        boxSize="45px"
-                      />
-                    </Button>
-                    <Button
-                      _hover={{ bg: "#600086" }}
-                      _active={{ bg: "#600086" }}
-                      bg="#E9E4F2"
-                      p="0"
-                      width="50px"
-                      height="50px"
-                    >
-                      <Image
-                        className={styles.avatars}
-                        src="/images/avatar-dino.png"
-                        alt="dino"
-                        boxSize="45px"
-                      />
-                    </Button>
-                  </CardHeader>
-                  <CardBody display="flex" justifyContent="center">
-                    <Button 
-                        colorScheme="blue" 
-                        mt={2} 
-                        onClick={handleSubmit}
-                      >
-                        Save
+                  <Card mt={2} width="auto" bgColor="#C7B3DC">
+                      <CardHeader padding={2}></CardHeader>
+                      <div className={styles.avatarCards}>
+                          {avatars.map(avatar => (
+                              <div
+                              key={avatar.id}
+                              onClick={() => handleAvatarSelection(avatar.id)}
+                              >
+                                  <Button
+                                      bg={selectedAvatarId === avatar.id ? "#600086" : "#E9E4F2"}
+                                      _hover={{ bg: "#A759C6" }}
+                                      _active={{ bg: "#450061" }}
+                                      p="0"
+                                      width="50px"
+                                      height="50px"
+                                  >
+                                      <Image
+                                      src={avatar.path}
+                                      boxSize="45px"
+                                      />
+                                  </Button>
+                              </div>
+                          ))}
+                      </div>
+                      <CardBody padding={2} display="flex" alignItems="center" justifyContent="center" gap={2}>
+                      <Button 
+                          colorScheme="blue" 
+                          onClick={handleSubmit}
+                          >
+                          Save
+                          </Button>
+                          <Button
+                          colorScheme="red"
+                          onClick={() => handleCancel("avatar")}
+                          >
+                          Cancel
                       </Button>
-                      <Button
-                        colorScheme="red"
-                        mt={2}
-                        onClick={() => handleCancel("name")}
-                        marginLeft="5"
-                      >
-                        Cancel
-                    </Button>
-                  </CardBody>
-                </Card>
+                      </CardBody>
+                  </Card>
               ) }
             </div>
             <div className={styles.cards}>

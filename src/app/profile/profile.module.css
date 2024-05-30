@@ -42,5 +42,8 @@
 .avatarCards {
   display: flex;
   justify-content: space-between;
+  align-content: center;
   gap: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
 }
