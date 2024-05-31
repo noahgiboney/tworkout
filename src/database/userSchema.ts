@@ -33,6 +33,11 @@ const userSchema = new mongoose.Schema({
     type: Number,
     require: false,
   },
+
+  avatarId: {
+    type: Number,
+    require: false,
+  },
 });
 
 // Create a model from the schema
