@@ -115,6 +115,10 @@ const Profile: React.FC = () => {
                 setAge(user.age);
                 setIsEditingField(null);
                 break;
+            case "avatar":
+                setAvatarId(user.avatarId);
+                setIsEditingField(null);
+                break;
             default:
                 break;
             }
