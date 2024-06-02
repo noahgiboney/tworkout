@@ -3,11 +3,11 @@ import React, { useState, useEffect, ChangeEvent } from "react";
 import SideBar from "../components/SideBar";
 import styles from "./profile.module.css";
 import {
+  Avatar,
   Card,
   CardBody,
   CardHeader,
   Text,
-  Avatar,
   IconButton,
   Input,
   Image,
@@ -22,28 +22,9 @@ import {
 } from "@chakra-ui/react";
 import { EditIcon } from "@chakra-ui/icons";
 import { useUser } from "@/context/userContext";
+import { avatars, getAvatarPathById } from "@/avatars/avatarsList";
+import { User } from "@/user/user";
 
-interface User {
-  email: string;
-  name: string;
-  weight?: number;
-  heightFeet?: number;
-  heightInches?: number;
-  age?: number;
-  avatarId?: number;
-}
-
-type Avatar = {
-  id: number;
-  path: string;
-};
-
-const avatars: Avatar[] = [
-  { id: 1, path: "/images/avatar-alien.png" },
-  { id: 2, path: "/images/avatar-cowboy.png" },
-  { id: 3, path: "/images/avatar-dolphin.png" },
-  { id: 4, path: "/images/avatar-dino.png" },
-];
 
 const Profile: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -58,10 +39,7 @@ const Profile: React.FC = () => {
   const [selectedAvatarId, setSelectedAvatarId] = useState<
     number | undefined
   >(undefined);
-  const getAvatarPathById = (id: number): string | undefined => {
-    const avatar = avatars.find((avatar) => avatar.id === id);
-    return avatar ? avatar.path : undefined;
-  };
+  
 
   const [isEditingField, setIsEditingField] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -226,7 +204,7 @@ const Profile: React.FC = () => {
         ) : (
           <>
             <div className={styles.avatar}>
-              {avatarId !== undefined ? (
+              <Box position="relative" display="inline-block" boxSize="130px">
                 <Box
                   boxSize={130}
                   borderRadius="full"
@@ -236,20 +214,28 @@ const Profile: React.FC = () => {
                   alignItems="center"
                   justifyContent="center"
                 >
-                  <Image src={getAvatarPathById(avatarId)} boxSize={110} />
+                  {avatarId !== undefined ? (
+                    <Image src={getAvatarPathById(avatarId)} boxSize={110} />
+                  ) : (
+                    <Avatar size="2xl" />
+                  )}
                 </Box>
-              ) : (
-                <Avatar size="2xl" />
-              )}
-
-              <IconButton
-                aria-label="Edit Avatar"
-                icon={<EditIcon />}
-                size="sm"
-                mt={2}
-                color="#E9E4F2"
-                onClick={() => setIsEditingField("avatar")}
-              />
+                <IconButton
+                  aria-label="Edit Avatar"
+                  icon={<EditIcon />}
+                  position="absolute"
+                  top="75%"
+                  left="75%"
+                  transform="translate(-50%, -50%)"
+                  size="small"
+                  width="25px"
+                  height="25px"
+                  fontSize="15px"
+                  color="#E9E4F2"
+                  onClick={() => setIsEditingField("avatar")}
+                />
+              </Box>
+              
               {isEditingField === "avatar" && (
                 <Card mt={2} width="auto" bgColor="#C7B3DC">
                   <CardHeader padding={2}></CardHeader>

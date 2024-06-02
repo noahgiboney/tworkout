@@ -1,17 +1,58 @@
-import React from "react";
-import { Box, VStack, Button, Avatar } from "@chakra-ui/react";
+import React, { useState, useEffect } from "react";
+import { Box, VStack, Button, Image, Avatar } from "@chakra-ui/react";
 import Link from "next/link";
-import { useRouter } from "next/router";
-
-interface SideBarProps {
-  userId: string;
-}
+import { useUser } from "@/context/userContext";
+import { getAvatarPathById } from "@/avatars/avatarsList";
+import { User } from "@/user/user";
 
 const SideBar = () => {
+
+  const [user, setUser] = useState<User | null>(null);
+  const currentUser = useUser();
+
+  console.log(currentUser);
+
+  
+  const [avatarId, setAvatarId] = useState<number | undefined>(undefined);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (currentUser) {
+        try {
+          const response = await fetch(`/api/user/${currentUser.userId}`);
+          if (!response.ok) {
+            throw new Error(`Error: ${response.statusText}`);
+          }
+          const data: User = await response.json();
+          setUser(data);
+          setAvatarId(data.avatarId);
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        } 
+        }
+      };
+
+    fetchUserData();
+  }, [currentUser]);
+
   return (
     <Box h="100vh" bg="#5A457F" w="300px" padding="20px" marginRight="20px">
       <VStack>
-        <Avatar marginTop="30px" marginBottom="30px" size="2xl" />
+        <Box
+          boxSize={130}
+          borderRadius="full"
+          overflow="hidden"
+          bg="white"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+        >
+          {avatarId !== undefined ? (
+            <Image src={getAvatarPathById(avatarId)} boxSize={110} />
+          ) : (
+            <Avatar size="2xl" />
+          )}
+        </Box>
         <Link href="/homepage" passHref>
           <Button
             bg="#C7B3DC"

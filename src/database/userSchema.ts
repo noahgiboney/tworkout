@@ -37,6 +37,7 @@ const userSchema = new mongoose.Schema({
   avatarId: {
     type: Number,
     require: false,
+    default: 0,
   },
 });
 
