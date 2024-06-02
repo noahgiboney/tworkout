@@ -1,6 +1,6 @@
 import { Button } from "@chakra-ui/react";
 import { signIn, useSession } from "next-auth/react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Image from "next/image";
 import { useUser } from "@/context/userContext";
 
@@ -22,11 +22,9 @@ const SignInButton = () => {
       console.error("Sign in error: ", result.error);
     } else if (result?.ok) {
       const response = await fetch("/api/auth/session");
-      const data = await response.json();
-      console.log(data.userId);
-      setUserId(data.userId);
     }
   };
+
   return (
     <Button
       padding={25}
@@ -35,9 +33,7 @@ const SignInButton = () => {
       fontSize={18}
       border="1px"
       borderColor={"#600086"}
-      onClick={() =>
-        signIn("google", { callbackUrl: "http://localhost:3000/homepage" })
-      }
+      onClick={handleSignIn}
     >
       <Image
         src="/images/google-logo.webp"

@@ -35,7 +35,7 @@ const SideBar = () => {
           padding={30}
           width="13rem"
           margin={1}
-          onClick={() => handleNavigation('/homepage')}
+          onClick={() => handleNavigation("/homepage")}
         >
           Today&apos;s View
         </Button>
@@ -45,7 +45,7 @@ const SideBar = () => {
           padding={30}
           width="13rem"
           margin={1}
-          onClick={() => handleNavigation('/calendar')}
+          onClick={() => handleNavigation("/calendar")}
         >
           Calendar
         </Button>
@@ -55,7 +55,7 @@ const SideBar = () => {
           padding={30}
           width="13rem"
           margin={1}
-          onClick={() => handleNavigation('/progress')}
+          onClick={() => handleNavigation("/progress")}
         >
           Track Progress
         </Button>
@@ -65,7 +65,7 @@ const SideBar = () => {
           padding={30}
           width="13rem"
           margin={1}
-          onClick={() => handleNavigation('/profile')}
+          onClick={() => handleNavigation("/profile")}
         >
           My Profile
         </Button>

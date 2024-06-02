@@ -16,7 +16,7 @@ async function generateAccessToken(email: string): Promise<string> {
         if (error) {
           reject(error);
         } else {
-          resolve(token!); // Ensure token is a string
+          resolve(token!);
         }
       }
     );
@@ -44,7 +44,7 @@ const options: NextAuthOptions = {
         await dbUser.save();
       }
 
-      const token = await generateAccessToken(user.email);
+      const token = await generateAccessToken(dbUser.email);
       user.token = token; // Attach the token to the user object
       user.id = dbUser._id.toString();
       cookies().set({

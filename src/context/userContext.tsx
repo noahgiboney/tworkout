@@ -27,7 +27,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     // Load userId from localStorage if available
     const storedUserId = localStorage.getItem("userId");
-
   }, []); // Empty dependency array ensures this effect runs only once on mount
 
   const setUserId = (userId: string) => {
