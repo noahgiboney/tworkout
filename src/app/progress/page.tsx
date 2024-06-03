@@ -22,7 +22,6 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { useRouter } from "next/router";
 
 ChartJS.register(
   CategoryScale,
@@ -42,6 +41,11 @@ interface Workout {
     sets?: { weight: number }[];
     distance?: number;
   }[];
+}
+
+interface WeightEntry {
+  weight: number;
+  date: string;
 }
 
 interface ChartData {
@@ -69,6 +73,7 @@ const Progress = () => {
   const [exercises, setExercises] = useState<string[]>([]);
   const [exercise, setExercise] = useState<string>("");
   const [workouts, setWorkouts] = useState<Workout[]>([]);
+  const [weightHistory, setWeightHistory] = useState<WeightEntry[]>([]);
 
   const { userId } = useUser();
   console.log(userId);
@@ -108,8 +113,28 @@ const Progress = () => {
       }
     };
 
+    const fetchWeightHistory = async () => {
+      if (userId) {
+        try {
+          const response = await fetch(`/api/users/${userId}/weight-history`);
+          if (response.ok) {
+            const weightHistoryList: WeightEntry[] = await response.json();
+            setWeightHistory(weightHistoryList);
+          } else {
+            console.error(
+              "Failed to fetch weight history:",
+              await response.json()
+            );
+          }
+        } catch (error) {
+          console.error("Error fetching weight history:", error);
+        }
+      }
+    };
+
     fetchExercises();
     fetchWorkouts();
+    fetchWeightHistory();
   }, [userId]);
 
   const handleExerciseChange = async (
@@ -117,6 +142,11 @@ const Progress = () => {
   ) => {
     const selectedExercise = e.target.value;
     setExercise(selectedExercise);
+
+    if (selectedExercise === "weight") {
+      handleWeightChange();
+      return;
+    }
 
     if (selectedExercise) {
       const selectedWorkouts = workouts.filter((workout) =>
@@ -151,6 +181,7 @@ const Progress = () => {
         }
         return "" as string;
       });
+
       setData({
         labels: dates,
         datasets: [
@@ -163,6 +194,29 @@ const Progress = () => {
         ],
       });
     }
+  };
+
+  const handleWeightChange = () => {
+    if (!Array.isArray(weightHistory)) {
+      console.error("Weight history is not an array");
+      return;
+    }
+    const dates = weightHistory.map((entry) =>
+      new Date(entry.date).toLocaleDateString()
+    );
+    const weights = weightHistory.map((entry) => entry.weight);
+
+    setData({
+      labels: dates,
+      datasets: [
+        {
+          label: "Weight",
+          data: weights,
+          borderColor: "#600086",
+          backgroundColor: "rgba(136, 62, 227, 0.2)",
+        },
+      ],
+    });
   };
 
   const backgroundColor = useColorModeValue("#130030", "#130030");
@@ -198,6 +252,18 @@ const Progress = () => {
             _hover={{ borderColor: "purple.500" }}
             _focus={{ borderColor: "purple.500" }}
           >
+            <option
+              value="select"
+              style={{ background: "#600086", color: "white" }}
+            >
+              -- Select Metric --
+            </option>
+            <option
+              value="weight"
+              style={{ background: "#600086", color: "white" }}
+            >
+              Body Weight
+            </option>
             {exercises.map((exercise, index) => (
               <option
                 key={index}
