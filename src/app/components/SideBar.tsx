@@ -17,19 +17,18 @@ const SideBar = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      if (currentUser) {
-        try {
-          const response = await fetch(`/api/user/${currentUser.userId}`);
-          if (!response.ok) {
-            throw new Error(`Error: ${response.statusText}`);
-          }
-          const data: User = await response.json();
-          setUser(data);
-          setAvatarId(data.avatarId);
-        } catch (error) {
-          console.error("Error fetching user data:", error);
-        } 
+      if (user) return;
+      try {
+        const response = await fetch(`/api/user/${currentUser?.userId}`);
+        if (!response.ok) {
+          throw new Error(`Error: ${response.statusText}`);
         }
+        const data: User = await response.json();
+        setUser(data);
+        setAvatarId(data.avatarId);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      } 
       };
 
     fetchUserData();
