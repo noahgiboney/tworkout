@@ -1,6 +1,17 @@
 import mongoose from "mongoose";
 
-// Define the user schema
+const weightEntrySchema = new mongoose.Schema({
+  weight: {
+    type: Number,
+    required: true,
+  },
+  date: {
+    type: Date,
+    required: true,
+    default: Date.now,
+  },
+});
+
 const userSchema = new mongoose.Schema({
   email: {
     type: String,
@@ -16,32 +27,27 @@ const userSchema = new mongoose.Schema({
     required: true,
   },
   weight: {
-    type: Number,
+    type: [weightEntrySchema],
     required: false,
   },
   heightFeet: {
     type: Number,
     required: false,
   },
-
   heightInches: {
     type: Number,
     required: false,
   },
-
   age: {
     type: Number,
-    require: false,
+    required: false,
   },
-
   avatarId: {
     type: Number,
     require: false,
-    default: 0,
   },
 });
 
-// Create a model from the schema
 const User = mongoose.models.User || mongoose.model("User", userSchema);
 
 export default User;
