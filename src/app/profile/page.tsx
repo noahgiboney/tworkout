@@ -22,36 +22,8 @@ import {
 } from "@chakra-ui/react";
 import { EditIcon } from "@chakra-ui/icons";
 import { useUser } from "@/context/userContext";
-
-interface User {
-  email: string;
-  name: string;
-  weight?: WeightEntry[];
-  heightFeet?: number;
-  heightInches?: number;
-  age?: number;
-  avatarId?: number;
-}
-
-interface WeightEntry {
-  weight: number;
-  date: Date;
-}
-
-type Avatar = {
-  id: number;
-  path: string;
-};
-
-const avatars: Avatar[] = [
-  { id: 1, path: "/images/avatar-alien.png" },
-  { id: 2, path: "/images/avatar-cowboy.png" },
-  { id: 3, path: "/images/avatar-dolphin.png" },
-  { id: 4, path: "/images/avatar-dino.png" },
-];
 import { avatars, getAvatarPathById } from "@/avatars/avatarsList";
 import { User } from "@/user/user";
-
 
 const Profile: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);

@@ -1,10 +1,7 @@
 "use client";
-import React from "react";
-import { Box, VStack, Button, Avatar } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import { Box, VStack, Button, Image, Avatar } from "@chakra-ui/react";
-import Link from "next/link";
 import { useUser } from "@/context/userContext";
 import { getAvatarPathById } from "@/avatars/avatarsList";
 import { User } from "@/user/user";
