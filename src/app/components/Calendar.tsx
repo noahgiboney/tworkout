@@ -1,8 +1,25 @@
 import Calendar from "react-calendar";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import "react-calendar/dist/Calendar.css";
 import styles from "./Calendar.module.css";
-import { Box, Text, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  Text,
+  Button,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverBody,
+  PopoverFooter,
+  PopoverArrow,
+  Portal,
+  PopoverCloseButton,
+  PopoverAnchor,
+  useDisclosure,
+  IconButton,
+} from "@chakra-ui/react";
+import { EditIcon } from "@chakra-ui/icons";
 import { Kumbh_Sans } from "next/font/google";
 import {
   FaAngleDoubleLeft,
@@ -21,6 +38,11 @@ interface Props {
 }
 
 const CustomCalendar = ({ getWorkoutForDate }: Props) => {
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const { isOpen, onOpen, onClose, onToggle } = useDisclosure();
+  const [popoverRef, setPopoverref] = useState<
+    EventTarget & HTMLButtonElement
+  >();
   const [value, onChange] = useState<Value>(new Date());
   const colors = ["#E79BD3", "#D7A1F0"];
   const monthNames = [
@@ -41,13 +63,22 @@ const CustomCalendar = ({ getWorkoutForDate }: Props) => {
   const getRandomColor = () => {
     const randomIndex = Math.floor(Math.random() * colors.length);
     return colors[randomIndex];
+  };
+
+  const handleDayClick = (date: Date) => {
+    setSelectedDate(date);
+  };
+
+  const isSelectedDate = (date: Date) => {
+    return (date.getTime() === selectedDate?.getTime())
   }
+  
 
   return (
     <Box height="100vh">
       <Calendar
         className={styles.reactCalendar}
-        onChange={onChange}
+        onClickDay={(value) => handleDayClick(value)}
         value={value}
         view="month"
         navigationLabel={({ date }) => {
@@ -67,19 +98,40 @@ const CustomCalendar = ({ getWorkoutForDate }: Props) => {
         }}
         tileContent={({ date }) => {
           const workoutForDate = getWorkoutForDate(date);
-          if (!workoutForDate) return "";
+
           return (
-            <Box borderRadius="5px" bg={getRandomColor()}>
-              <Text
-                padding="5px"
-                fontWeight="semibold"
-                fontFamily={kumbhSans.style.fontFamily}
-              >
-                {workoutForDate ? workoutForDate.name : ""}
-              </Text>
+            <Box>
+              { isSelectedDate(date) && <Popover>
+                <PopoverTrigger>
+                  <IconButton aria-label="edit" size="sm" icon={<EditIcon />} />
+                </PopoverTrigger>
+                <Portal>
+                  <PopoverContent>
+                    <PopoverArrow />
+                    <PopoverHeader>Header</PopoverHeader>
+                    <PopoverCloseButton />
+                    <PopoverBody>
+                      <Button colorScheme="blue">Button</Button>
+                    </PopoverBody>
+                    <PopoverFooter>This is the footer</PopoverFooter>
+                  </PopoverContent>
+                </Portal>
+              </Popover>}
+              {workoutForDate && (
+                <Box borderRadius="5px" bg={getRandomColor()}>
+                  <Text
+                    padding="5px"
+                    fontWeight="semibold"
+                    fontFamily={kumbhSans.style.fontFamily}
+                  >
+                    {workoutForDate ? workoutForDate.name : ""}
+                  </Text>
+                </Box>
+              )}
             </Box>
           );
         }}
+
         nextLabel={<FaAngleRight />}
         next2Label={<FaAngleDoubleRight />}
         prevLabel={<FaAngleLeft />}

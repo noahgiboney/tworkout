@@ -24,6 +24,7 @@ const Calendar = () => {
   const [workouts, setWorkouts] = useState<Workout[]>([]);
   const { userId } = useUser();
 
+
   console.log(userId);
   useEffect(() => {
     const fetchExercises = async () => {
@@ -65,6 +66,7 @@ const Calendar = () => {
   }, [userId]);
 
   const getWorkoutsForDate = (date: Date): Workout | null => {
+    if (date == null) return null;
     const dateString = date.toISOString().split("T")[0]; // Get the date in 'YYYY-MM-DD' format
 
     const workoutForDate = workouts.find((workout) => {
