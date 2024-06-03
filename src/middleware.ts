@@ -26,6 +26,7 @@ export default async function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
+    "/api/user",
     "/api/workouts",
     "/api/workouts/:path*",
     "/progress",

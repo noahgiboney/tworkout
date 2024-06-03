@@ -12,7 +12,7 @@ import {
   Input,
   Text,
   VStack,
-  Link
+  Link,
 } from "@chakra-ui/react";
 import Image from "next/image";
 import NextLink from "next/link";
@@ -109,7 +109,11 @@ const Signup = () => {
               >
                 Sign Up
               </Button>
-              {signupFailed && <Text fontWeight="bold" color="red.500">{error}</Text>}
+              {signupFailed && (
+                <Text fontWeight="bold" color="red.500">
+                  {error}
+                </Text>
+              )}
               <SignInButton />
               <Link
                 margin={3}
