@@ -70,9 +70,8 @@ const CustomCalendar = ({ getWorkoutForDate }: Props) => {
   };
 
   const isSelectedDate = (date: Date) => {
-    return (date.getTime() === selectedDate?.getTime())
-  }
-  
+    return date.getTime() === selectedDate?.getTime();
+  };
 
   return (
     <Box height="100vh">
@@ -100,38 +99,46 @@ const CustomCalendar = ({ getWorkoutForDate }: Props) => {
           const workoutForDate = getWorkoutForDate(date);
 
           return (
-            <Box>
-              { isSelectedDate(date) && <Popover>
-                <PopoverTrigger>
-                  <IconButton aria-label="edit" size="sm" icon={<EditIcon />} />
-                </PopoverTrigger>
-                <Portal>
-                  <PopoverContent>
-                    <PopoverArrow />
-                    <PopoverHeader>Header</PopoverHeader>
-                    <PopoverCloseButton />
-                    <PopoverBody>
-                      <Button colorScheme="blue">Button</Button>
-                    </PopoverBody>
-                    <PopoverFooter>This is the footer</PopoverFooter>
-                  </PopoverContent>
-                </Portal>
-              </Popover>}
-              {workoutForDate && (
-                <Box borderRadius="5px" bg={getRandomColor()}>
-                  <Text
-                    padding="5px"
-                    fontWeight="semibold"
-                    fontFamily={kumbhSans.style.fontFamily}
-                  >
-                    {workoutForDate ? workoutForDate.name : ""}
-                  </Text>
+            <Box display="flex" flexDirection="column" position="relative">
+              {isSelectedDate(date) && (
+                <Box position="absolute" top="-60px" right="-10px">
+                  <Popover placement="right-start">
+                    <PopoverTrigger>
+                      <IconButton
+                        aria-label="edit"
+                        size="sm"
+                        icon={<EditIcon />}
+                      />
+                    </PopoverTrigger>
+                    <Portal>
+                      <PopoverContent>
+                        <PopoverArrow />
+                        <PopoverHeader>Header</PopoverHeader>
+                        <PopoverCloseButton />
+                        <PopoverBody>
+                          <Button colorScheme="blue">Button</Button>
+                        </PopoverBody>
+                        <PopoverFooter>This is the footer</PopoverFooter>
+                      </PopoverContent>
+                    </Portal>
+                  </Popover>
                 </Box>
               )}
+              <Box
+                borderRadius="5px"
+                bg={workoutForDate ? getRandomColor() : ""}
+              >
+                <Text
+                  padding="5px"
+                  fontWeight="semibold"
+                  fontFamily={kumbhSans.style.fontFamily}
+                >
+                  {workoutForDate ? workoutForDate.name : ""}
+                </Text>
+              </Box>
             </Box>
           );
         }}
-
         nextLabel={<FaAngleRight />}
         next2Label={<FaAngleDoubleRight />}
         prevLabel={<FaAngleLeft />}
