@@ -29,32 +29,34 @@ const SideBar = () => {
   };
 
 
-  const [user, setUser] = useState<User | null>(null);
-  const currentUser = useUser();
-
-  console.log(currentUser);
+  // const [user, setUser] = useState<User | null>(null);
+  // const user = useUser();
+  // const { user, setUser } = useUser();
+  const { userId, avatarId, setAvatarId } = useUser();
 
   
-  const [avatarId, setAvatarId] = useState<number | undefined>(undefined);
+  // const [avatarId, setAvatarId] = useState<number | undefined>(undefined);
 
   useEffect(() => {
     const fetchUserData = async () => {
-      if (user) return;
-      try {
-        const response = await fetch(`/api/user/${currentUser?.userId}`);
-        if (!response.ok) {
-          throw new Error(`Error: ${response.statusText}`);
-        }
-        const data: User = await response.json();
-        setUser(data);
-        setAvatarId(data.avatarId);
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      } 
+      if (userId) {
+        try {
+          const response = await fetch(`/api/user/${userId}`);
+          if (!response.ok) {
+            throw new Error(`Error: ${response.statusText}`);
+          }
+          const data: User = await response.json();
+          
+          console.log(avatarId);
+          setAvatarId(data.avatarId);
+          console.log(avatarId);
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        } 
+      }
       };
-
     fetchUserData();
-  }, [currentUser]);
+  }, [userId, avatarId]);
 
   return (
     <Box h="100vh" bg="#5A457F" w="300px" padding="20px" marginRight="20px">
@@ -68,7 +70,7 @@ const SideBar = () => {
           alignItems="center"
           justifyContent="center"
         >
-          {avatarId !== undefined ? (
+          {avatarId !== undefined && avatarId !== null ? (
             <Image src={getAvatarPathById(avatarId)} boxSize={110} />
           ) : (
             <Avatar size="2xl" />
