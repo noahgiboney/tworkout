@@ -22,6 +22,7 @@ import {
 } from "@chakra-ui/react";
 import { EditIcon } from "@chakra-ui/icons";
 import { useUser } from "@/context/userContext";
+import WeightLogger from "../components/WeightLogger";
 
 interface User {
   email: string;
@@ -53,7 +54,6 @@ const avatars: Avatar[] = [
 const Profile: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [name, setName] = useState<string>("");
-  const [weight, setWeight] = useState<number | undefined>(undefined);
   const [heightFeet, setHeightFeet] = useState<number | undefined>(undefined);
   const [heightInches, setHeightInches] = useState<number | undefined>(
     undefined
@@ -71,11 +71,6 @@ const Profile: React.FC = () => {
   const [isEditingField, setIsEditingField] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const currentUser = useUser();
-
-  const handleWeightChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setWeight(parseFloat(e.target.value));
-    setIsEditingField("weight");
-  };
 
   const handleHeightFeetChange = (value: string) => {
     setHeightFeet(parseInt(value, 10));
@@ -109,12 +104,6 @@ const Profile: React.FC = () => {
           setName(user.name || "");
           setIsEditingField(null);
           break;
-        case "weight":
-          setWeight(
-            user.weight ? user.weight[user.weight.length - 1].weight : undefined
-          );
-          setIsEditingField(null);
-          break;
         case "height":
           setHeightFeet(user.heightFeet);
           setHeightInches(user.heightInches);
@@ -141,14 +130,6 @@ const Profile: React.FC = () => {
         switch (isEditingField) {
           case "name":
             updates.name = name;
-            break;
-          case "weight":
-            if (weight !== undefined) {
-              updates.weight = [
-                ...(user?.weight || []),
-                { weight, date: new Date() },
-              ];
-            }
             break;
           case "height":
             updates.heightFeet = heightFeet;
@@ -202,10 +183,6 @@ const Profile: React.FC = () => {
           const data: User = await response.json();
           setUser(data);
           setName(data.name || "");
-          const latestWeight = data.weight
-            ? data.weight[data.weight.length - 1].weight
-            : undefined;
-          setWeight(latestWeight);
           setHeightFeet(data.heightFeet);
           setHeightInches(data.heightInches);
           setAge(data.age);
@@ -386,55 +363,6 @@ const Profile: React.FC = () => {
                 </CardHeader>
                 <CardBody>
                   <Text paddingTop="1rem" fontSize={18} color="black">
-                    Weight
-                    <IconButton
-                      aria-label="Edit weight"
-                      icon={<EditIcon />}
-                      size="sm"
-                      ml={2}
-                      bg="#E9E4F2"
-                      color="#130030"
-                      onClick={() => setIsEditingField("weight")}
-                    />
-                  </Text>
-                  {isEditingField === "weight" ? (
-                    <Card bgColor="#C7B3DC">
-                      <CardHeader>
-                        <Input
-                          type="number"
-                          value={weight !== undefined ? weight.toString() : ""}
-                          onChange={handleWeightChange}
-                          placeholder="Enter your weight"
-                        />
-                        <Button
-                          colorScheme="blue"
-                          mt={2}
-                          onClick={handleSubmit}
-                        >
-                          Save
-                        </Button>
-                        <Button
-                          colorScheme="red"
-                          mt={2}
-                          onClick={() => handleCancel("weight")}
-                          marginLeft="5"
-                        >
-                          Cancel
-                        </Button>
-                      </CardHeader>
-                    </Card>
-                  ) : (
-                    <Card bgColor="#C7B3DC">
-                      <CardHeader>
-                        <Text fontSize={18} color="black">
-                          {weight !== undefined
-                            ? `${weight} lbs`
-                            : "Update your weight"}
-                        </Text>
-                      </CardHeader>
-                    </Card>
-                  )}
-                  <Text paddingTop="1rem" fontSize={18} color="black">
                     Height
                     <IconButton
                       aria-label="Edit height"
@@ -559,6 +487,7 @@ const Profile: React.FC = () => {
                   )}
                 </CardBody>
               </Card>
+              <WeightLogger/>
             </div>
           </>
         )}
