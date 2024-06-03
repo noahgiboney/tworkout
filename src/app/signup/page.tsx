@@ -20,6 +20,7 @@ import SignInButton from "../components/SignInButton";
 import { useUser } from "@/context/userContext";
 
 const Signup = () => {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [signupFailed, setSignupFailed] = useState(false);
@@ -35,7 +36,7 @@ const Signup = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ name, email, password }),
       });
       if (response.ok) {
         const data = await response.json();
@@ -67,6 +68,22 @@ const Signup = () => {
           </CardHeader>
           <CardBody>
             <VStack as="form" onSubmit={handleSubmit}>
+              <FormControl>
+                <FormLabel fontSize={18} fontWeight="bold" marginBottom={1}>
+                  Name
+                </FormLabel>
+                <Input
+                  type="name"
+                  placeholder="Enter your name"
+                  bgColor="rgba(251, 251, 251, .5)"
+                  borderColor="black"
+                  marginBottom={5}
+                  fontSize={15}
+                  padding={25}
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </FormControl>
               <FormControl>
                 <FormLabel fontSize={18} fontWeight="bold" marginBottom={1}>
                   Email
