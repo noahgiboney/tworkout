@@ -15,7 +15,6 @@ import {
   PopoverArrow,
   Portal,
   PopoverCloseButton,
-  PopoverAnchor,
   useDisclosure,
   IconButton,
 } from "@chakra-ui/react";
@@ -113,12 +112,26 @@ const CustomCalendar = ({ getWorkoutForDate }: Props) => {
                     <Portal>
                       <PopoverContent>
                         <PopoverArrow />
-                        <PopoverHeader>Header</PopoverHeader>
+                        <PopoverHeader fontSize="large" fontWeight="bold">
+                          Exercises
+                        </PopoverHeader>
                         <PopoverCloseButton />
-                        <PopoverBody>
+                        <PopoverBody padding="10px">
+                          <Box padding="5px" paddingLeft="20px" marginBottom="5px">
+                            <ul>
+                            {workoutForDate?.exercises.map(
+                              (exercise, index) => {
+                                return (
+                                  <li key={index}><Text fontWeight="bold" >
+                                    {exercise.name}
+                                  </Text></li>
+                                );
+                              }
+                            )}
+                            </ul>
+                          </Box>
                           <Button colorScheme="blue">Button</Button>
                         </PopoverBody>
-                        <PopoverFooter>This is the footer</PopoverFooter>
                       </PopoverContent>
                     </Portal>
                   </Popover>
