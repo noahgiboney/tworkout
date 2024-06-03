@@ -29,6 +29,7 @@ const userSchema = new mongoose.Schema({
   weight: {
     type: [weightEntrySchema],
     required: false,
+    default: [], 
   },
   heightFeet: {
     type: Number,

@@ -116,7 +116,7 @@ const Progress = () => {
     const fetchWeightHistory = async () => {
       if (userId) {
         try {
-          const response = await fetch(`/api/users/${userId}/weight-history`);
+          const response = await fetch(`/api/user/${userId}/weight-history`);
           if (response.ok) {
             const weightHistoryList: WeightEntry[] = await response.json();
             setWeightHistory(weightHistoryList);

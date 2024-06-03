@@ -26,11 +26,11 @@ export async function POST(req: NextRequest) {
   try {
     await connectDB();
 
-    const { email, password } = await req.json();
+    const { name, email, password } = await req.json();
 
-    if (!email || !password) {
+    if (!name || !email || !password) {
       return NextResponse.json(
-        { error: "Email and password are required." },
+        { error: "Name, Email, and password are required." },
         { status: 400 }
       );
     }
@@ -47,6 +47,7 @@ export async function POST(req: NextRequest) {
 
     const newUser = new User({
       email: email,
+      name: name, 
       password: hashedPassword,
     });
     await newUser.save();

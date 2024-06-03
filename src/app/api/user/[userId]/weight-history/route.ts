@@ -44,10 +44,6 @@ export async function PATCH(
       return NextResponse.json({ error: "No User Found" }, { status: 404 });
     }
 
-    if (!user.weight) {
-      user.weight = []; // Initialize the weight field as an array if it doesn't exist
-    }
-
     user.weight.push({ weight, date: date || new Date() });
     await user.save();
 
