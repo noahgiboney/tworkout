@@ -32,3 +32,7 @@
 .reactCalendar__tile:hover {
   background: #c7b3dc !important;
 }
+
+.listItem {
+  padding-left: 10px;
+}

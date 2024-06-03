@@ -117,17 +117,64 @@ const CustomCalendar = ({ getWorkoutForDate }: Props) => {
                         </PopoverHeader>
                         <PopoverCloseButton />
                         <PopoverBody padding="10px">
-                          <Box padding="5px" paddingLeft="20px" marginBottom="5px">
+                          <Box
+                            padding="5px"
+                            paddingLeft="20px"
+                            marginBottom="5px"
+                          >
                             <ul>
-                            {workoutForDate?.exercises.map(
-                              (exercise, index) => {
-                                return (
-                                  <li key={index}><Text fontWeight="bold" >
-                                    {exercise.name}
-                                  </Text></li>
-                                );
-                              }
-                            )}
+                              {workoutForDate?.exercises.map(
+                                (exercise, index) => {
+                                  return (
+                                    <li key={index}>
+                                      <Text fontWeight="bold">
+                                        {exercise.name}
+                                      </Text>
+                                      <ul className={styles.listItem}>
+                                        {exercise.type === "Cardio" && (
+                                          <>
+                                            <li>
+                                              <Text fontWeight="bold">
+                                                Distance: {exercise.distance}{" "}
+                                                miles
+                                              </Text>
+                                            </li>
+                                            <li>
+                                              <Text fontWeight="bold">
+                                                Duration: {exercise.duration}{" "}
+                                                min
+                                              </Text>
+                                            </li>
+                                          </>
+                                        )}
+                                        {exercise.type === "Weights" && (
+                                          <>
+                                            {exercise.sets?.map(
+                                              (set, index) => {
+                                                return (
+                                                  <li key={index}>
+                                                    <Text fontWeight="bold">
+                                                      Set {index + 1}:
+                                                    </Text>
+                                                    <Box paddingLeft="10px">
+                                                      <Text fontWeight="bold">
+                                                        Reps: {set.reps}
+                                                      </Text>
+                                                      <Text fontWeight="bold">
+                                                        Weight: {set.weight} lbs
+                                                      </Text>
+                                                    </Box>
+                                                  </li>
+                                                );
+                                              }
+                                            )}
+                                          </>
+                                        )}
+                                      </ul>
+                                    </li>
+                                  );
+                                }
+                              )}
                             </ul>
                           </Box>
                           <Button colorScheme="blue">Button</Button>
