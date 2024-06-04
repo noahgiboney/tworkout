@@ -1,59 +1,44 @@
-"use client";
-import { useRouter } from "next/navigation";
-import React, { useState, useEffect } from "react";
-import { Box, VStack, Button, Image, Avatar } from "@chakra-ui/react";
+import React, { useEffect, useState } from "react";
+import { Box, VStack, Button, Image, Avatar, Spinner } from "@chakra-ui/react";
+import Link from "next/link";
 import { useUser } from "@/context/userContext";
 import { getAvatarPathById } from "@/avatars/avatarsList";
-import { User } from "@/user/user";
 
 const SideBar = () => {
-  const router = useRouter();
-
-  const handleLogout = async () => {
-    // Perform logout operations here, such as clearing authentication tokens
-    await fetch("/api/logout", {
-      method: "POST",
-    });
-
-    if (typeof window !== "undefined") {
-      localStorage.clear();
-    }
-
-    console.log("Logging out");
-    // Redirect to the login page or home page
-    window.location.href = "/login";
-  };
-
-  const handleNavigation = (path: string) => {
-    window.location.href = path;
-  };
-
-
-  // const [user, setUser] = useState<User | null>(null);
-  // const user = useUser();
-  // const { user, setUser } = useUser();
-  const { userId, avatarId, setAvatarId } = useUser();
-
-  
-  // const [avatarId, setAvatarId] = useState<number | undefined>(undefined);
+  const { userId, user, setUser, avatarId, setAvatarId } = useUser();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUserData = async () => {
-      if (userId) {
+      if (userId && !user) {
         try {
           const response = await fetch(`/api/user/${userId}`);
           if (!response.ok) {
             throw new Error(`Error: ${response.statusText}`);
           }
           const data = await response.json();
+          setUser(data);
           setAvatarId(data.avatarId);
         } catch (error) {
           console.error("Error fetching user data:", error);
-        } 
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setLoading(false);
       }
-      };
+    };
+
     fetchUserData();
-  }, [userId]);
+  }, [userId, user, setUser, setAvatarId]);
+
+  if (loading) {
+    return (
+      <Box h="100vh" bg="#5A457F" w="300px" padding="20px" marginRight="20px" display="flex" alignItems="center" justifyContent="center">
+        <Spinner color="white" />
+      </Box>
+    );
+  }
 
   return (
     <Box h="100vh" bg="#5A457F" w="300px" padding="20px" marginRight="20px">
@@ -67,62 +52,56 @@ const SideBar = () => {
           alignItems="center"
           justifyContent="center"
         >
-          {avatarId !== undefined && avatarId !== null ? (
+          {avatarId !== undefined ? (
             <Image src={getAvatarPathById(avatarId)} boxSize={110} />
           ) : (
             <Avatar size="2xl" />
           )}
         </Box>
-        <Button
-          bg="#C7B3DC"
-          color="black"
-          padding={30}
-          width="13rem"
-          margin={1}
-          onClick={() => handleNavigation("/homepage")}
-        >
-          Today&apos;s View
-        </Button>
-        <Button
-          bg="#C7B3DC"
-          color="black"
-          padding={30}
-          width="13rem"
-          margin={1}
-          onClick={() => handleNavigation("/calendar")}
-        >
-          Calendar
-        </Button>
-        <Button
-          bg="#C7B3DC"
-          color="black"
-          padding={30}
-          width="13rem"
-          margin={1}
-          onClick={() => handleNavigation("/progress")}
-        >
-          Track Progress
-        </Button>
-        <Button
-          bg="#C7B3DC"
-          color="black"
-          padding={30}
-          width="13rem"
-          margin={1}
-          onClick={() => handleNavigation("/profile")}
-        >
-          My Profile
-        </Button>
-        <Button
-          bg="#C7B3DC"
-          color="black"
-          padding={30}
-          width="13rem"
-          margin={1}
-          onClick={handleLogout}
-        >
-          Logout
-        </Button>
+        <Link href="/homepage" passHref>
+          <Button
+            bg="#C7B3DC"
+            color="black"
+            padding={30}
+            width="13rem"
+            margin={1}
+          >
+            Today&apos;s View
+          </Button>
+        </Link>
+        <Link href="/calendar" passHref>
+          <Button
+            bg="#C7B3DC"
+            color="black"
+            padding={30}
+            width="13rem"
+            margin={1}
+          >
+            Calendar
+          </Button>
+        </Link>
+        <Link href="/progress" passHref>
+          <Button
+            bg="#C7B3DC"
+            color="black"
+            padding={30}
+            width="13rem"
+            margin={1}
+          >
+            Track Progress
+          </Button>
+        </Link>
+        <Link href="/profile" passHref>
+          <Button
+            bg="#C7B3DC"
+            color="black"
+            padding={30}
+            width="13rem"
+            margin={1}
+          >
+            My Profile
+          </Button>
+        </Link>
       </VStack>
     </Box>
   );

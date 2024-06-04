@@ -6,50 +6,55 @@ import React, {
   ReactNode,
   useEffect,
 } from "react";
+import { User } from "@/user/user";
 
 interface UserContextType {
   userId: string;
-  avatarId: number | undefined;
   setUserId: (userId: string) => void;
-  setAvatarId: (avatarId: number | undefined) => void;
+  user: User | null;
+  setUser: (user: User) => void;
+  avatarId: number | undefined;
+  setAvatarId: (avatarId: number) => void;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<{ userId: string; avatarId: number | undefined }>({
-    userId: "",
-    avatarId: undefined
+  const [userId, setUserIdState] = useState<string>(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("userId") || "";
+    } else {
+      return "";
+    }
   });
+  const [user, setUserState] = useState<User | null>(null);
+  const [avatarId, setAvatarIdState] = useState<number | undefined>(undefined);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const storedUserId = localStorage.getItem("userId");
-      const storedAvatarId = localStorage.getItem("avatarId");
-
-      setUser({
-        userId: storedUserId || "",
-        avatarId: storedAvatarId ? parseInt(storedAvatarId, 10) : undefined,
-      });
+    const storedUserId = localStorage.getItem("userId");
+    if (storedUserId) {
+      setUserIdState(storedUserId);
     }
   }, []);
 
   const setUserId = (userId: string) => {
     localStorage.setItem("userId", userId);
-    setUser(prev => ({ ...prev, userId }));
+    setUserIdState(userId);
   };
 
-  const setAvatarId = (avatarId: number | undefined) => {
-    if (avatarId === undefined) {
-      localStorage.removeItem("avatarId");
-    } else {
-      localStorage.setItem("avatarId", avatarId.toString());
-    }
-    setUser(prev => ({ ...prev, avatarId }));
+  const setUser = (user: User) => {
+    setUserState(user);
+    setAvatarIdState(user.avatarId);
+  };
+
+  const setAvatarId = (avatarId: number) => {
+    setAvatarIdState(avatarId);
   };
 
   return (
-    <UserContext.Provider value={{ userId: user.userId, avatarId: user.avatarId, setUserId, setAvatarId }}>
+    <UserContext.Provider
+      value={{ userId, setUserId, user, setUser, avatarId, setAvatarId }}
+    >
       {children}
     </UserContext.Provider>
   );
