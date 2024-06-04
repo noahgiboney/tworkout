@@ -3,23 +3,7 @@ import React, { useState, useRef } from "react";
 import "react-calendar/dist/Calendar.css";
 import styles from "./Calendar.module.css";
 import PopoverComponent from "./PopoverComponent";
-import {
-  Box,
-  Text,
-  Button,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverHeader,
-  PopoverBody,
-  PopoverFooter,
-  PopoverArrow,
-  Portal,
-  PopoverCloseButton,
-  useDisclosure,
-  IconButton,
-} from "@chakra-ui/react";
-import { EditIcon } from "@chakra-ui/icons";
+import { Box, Text, useDisclosure } from "@chakra-ui/react";
 import { Kumbh_Sans } from "next/font/google";
 import {
   FaAngleDoubleLeft,
@@ -35,14 +19,12 @@ type Value = ValuePiece | [ValuePiece, ValuePiece];
 
 interface Props {
   getWorkoutForDate: (date: Date) => Workout | null;
+  onSave: (savedWorkout: Workout) => void;
 }
 
-const CustomCalendar = ({ getWorkoutForDate }: Props) => {
+const CustomCalendar = ({ getWorkoutForDate, onSave }: Props) => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const { isOpen, onOpen, onClose, onToggle } = useDisclosure();
-  const [popoverRef, setPopoverref] = useState<
-    EventTarget & HTMLButtonElement
-  >();
   const [value, onChange] = useState<Value>(new Date());
   const colors = ["#E79BD3", "#D7A1F0"];
   const monthNames = [
@@ -101,7 +83,7 @@ const CustomCalendar = ({ getWorkoutForDate }: Props) => {
           return (
             <Box display="flex" flexDirection="column" position="relative">
               {isSelectedDate(date) && (
-                <PopoverComponent workoutForDate={workoutForDate}/>
+                <PopoverComponent onSave={onSave} workoutForDate={workoutForDate} />
               )}
               <Box
                 borderRadius="5px"

@@ -27,10 +27,13 @@ import { Workout } from "../calendar/page";
 
 interface Props {
   workoutForDate: Workout | null;
+  onSave: (savedWorkout: Workout) => void;
 }
-const PopoverComponent = ({ workoutForDate }: Props) => {
-  const [editMode, setEditMode] = useState(false);
+const PopoverComponent = ({ workoutForDate, onSave }: Props) => {
   const [workout, setWorkout] = useState(workoutForDate)
+
+
+
   return (
     <Box position="absolute" top="-60px" right="-10px">
       <Popover placement="right-start">
@@ -40,120 +43,13 @@ const PopoverComponent = ({ workoutForDate }: Props) => {
         <Portal>
           <PopoverContent>
             <PopoverArrow />
-            <PopoverHeader fontSize="large" fontWeight="bold">
-              <Text>Exercises</Text>
-            </PopoverHeader>
+            {/* <PopoverHeader fontSize="large" fontWeight="bold">
+              <Text>{workout ? workout.name : "Exercises"}</Text>
+            </PopoverHeader> */}
             <PopoverCloseButton />
             <PopoverBody display="flex" flexDirection="row" padding="10px">
-              {workoutForDate ? <WorkoutEditor initialWorkout={workout}/> : <Button>Add Workout</Button>}
-              {/* <UnorderedList
-                flex="5"
-                padding="5px"
-                paddingLeft="20px"
-                marginBottom="5px"
-              >
-                {workoutForDate?.exercises.map((exercise, index) => {
-                  return (
-                    <ListItem key={index}>
-                      {editMode === false ? (
-                        <Text fontWeight="bold">{exercise.name}</Text>
-                      ) : (
-                        <Input
-                          fontWeight="bold"
-                          type="text"
-                          variant="flushed"
-                          value={exercise.name}
-                        ></Input>
-                      )}
-                      <UnorderedList styleType="''" className={styles.listItem}>
-                        {exercise.type === "Cardio" && (
-                          <>
-                            <ListItem>
-                              {editMode === false ? (
-                                <Text fontWeight="semibold">
-                                  Distance: {exercise.distance} miles
-                                </Text>
-                              ) : (
-                                <Box>
-                                  <Text>Distance: </Text>
-                                  <Input
-                                    type="text"
-                                    value={exercise.distance}
-                                  ></Input>
-                                </Box>
-                              )}
-                            </ListItem>
-                            <ListItem>
-                              {editMode === false ? (
-                                <Text fontWeight="semibold">
-                                  Duration: {exercise.duration} min
-                                </Text>
-                              ) : (
-                                <Box>
-                                  <Text>Duration: </Text>
-                                  <Input
-                                    type="text"
-                                    value={exercise.duration}
-                                  ></Input>
-                                </Box>
-                              )}
-                            </ListItem>
-                          </>
-                        )}
-                        {exercise.type === "Weights" && (
-                          <>
-                            {exercise.sets?.map((set, index) => {
-                              return (
-                                <ListItem key={index}>
-                                  <Text marginLeft="-3px" fontWeight="semibold">
-                                    Set {index + 1}:
-                                  </Text>
-                                  {!editMode ? (
-                                    <Box paddingLeft="10px">
-                                      <Text fontWeight="semibold">
-                                        Reps: {set.reps}
-                                      </Text>
-                                      <Text fontWeight="semibold">
-                                        Weight: {set.weight} lbs
-                                      </Text>
-                                    </Box>
-                                  ) : (
-                                    <Box>
-                                      <Text>Reps: </Text>
-                                      <Input value={set.reps} />
-                                      <Text>Weight: </Text>
-                                      <Input value={set.weight} />
-                                    </Box>
-                                  )}
-                                </ListItem>
-                              );
-                            })}
-                          </>
-                        )}
-                      </UnorderedList>
-                    </ListItem>
-                  );
-                })}
-                {!workoutForDate && !editMode ? (
-                  <Text>Plan or log a workout!</Text>
-                ) : (
-                  ""
-                )}
-              </UnorderedList> */}
-              
-
-              {/* <IconButton
-                flex="1"
-                padding="0"
-                color="black"
-                bgColor="transparent"
-                aria-label="edit"
-                size="sm"
-                icon={<EditIcon />}
-                onClick={() => setEditMode(!editMode)}
-              /> */}
+              {<WorkoutEditor onSave={onSave} initialWorkout={workout}/> }
             </PopoverBody>
-            {/* {editMode && <Button marginBottom="10px" marginLeft="120px" marginRight="120px">Save</Button>} */}
           </PopoverContent>
         </Portal>
       </Popover>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Workout } from "../calendar/page";
 import {
   Box,
@@ -16,36 +16,63 @@ import {
   MenuItem,
 } from "@chakra-ui/react";
 import { DeleteIcon } from "@chakra-ui/icons";
-import styles from "./Calendar.module.css"
-import { BiSolidMinusCircle } from "react-icons/bi";
+import styles from "./Calendar.module.css";
 import { FiMinusCircle } from "react-icons/fi";
+import { useUser } from "@/context/userContext";
+interface Props {
+  initialWorkout: Workout | null;
+  onSave: (savedWorkout: Workout) => void;
+}
 
-const WorkoutEditor = ({ initialWorkout }: { initialWorkout: Workout }) => {
-  const [workout, setWorkout] = useState<Workout>(initialWorkout);
-  const [add, setAdd] = useState(false);
+const WorkoutEditor = ({ initialWorkout, onSave }: Props) => {
+  const [workout, setWorkout] = useState<Workout | null>(initialWorkout);
   const [saved, setSaved] = useState(false);
+  const { userId } = useUser();
+
+  useEffect(() => {
+    setSaved(false);
+    if (!initialWorkout) {
+      setWorkout({
+        // Id will be set by the backend upon creation
+        userId: userId, // This should be set based on the logged-in user
+        date: new Date(),
+        name: "",
+        exercises: [],
+      });
+    }
+  }, [initialWorkout, userId]);
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     field: string
   ) => {
     const value = e.target.value;
-    setWorkout((prevWorkout) => ({
-      ...prevWorkout,
-      [field]: value,
-    }));
+    setWorkout((prevWorkout) =>
+      prevWorkout
+        ? {
+            ...prevWorkout,
+            [field]: value,
+          }
+        : null
+    );
   };
 
   const handleExerciseChange = (index: number, field: string, value: any) => {
+    if (!workout) return;
     const updatedExercises = workout.exercises.map((exercise, idx) => {
       if (idx === index) {
         return { ...exercise, [field]: value };
       }
       return exercise;
     });
-    setWorkout((prevWorkout) => ({
-      ...prevWorkout,
-      exercises: updatedExercises,
-    }));
+    setWorkout((prevWorkout) =>
+      prevWorkout
+        ? {
+            ...prevWorkout,
+            exercises: updatedExercises,
+          }
+        : null
+    );
   };
 
   const handleSetChange = (
@@ -54,6 +81,7 @@ const WorkoutEditor = ({ initialWorkout }: { initialWorkout: Workout }) => {
     field: string,
     value: number
   ) => {
+    if (!workout) return;
     const updatedExercises = workout.exercises.map((exercise, idx) => {
       if (idx === exerciseIndex && exercise.sets) {
         const updatedSets = exercise.sets.map((set, sIdx) => {
@@ -66,42 +94,61 @@ const WorkoutEditor = ({ initialWorkout }: { initialWorkout: Workout }) => {
       }
       return exercise;
     });
-    setWorkout((prevWorkout) => ({
-      ...prevWorkout,
-      exercises: updatedExercises,
-    }));
+    setWorkout((prevWorkout) =>
+      prevWorkout
+        ? {
+            ...prevWorkout,
+            exercises: updatedExercises,
+          }
+        : null
+    );
   };
 
   const handleAddExercise = (type: string) => {
+    if (!workout) return;
     type === "Cardio" &&
-    setWorkout((prevWorkout) => ({
-      ...prevWorkout,
-      exercises: [
-        ...prevWorkout.exercises,
-        { name: "", type: "Cardio", distance: 0, duration: 0 },
-      ],
-    }));
-    type === "Weights" &&     
-    setWorkout((prevWorkout) => ({
-      ...prevWorkout,
-      exercises: [
-        ...prevWorkout.exercises,
-        { name: "", type: "Weights", sets: []},
-      ],
-    }));
+      setWorkout((prevWorkout) =>
+        prevWorkout
+          ? {
+              ...prevWorkout,
+              exercises: [
+                ...prevWorkout.exercises,
+                { name: "", type: "Cardio", distance: 0, duration: 0 },
+              ],
+            }
+          : null
+      );
+    type === "Weights" &&
+      setWorkout((prevWorkout) =>
+        prevWorkout
+          ? {
+              ...prevWorkout,
+              exercises: [
+                ...prevWorkout.exercises,
+                { name: "", type: "Weights", sets: [] },
+              ],
+            }
+          : null
+      );
   };
 
   const handleRemoveExercise = (index: number) => {
+    if (!workout) return;
     const updatedExercises = workout.exercises.filter(
       (_, idx) => idx !== index
     );
-    setWorkout((prevWorkout) => ({
-      ...prevWorkout,
-      exercises: updatedExercises,
-    }));
+    setWorkout((prevWorkout) =>
+      prevWorkout
+        ? {
+            ...prevWorkout,
+            exercises: updatedExercises,
+          }
+        : null
+    );
   };
 
   const handleAddSet = (exerciseIndex: number) => {
+    if (!workout) return;
     const updatedExercises = workout.exercises.map((exercise, idx) => {
       if (idx === exerciseIndex && exercise.sets) {
         return {
@@ -111,13 +158,18 @@ const WorkoutEditor = ({ initialWorkout }: { initialWorkout: Workout }) => {
       }
       return exercise;
     });
-    setWorkout((prevWorkout) => ({
-      ...prevWorkout,
-      exercises: updatedExercises,
-    }));
+    setWorkout((prevWorkout) =>
+      prevWorkout
+        ? {
+            ...prevWorkout,
+            exercises: updatedExercises,
+          }
+        : null
+    );
   };
 
   const handleRemoveSet = (exerciseIndex: number, setIndex: number) => {
+    if (!workout) return;
     const updatedExercises = workout.exercises.map((exercise, idx) => {
       if (idx === exerciseIndex && exercise.sets) {
         const updatedSets = exercise.sets.filter(
@@ -127,18 +179,27 @@ const WorkoutEditor = ({ initialWorkout }: { initialWorkout: Workout }) => {
       }
       return exercise;
     });
-    setWorkout((prevWorkout) => ({
-      ...prevWorkout,
-      exercises: updatedExercises,
-    }));
+    setWorkout((prevWorkout) =>
+      prevWorkout
+        ? {
+            ...prevWorkout,
+            exercises: updatedExercises,
+          }
+        : null
+    );
   };
 
   const handleSave = async () => {
     // Implement API call to save the updated workout to the database
+    if (!workout) return;
+
+    const isUpdate = Boolean(workout._id);
+    const url = isUpdate ? `/api/workouts/${workout._id}` : "/api/workouts";
+    const method = isUpdate ? "PATCH" : "POST";
 
     try {
-      const response = await fetch(`/api/workouts/${workout._id}`, {
-        method: "PATCH",
+      const response = await fetch(url, {
+        method: method,
         headers: {
           "Content-Type": "application/json",
         },
@@ -147,10 +208,14 @@ const WorkoutEditor = ({ initialWorkout }: { initialWorkout: Workout }) => {
 
       if (response.ok) {
         // Handle successful save
-        console.log("Workout updated successfully");
+        const savedWorkout = await response.json();
+        console.log(savedWorkout);
+        setWorkout(savedWorkout); // Update state with saved workout, including its new ID if created
+        onSave(savedWorkout);
+        console.log("Workout updated/added successfully");
       } else {
         const errorData = await response.json();
-        console.error("Error updating workout:", errorData);
+        console.error("Error updating/adding workout:", errorData);
       }
     } catch (error) {
       console.error("Error saving workout:", error);
@@ -159,9 +224,24 @@ const WorkoutEditor = ({ initialWorkout }: { initialWorkout: Workout }) => {
     }
   };
 
+  if (!workout) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <VStack>
-      {workout?.exercises.map((exercise, index) => (
+      {!saved && (
+        <Input
+          value={workout.name || ""}
+          fontWeight="extrabold"
+          size="lg"
+          variant="flushed"
+          onChange={(e) => handleInputChange(e, "name")}
+          placeholder="Workout Name"
+        />
+      )}
+
+      {workout.exercises?.map((exercise, index) => (
         <Box key={index} border="1px solid gray" padding="4" borderRadius="md">
           <VStack>
             <HStack>
@@ -272,10 +352,19 @@ const WorkoutEditor = ({ initialWorkout }: { initialWorkout: Workout }) => {
           </VStack>
         </Box>
       ))}
-      <HStack>
-        {/* <Button onClick={handleAddExercise}>Add Exercise</Button> */}
+
+      {!saved && <HStack>
         <Menu>
-          <MenuButton className={styles.menuButton} padding="9px" borderRadius="5px" fontWeight="semibold" color="#E9E4F2" bgColor="#600086">Add Exercise</MenuButton>
+          <MenuButton
+            className={styles.menuButton}
+            padding="9px"
+            borderRadius="5px"
+            fontWeight="semibold"
+            color="#E9E4F2"
+            bgColor="#600086"
+          >
+            Add Exercise
+          </MenuButton>
           <MenuList>
             <MenuItem onClick={() => handleAddExercise("Cardio")}>
               Cardio
@@ -283,11 +372,10 @@ const WorkoutEditor = ({ initialWorkout }: { initialWorkout: Workout }) => {
             <MenuItem onClick={() => handleAddExercise("Weights")}>
               Weights
             </MenuItem>
-
           </MenuList>
         </Menu>
         <Button onClick={handleSave}>Save</Button>
-      </HStack>
+      </HStack>}
       {saved && <Text>Workout updated!</Text>}
     </VStack>
   );
