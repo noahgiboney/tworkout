@@ -6,7 +6,7 @@ import { getAvatarPathById } from "@/avatars/avatarsList";
 
 const SideBar = () => {
   const { userId, user, setUser, avatarId, setAvatarId } = useUser();
-  const [loading, setLoading] = useState(true);
+  const [avatarLoading, setAvatarLoading] = useState(true);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -19,26 +19,18 @@ const SideBar = () => {
           const data = await response.json();
           setUser(data);
           setAvatarId(data.avatarId);
+          setAvatarLoading(false);
         } catch (error) {
           console.error("Error fetching user data:", error);
-        } finally {
-          setLoading(false);
+          setAvatarLoading(false);
         }
       } else {
-        setLoading(false);
+        setAvatarLoading(false);
       }
     };
 
     fetchUserData();
   }, [userId, user, setUser, setAvatarId]);
-
-  if (loading) {
-    return (
-      <Box h="100vh" bg="#5A457F" w="300px" padding="20px" marginRight="20px" display="flex" alignItems="center" justifyContent="center">
-        <Spinner color="white" />
-      </Box>
-    );
-  }
 
   return (
     <Box h="100vh" bg="#5A457F" w="300px" padding="20px" marginRight="20px">
@@ -52,7 +44,9 @@ const SideBar = () => {
           alignItems="center"
           justifyContent="center"
         >
-          {avatarId !== undefined ? (
+          {avatarLoading ? (
+            <Spinner size="xl" />
+          ) : avatarId !== undefined ? (
             <Image src={getAvatarPathById(avatarId)} boxSize={110} />
           ) : (
             <Avatar size="2xl" />
