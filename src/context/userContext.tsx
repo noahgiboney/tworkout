@@ -16,6 +16,7 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [userId, setUserIdState] = useState<string>(() => {
+    // Load userId from localStorage if available
     if (typeof window !== "undefined") {
       return localStorage.getItem("userId") || "";
     } else {
@@ -23,17 +24,15 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }
   });
 
-
   useEffect(() => {
+    // Load userId from localStorage if available
     const storedUserId = localStorage.getItem("userId");
-    if (storedUserId) setUserIdState(storedUserId);
-  }, []);
+  }, []); // Empty dependency array ensures this effect runs only once on mount
 
   const setUserId = (userId: string) => {
+    localStorage.clear();
     localStorage.setItem("userId", userId);
-    setUserIdState(userId);
   };
-
 
   return (
     <UserContext.Provider value={{ userId, setUserId }}>

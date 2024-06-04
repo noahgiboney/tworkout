@@ -22,7 +22,6 @@ import {
 } from "@chakra-ui/react";
 import { EditIcon } from "@chakra-ui/icons";
 import { useUser } from "@/context/userContext";
-import WeightLogger from "../components/WeightLogger";
 
 interface User {
   email: string;
@@ -387,6 +386,55 @@ const Profile: React.FC = () => {
                 </CardHeader>
                 <CardBody>
                   <Text paddingTop="1rem" fontSize={18} color="black">
+                    Weight
+                    <IconButton
+                      aria-label="Edit weight"
+                      icon={<EditIcon />}
+                      size="sm"
+                      ml={2}
+                      bg="#E9E4F2"
+                      color="#130030"
+                      onClick={() => setIsEditingField("weight")}
+                    />
+                  </Text>
+                  {isEditingField === "weight" ? (
+                    <Card bgColor="#C7B3DC">
+                      <CardHeader>
+                        <Input
+                          type="number"
+                          value={weight !== undefined ? weight.toString() : ""}
+                          onChange={handleWeightChange}
+                          placeholder="Enter your weight"
+                        />
+                        <Button
+                          colorScheme="blue"
+                          mt={2}
+                          onClick={handleSubmit}
+                        >
+                          Save
+                        </Button>
+                        <Button
+                          colorScheme="red"
+                          mt={2}
+                          onClick={() => handleCancel("weight")}
+                          marginLeft="5"
+                        >
+                          Cancel
+                        </Button>
+                      </CardHeader>
+                    </Card>
+                  ) : (
+                    <Card bgColor="#C7B3DC">
+                      <CardHeader>
+                        <Text fontSize={18} color="black">
+                          {weight !== undefined
+                            ? `${weight} lbs`
+                            : "Update your weight"}
+                        </Text>
+                      </CardHeader>
+                    </Card>
+                  )}
+                  <Text paddingTop="1rem" fontSize={18} color="black">
                     Height
                     <IconButton
                       aria-label="Edit height"
@@ -511,7 +559,6 @@ const Profile: React.FC = () => {
                   )}
                 </CardBody>
               </Card>
-              <WeightLogger/>
             </div>
           </>
         )}
