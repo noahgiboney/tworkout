@@ -57,7 +57,7 @@ const Calendar = () => {
         if (response.ok) {
           const workoutList: Workout[] = await response.json();
           setWorkouts(workoutList);
-          console.log("user workouts:", workoutList)
+          //console.log("user workouts:", workoutList)
         } else {
           console.error("Failed to fetch workouts:", await response.json());
         }
@@ -72,22 +72,19 @@ const Calendar = () => {
   };
 
   const getWorkoutsForDate = (date: Date): Workout | null => {
-    console.log(workouts)
+    
     if (date == null) return null;
     const dateString = date.toISOString().split("T")[0]; // Get the date in 'YYYY-MM-DD' format
 
-    //console.log("datestring", dateString);
     const workoutForDate = workouts.find((workout) => {
       const workoutDateString = new Date(workout.date)
         .toISOString()
         .split("T")[0];
 
-      console.log("workoutdatestring:", workoutDateString, "datestring", dateString)
       return workoutDateString === dateString;
     });
 
     if (workoutForDate) {
-      //console.log(workoutForDate);
       return workoutForDate;
     } else return null;
   };

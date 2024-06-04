@@ -22,9 +22,10 @@ import { useUser } from "@/context/userContext";
 interface Props {
   initialWorkout: Workout | null;
   onSave: (savedWorkout: Workout) => void;
+  date: Date;
 }
 
-const WorkoutEditor = ({ initialWorkout, onSave }: Props) => {
+const WorkoutEditor = ({ initialWorkout, onSave, date }: Props) => {
   const [workout, setWorkout] = useState<Workout | null>(initialWorkout);
   const [saved, setSaved] = useState(false);
   const { userId } = useUser();
@@ -35,7 +36,7 @@ const WorkoutEditor = ({ initialWorkout, onSave }: Props) => {
       setWorkout({
         // Id will be set by the backend upon creation
         userId: userId, // This should be set based on the logged-in user
-        date: new Date(),
+        date: date,
         name: "",
         exercises: [],
       });

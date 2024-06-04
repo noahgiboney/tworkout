@@ -83,7 +83,7 @@ const CustomCalendar = ({ getWorkoutForDate, onSave }: Props) => {
           return (
             <Box display="flex" flexDirection="column" position="relative">
               {isSelectedDate(date) && (
-                <PopoverComponent onSave={onSave} workoutForDate={workoutForDate} />
+                <PopoverComponent date={date} onSave={onSave} workoutForDate={workoutForDate} />
               )}
               <Box
                 borderRadius="5px"

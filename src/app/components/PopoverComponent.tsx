@@ -27,9 +27,10 @@ import { Workout } from "../calendar/page";
 
 interface Props {
   workoutForDate: Workout | null;
+  date: Date;
   onSave: (savedWorkout: Workout) => void;
 }
-const PopoverComponent = ({ workoutForDate, onSave }: Props) => {
+const PopoverComponent = ({ workoutForDate, date, onSave }: Props) => {
   const [workout, setWorkout] = useState(workoutForDate)
 
 
@@ -48,7 +49,7 @@ const PopoverComponent = ({ workoutForDate, onSave }: Props) => {
             </PopoverHeader> */}
             <PopoverCloseButton />
             <PopoverBody display="flex" flexDirection="row" padding="10px">
-              {<WorkoutEditor onSave={onSave} initialWorkout={workout}/> }
+              {<WorkoutEditor date={date} onSave={onSave} initialWorkout={workout}/> }
             </PopoverBody>
           </PopoverContent>
         </Portal>
