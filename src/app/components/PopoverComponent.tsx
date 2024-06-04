@@ -30,6 +30,7 @@ interface Props {
 }
 const PopoverComponent = ({ workoutForDate }: Props) => {
   const [editMode, setEditMode] = useState(false);
+  const [workout, setWorkout] = useState(workoutForDate)
   return (
     <Box position="absolute" top="-60px" right="-10px">
       <Popover placement="right-start">
@@ -44,7 +45,7 @@ const PopoverComponent = ({ workoutForDate }: Props) => {
             </PopoverHeader>
             <PopoverCloseButton />
             <PopoverBody display="flex" flexDirection="row" padding="10px">
-              {workoutForDate ? <WorkoutEditor initialWorkout={workoutForDate}/> : ""}
+              {workoutForDate ? <WorkoutEditor initialWorkout={workout}/> : <Button>Add Workout</Button>}
               {/* <UnorderedList
                 flex="5"
                 padding="5px"

@@ -10,13 +10,19 @@ import {
   IconButton,
   NumberInput,
   NumberInputField,
+  MenuButton,
+  Menu,
+  MenuList,
+  MenuItem,
 } from "@chakra-ui/react";
 import { DeleteIcon } from "@chakra-ui/icons";
+import styles from "./Calendar.module.css"
 import { BiSolidMinusCircle } from "react-icons/bi";
 import { FiMinusCircle } from "react-icons/fi";
 
 const WorkoutEditor = ({ initialWorkout }: { initialWorkout: Workout }) => {
   const [workout, setWorkout] = useState<Workout>(initialWorkout);
+  const [add, setAdd] = useState(false);
   const [saved, setSaved] = useState(false);
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -66,12 +72,21 @@ const WorkoutEditor = ({ initialWorkout }: { initialWorkout: Workout }) => {
     }));
   };
 
-  const handleAddExercise = () => {
+  const handleAddExercise = (type: string) => {
+    type === "Cardio" &&
     setWorkout((prevWorkout) => ({
       ...prevWorkout,
       exercises: [
         ...prevWorkout.exercises,
-        { name: "", type: "Cardio", sets: [], distance: 0, duration: 0 },
+        { name: "", type: "Cardio", distance: 0, duration: 0 },
+      ],
+    }));
+    type === "Weights" &&     
+    setWorkout((prevWorkout) => ({
+      ...prevWorkout,
+      exercises: [
+        ...prevWorkout.exercises,
+        { name: "", type: "Weights", sets: []},
       ],
     }));
   };
@@ -146,7 +161,7 @@ const WorkoutEditor = ({ initialWorkout }: { initialWorkout: Workout }) => {
 
   return (
     <VStack>
-      {workout.exercises.map((exercise, index) => (
+      {workout?.exercises.map((exercise, index) => (
         <Box key={index} border="1px solid gray" padding="4" borderRadius="md">
           <VStack>
             <HStack>
@@ -258,7 +273,19 @@ const WorkoutEditor = ({ initialWorkout }: { initialWorkout: Workout }) => {
         </Box>
       ))}
       <HStack>
-        <Button onClick={handleAddExercise}>Add Exercise</Button>
+        {/* <Button onClick={handleAddExercise}>Add Exercise</Button> */}
+        <Menu>
+          <MenuButton className={styles.menuButton} padding="9px" borderRadius="5px" fontWeight="semibold" color="#E9E4F2" bgColor="#600086">Add Exercise</MenuButton>
+          <MenuList>
+            <MenuItem onClick={() => handleAddExercise("Cardio")}>
+              Cardio
+            </MenuItem>
+            <MenuItem onClick={() => handleAddExercise("Weights")}>
+              Weights
+            </MenuItem>
+
+          </MenuList>
+        </Menu>
         <Button onClick={handleSave}>Save</Button>
       </HStack>
       {saved && <Text>Workout updated!</Text>}
