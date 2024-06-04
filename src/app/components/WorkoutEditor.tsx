@@ -17,6 +17,7 @@ import { FiMinusCircle } from "react-icons/fi";
 
 const WorkoutEditor = ({ initialWorkout }: { initialWorkout: Workout }) => {
   const [workout, setWorkout] = useState<Workout>(initialWorkout);
+  const [saved, setSaved] = useState(false);
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     field: string
@@ -119,26 +120,28 @@ const WorkoutEditor = ({ initialWorkout }: { initialWorkout: Workout }) => {
 
   const handleSave = async () => {
     // Implement API call to save the updated workout to the database
-    
+
     try {
-        const response = await fetch(`/api/workouts/${workout._id}`, {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(workout)
-        });
-  
-        if (response.ok) {
-          // Handle successful save
-          console.log('Workout updated successfully');
-        } else {
-          const errorData = await response.json();
-          console.error('Error updating workout:', errorData);
-        }
-      } catch (error) {
-        console.error('Error saving workout:', error);
+      const response = await fetch(`/api/workouts/${workout._id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(workout),
+      });
+
+      if (response.ok) {
+        // Handle successful save
+        console.log("Workout updated successfully");
+      } else {
+        const errorData = await response.json();
+        console.error("Error updating workout:", errorData);
       }
+    } catch (error) {
+      console.error("Error saving workout:", error);
+    } finally {
+      setSaved(true);
+    }
   };
 
   return (
@@ -258,6 +261,7 @@ const WorkoutEditor = ({ initialWorkout }: { initialWorkout: Workout }) => {
         <Button onClick={handleAddExercise}>Add Exercise</Button>
         <Button onClick={handleSave}>Save</Button>
       </HStack>
+      {saved && <Text>Workout updated!</Text>}
     </VStack>
   );
 };
