@@ -117,6 +117,21 @@ const WorkoutEditor = ({ initialWorkout }: { initialWorkout: Workout }) => {
     }));
   };
 
+  const handleSave = async () => {
+    // Implement API call to save the updated workout to the database
+    console.log(workout)
+    // try {
+    //   await fetch("/api/saveWorkout", {
+    //     method: "POST",
+    //     headers: { "Content-Type": "application/json" },
+    //     body: JSON.stringify(workout),
+    //   });
+    //   // Handle successful save
+    // } catch (error) {
+    //   console.error("Error saving workout:", error);
+    // }
+  };
+
   return (
     <VStack>
       {workout.exercises.map((exercise, index) => (
@@ -196,37 +211,44 @@ const WorkoutEditor = ({ initialWorkout }: { initialWorkout: Workout }) => {
               </VStack>
             )}
             {exercise.type === "Cardio" && (
-              <Box>
-                <Text>Distance</Text>
-                <Input
-                  value={exercise.distance || 0}
-                  onChange={(e) =>
-                    handleExerciseChange(
-                      index,
-                      "distance",
-                      Number(e.target.value)
-                    )
-                  }
-                  placeholder="Distance"
-                />
-                <Text>Duration</Text>
-                <Input
-                  value={exercise.duration || 0}
-                  onChange={(e) =>
-                    handleExerciseChange(
-                      index,
-                      "duration",
-                      Number(e.target.value)
-                    )
-                  }
-                  placeholder="Duration"
-                />
-              </Box>
+              <HStack>
+                <Box>
+                  <Text>Distance</Text>
+                  <Input
+                    value={exercise.distance || 0}
+                    onChange={(e) =>
+                      handleExerciseChange(
+                        index,
+                        "distance",
+                        Number(e.target.value)
+                      )
+                    }
+                    placeholder="Distance"
+                  />
+                </Box>
+                <Box>
+                  <Text>Duration</Text>
+                  <Input
+                    value={exercise.duration || 0}
+                    onChange={(e) =>
+                      handleExerciseChange(
+                        index,
+                        "duration",
+                        Number(e.target.value)
+                      )
+                    }
+                    placeholder="Duration"
+                  />
+                </Box>
+              </HStack>
             )}
           </VStack>
         </Box>
       ))}
-      <Button onClick={handleAddExercise}>Add Exercise</Button>
+      <HStack>
+        <Button onClick={handleAddExercise}>Add Exercise</Button>
+        <Button onClick={handleSave}>Save</Button>
+      </HStack>
     </VStack>
   );
 };

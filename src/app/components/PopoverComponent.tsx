@@ -141,7 +141,7 @@ const PopoverComponent = ({ workoutForDate }: Props) => {
               </UnorderedList> */}
               
 
-              <IconButton
+              {/* <IconButton
                 flex="1"
                 padding="0"
                 color="black"
@@ -150,9 +150,9 @@ const PopoverComponent = ({ workoutForDate }: Props) => {
                 size="sm"
                 icon={<EditIcon />}
                 onClick={() => setEditMode(!editMode)}
-              />
+              /> */}
             </PopoverBody>
-            {editMode && <Button marginBottom="10px" marginLeft="120px" marginRight="120px">Save</Button>}
+            {/* {editMode && <Button marginBottom="10px" marginLeft="120px" marginRight="120px">Save</Button>} */}
           </PopoverContent>
         </Portal>
       </Popover>
