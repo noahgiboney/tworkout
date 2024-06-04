@@ -1,14 +1,15 @@
-"use client"
-import React, { createContext, useContext, useState, ReactNode, Dispatch, SetStateAction } from 'react';
-import { User } from "@/user/user";
+"use client";
+import React, {
+  createContext,
+  useState,
+  useContext,
+  ReactNode,
+  useEffect,
+} from "react";
 
 interface UserContextType {
   userId: string;
   setUserId: (userId: string) => void;
-  user: User | null;
-  setUser: Dispatch<SetStateAction<User | null>>;
-  avatarId: number | undefined;
-  setAvatarId: (avatarId: number) => void;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -21,16 +22,21 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       return "";
     }
   });
-  const [user, setUser] = useState<User | null>(null);
-  const [avatarId, setAvatarId] = useState<number | undefined>(undefined);
+
+
+  useEffect(() => {
+    const storedUserId = localStorage.getItem("userId");
+    if (storedUserId) setUserIdState(storedUserId);
+  }, []);
 
   const setUserId = (userId: string) => {
     localStorage.setItem("userId", userId);
     setUserIdState(userId);
   };
 
+
   return (
-    <UserContext.Provider value={{ userId, setUserId, user, setUser, avatarId, setAvatarId }}>
+    <UserContext.Provider value={{ userId, setUserId }}>
       {children}
     </UserContext.Provider>
   );
