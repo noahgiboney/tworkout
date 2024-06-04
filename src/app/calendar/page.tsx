@@ -7,7 +7,7 @@ import { useUser } from "@/context/userContext";
 import styles from "./calendar.module.css";
 
 export interface Workout {
-  Id: string;
+  _id: string;
   userId: string;
   date: Date;
   name: string;

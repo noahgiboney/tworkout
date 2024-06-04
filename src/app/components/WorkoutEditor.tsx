@@ -119,17 +119,26 @@ const WorkoutEditor = ({ initialWorkout }: { initialWorkout: Workout }) => {
 
   const handleSave = async () => {
     // Implement API call to save the updated workout to the database
-    console.log(workout)
-    // try {
-    //   await fetch("/api/saveWorkout", {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify(workout),
-    //   });
-    //   // Handle successful save
-    // } catch (error) {
-    //   console.error("Error saving workout:", error);
-    // }
+    
+    try {
+        const response = await fetch(`/api/workouts/${workout._id}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(workout)
+        });
+  
+        if (response.ok) {
+          // Handle successful save
+          console.log('Workout updated successfully');
+        } else {
+          const errorData = await response.json();
+          console.error('Error updating workout:', errorData);
+        }
+      } catch (error) {
+        console.error('Error saving workout:', error);
+      }
   };
 
   return (
