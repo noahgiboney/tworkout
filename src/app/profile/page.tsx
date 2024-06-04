@@ -3,11 +3,11 @@ import React, { useState, useEffect, ChangeEvent } from "react";
 import SideBar from "../components/SideBar";
 import styles from "./profile.module.css";
 import {
+  Avatar,
   Card,
   CardBody,
   CardHeader,
   Text,
-  Avatar,
   IconButton,
   Input,
   Image,
@@ -22,60 +22,24 @@ import {
 } from "@chakra-ui/react";
 import { EditIcon } from "@chakra-ui/icons";
 import { useUser } from "@/context/userContext";
-
-interface User {
-  email: string;
-  name: string;
-  weight?: WeightEntry[];
-  heightFeet?: number;
-  heightInches?: number;
-  age?: number;
-  avatarId?: number;
-}
-
-interface WeightEntry {
-  weight: number;
-  date: Date;
-}
-
-type Avatar = {
-  id: number;
-  path: string;
-};
-
-const avatars: Avatar[] = [
-  { id: 1, path: "/images/avatar-alien.png" },
-  { id: 2, path: "/images/avatar-cowboy.png" },
-  { id: 3, path: "/images/avatar-dolphin.png" },
-  { id: 4, path: "/images/avatar-dino.png" },
-];
+import WeightLogger from "../components/WeightLogger";
+import { avatars, getAvatarPathById } from "@/avatars/avatarsList";
+import { User } from "@/user/user";
 
 const Profile: React.FC = () => {
-  const [user, setUser] = useState<User | null>(null);
+  const { userId, user, setUser, avatarId, setAvatarId } = useUser();
   const [name, setName] = useState<string>("");
-  const [weight, setWeight] = useState<number | undefined>(undefined);
   const [heightFeet, setHeightFeet] = useState<number | undefined>(undefined);
   const [heightInches, setHeightInches] = useState<number | undefined>(
     undefined
   );
   const [age, setAge] = useState<number | undefined>(undefined);
-  const [avatarId, setAvatarId] = useState<number | undefined>(undefined);
   const [selectedAvatarId, setSelectedAvatarId] = useState<number | undefined>(
     undefined
   );
-  const getAvatarPathById = (id: number): string | undefined => {
-    const avatar = avatars.find((avatar) => avatar.id === id);
-    return avatar ? avatar.path : undefined;
-  };
 
   const [isEditingField, setIsEditingField] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const currentUser = useUser();
-
-  const handleWeightChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setWeight(parseFloat(e.target.value));
-    setIsEditingField("weight");
-  };
 
   const handleHeightFeetChange = (value: string) => {
     setHeightFeet(parseInt(value, 10));
@@ -109,12 +73,6 @@ const Profile: React.FC = () => {
           setName(user.name || "");
           setIsEditingField(null);
           break;
-        case "weight":
-          setWeight(
-            user.weight ? user.weight[user.weight.length - 1].weight : undefined
-          );
-          setIsEditingField(null);
-          break;
         case "height":
           setHeightFeet(user.heightFeet);
           setHeightInches(user.heightInches);
@@ -135,20 +93,12 @@ const Profile: React.FC = () => {
   };
 
   const handleSubmit = async () => {
-    if (currentUser && isEditingField) {
+    if (userId && isEditingField) {
       try {
         const updates: Partial<User> = {};
         switch (isEditingField) {
           case "name":
             updates.name = name;
-            break;
-          case "weight":
-            if (weight !== undefined) {
-              updates.weight = [
-                ...(user?.weight || []),
-                { weight, date: new Date() },
-              ];
-            }
             break;
           case "height":
             updates.heightFeet = heightFeet;
@@ -163,25 +113,31 @@ const Profile: React.FC = () => {
           default:
             break;
         }
-
-        const response = await fetch(`/api/user/${currentUser.userId}`, {
+  
+        const response = await fetch(`/api/user/${userId}`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(updates),
         });
-
+  
         if (!response.ok) {
           throw new Error(`Error: ${response.statusText}`);
         }
-
-        const data = await response.json();
-        setUser((prevUser) => ({
-          ...prevUser,
-          ...data,
-        }));
-        if (isEditingField === "avatar") {
+  
+        const data: User = await response.json();
+        setUser((prevUser) => {
+          if (prevUser) {
+            return {
+              ...prevUser,
+              ...data,
+            };
+          }
+          return data;
+        });
+  
+        if (isEditingField === "avatar" && selectedAvatarId !== undefined) {
           setAvatarId(selectedAvatarId);
         }
         setIsEditingField(null);
@@ -193,23 +149,19 @@ const Profile: React.FC = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      if (currentUser) {
+      if (userId) {
         try {
-          const response = await fetch(`/api/user/${currentUser.userId}`);
+          const response = await fetch(`/api/user/${userId}`);
           if (!response.ok) {
             throw new Error(`Error: ${response.statusText}`);
           }
           const data: User = await response.json();
           setUser(data);
           setName(data.name || "");
-          const latestWeight = data.weight
-            ? data.weight[data.weight.length - 1].weight
-            : undefined;
-          setWeight(latestWeight);
           setHeightFeet(data.heightFeet);
           setHeightInches(data.heightInches);
           setAge(data.age);
-          setAvatarId(data.avatarId);
+          setAvatarId(data.avatarId ?? 0);
           setSelectedAvatarId(data.avatarId);
         } catch (error) {
           console.error("Error fetching user data:", error);
@@ -220,7 +172,7 @@ const Profile: React.FC = () => {
     };
 
     fetchUserData();
-  }, [currentUser]);
+  }, [userId, setUser, setAvatarId]);
 
   return (
     <div className={styles.main}>
@@ -241,7 +193,7 @@ const Profile: React.FC = () => {
         ) : (
           <>
             <div className={styles.avatar}>
-              {avatarId !== undefined ? (
+              <Box position="relative" display="inline-block" boxSize="130px">
                 <Box
                   boxSize={130}
                   borderRadius="full"
@@ -251,20 +203,28 @@ const Profile: React.FC = () => {
                   alignItems="center"
                   justifyContent="center"
                 >
-                  <Image src={getAvatarPathById(avatarId)} boxSize={110} />
+                  {avatarId !== undefined ? (
+                    <Image src={getAvatarPathById(avatarId)} boxSize={110} />
+                  ) : (
+                    <Avatar size="2xl" />
+                  )}
                 </Box>
-              ) : (
-                <Avatar size="2xl" />
-              )}
-
-              <IconButton
-                aria-label="Edit Avatar"
-                icon={<EditIcon />}
-                size="sm"
-                mt={2}
-                color="#E9E4F2"
-                onClick={() => setIsEditingField("avatar")}
-              />
+                <IconButton
+                  aria-label="Edit Avatar"
+                  icon={<EditIcon />}
+                  position="absolute"
+                  top="75%"
+                  left="75%"
+                  transform="translate(-50%, -50%)"
+                  size="small"
+                  width="25px"
+                  height="25px"
+                  fontSize="15px"
+                  color="#E9E4F2"
+                  onClick={() => setIsEditingField("avatar")}
+                />
+              </Box>
+              
               {isEditingField === "avatar" && (
                 <Card mt={2} width="auto" bgColor="#C7B3DC">
                   <CardHeader padding={2}></CardHeader>
@@ -386,55 +346,6 @@ const Profile: React.FC = () => {
                 </CardHeader>
                 <CardBody>
                   <Text paddingTop="1rem" fontSize={18} color="black">
-                    Weight
-                    <IconButton
-                      aria-label="Edit weight"
-                      icon={<EditIcon />}
-                      size="sm"
-                      ml={2}
-                      bg="#E9E4F2"
-                      color="#130030"
-                      onClick={() => setIsEditingField("weight")}
-                    />
-                  </Text>
-                  {isEditingField === "weight" ? (
-                    <Card bgColor="#C7B3DC">
-                      <CardHeader>
-                        <Input
-                          type="number"
-                          value={weight !== undefined ? weight.toString() : ""}
-                          onChange={handleWeightChange}
-                          placeholder="Enter your weight"
-                        />
-                        <Button
-                          colorScheme="blue"
-                          mt={2}
-                          onClick={handleSubmit}
-                        >
-                          Save
-                        </Button>
-                        <Button
-                          colorScheme="red"
-                          mt={2}
-                          onClick={() => handleCancel("weight")}
-                          marginLeft="5"
-                        >
-                          Cancel
-                        </Button>
-                      </CardHeader>
-                    </Card>
-                  ) : (
-                    <Card bgColor="#C7B3DC">
-                      <CardHeader>
-                        <Text fontSize={18} color="black">
-                          {weight !== undefined
-                            ? `${weight} lbs`
-                            : "Update your weight"}
-                        </Text>
-                      </CardHeader>
-                    </Card>
-                  )}
-                  <Text paddingTop="1rem" fontSize={18} color="black">
                     Height
                     <IconButton
                       aria-label="Edit height"
@@ -453,7 +364,7 @@ const Profile: React.FC = () => {
                           Feet
                         </Text>
                         <NumberInput
-                          value={heightFeet}
+                          value={heightFeet !== undefined ? heightFeet : ""}
                           onChange={handleHeightFeetChange}
                           min={0}
                           max={8}
@@ -468,7 +379,7 @@ const Profile: React.FC = () => {
                           Inches
                         </Text>
                         <NumberInput
-                          value={heightInches}
+                          value={heightInches !== undefined ? heightInches : ""}
                           onChange={handleHeightInchesChange}
                           min={0}
                           max={11}
@@ -559,6 +470,7 @@ const Profile: React.FC = () => {
                   )}
                 </CardBody>
               </Card>
+              <WeightLogger />
             </div>
           </>
         )}
