@@ -1,18 +1,12 @@
-"use client";
-import React, {
-  createContext,
-  useState,
-  useContext,
-  ReactNode,
-  useEffect,
-} from "react";
+"use client"
+import React, { createContext, useContext, useState, ReactNode, Dispatch, SetStateAction } from 'react';
 import { User } from "@/user/user";
 
 interface UserContextType {
   userId: string;
   setUserId: (userId: string) => void;
   user: User | null;
-  setUser: (user: User) => void;
+  setUser: Dispatch<SetStateAction<User | null>>;
   avatarId: number | undefined;
   setAvatarId: (avatarId: number) => void;
 }
@@ -27,34 +21,16 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       return "";
     }
   });
-  const [user, setUserState] = useState<User | null>(null);
-  const [avatarId, setAvatarIdState] = useState<number | undefined>(undefined);
-
-  useEffect(() => {
-    const storedUserId = localStorage.getItem("userId");
-    if (storedUserId) {
-      setUserIdState(storedUserId);
-    }
-  }, []);
+  const [user, setUser] = useState<User | null>(null);
+  const [avatarId, setAvatarId] = useState<number | undefined>(undefined);
 
   const setUserId = (userId: string) => {
     localStorage.setItem("userId", userId);
     setUserIdState(userId);
   };
 
-  const setUser = (user: User) => {
-    setUserState(user);
-    setAvatarIdState(user.avatarId);
-  };
-
-  const setAvatarId = (avatarId: number) => {
-    setAvatarIdState(avatarId);
-  };
-
   return (
-    <UserContext.Provider
-      value={{ userId, setUserId, user, setUser, avatarId, setAvatarId }}
-    >
+    <UserContext.Provider value={{ userId, setUserId, user, setUser, avatarId, setAvatarId }}>
       {children}
     </UserContext.Provider>
   );

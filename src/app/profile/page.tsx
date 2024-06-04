@@ -27,22 +27,19 @@ import { avatars, getAvatarPathById } from "@/avatars/avatarsList";
 import { User } from "@/user/user";
 
 const Profile: React.FC = () => {
-  const [user, setUser] = useState<User | null>(null);
+  const { userId, user, setUser, avatarId, setAvatarId } = useUser();
   const [name, setName] = useState<string>("");
   const [heightFeet, setHeightFeet] = useState<number | undefined>(undefined);
   const [heightInches, setHeightInches] = useState<number | undefined>(
     undefined
   );
   const [age, setAge] = useState<number | undefined>(undefined);
-  const [avatarId, setAvatarId] = useState<number | undefined>(undefined);
   const [selectedAvatarId, setSelectedAvatarId] = useState<number | undefined>(
     undefined
   );
 
-
   const [isEditingField, setIsEditingField] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const currentUser = useUser();
 
   const handleHeightFeetChange = (value: string) => {
     setHeightFeet(parseInt(value, 10));
@@ -96,7 +93,7 @@ const Profile: React.FC = () => {
   };
 
   const handleSubmit = async () => {
-    if (currentUser && isEditingField) {
+    if (userId && isEditingField) {
       try {
         const updates: Partial<User> = {};
         switch (isEditingField) {
@@ -116,25 +113,31 @@ const Profile: React.FC = () => {
           default:
             break;
         }
-
-        const response = await fetch(`/api/user/${currentUser.userId}`, {
+  
+        const response = await fetch(`/api/user/${userId}`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(updates),
         });
-
+  
         if (!response.ok) {
           throw new Error(`Error: ${response.statusText}`);
         }
-
-        const data = await response.json();
-        setUser((prevUser) => ({
-          ...prevUser,
-          ...data,
-        }));
-        if (isEditingField === "avatar") {
+  
+        const data: User = await response.json();
+        setUser((prevUser) => {
+          if (prevUser) {
+            return {
+              ...prevUser,
+              ...data,
+            };
+          }
+          return data;
+        });
+  
+        if (isEditingField === "avatar" && selectedAvatarId !== undefined) {
           setAvatarId(selectedAvatarId);
         }
         setIsEditingField(null);
@@ -146,9 +149,9 @@ const Profile: React.FC = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      if (currentUser) {
+      if (userId) {
         try {
-          const response = await fetch(`/api/user/${currentUser.userId}`);
+          const response = await fetch(`/api/user/${userId}`);
           if (!response.ok) {
             throw new Error(`Error: ${response.statusText}`);
           }
@@ -158,7 +161,7 @@ const Profile: React.FC = () => {
           setHeightFeet(data.heightFeet);
           setHeightInches(data.heightInches);
           setAge(data.age);
-          setAvatarId(data.avatarId);
+          setAvatarId(data.avatarId ?? 0);
           setSelectedAvatarId(data.avatarId);
         } catch (error) {
           console.error("Error fetching user data:", error);
@@ -169,7 +172,7 @@ const Profile: React.FC = () => {
     };
 
     fetchUserData();
-  }, [currentUser]);
+  }, [userId, setUser, setAvatarId]);
 
   return (
     <div className={styles.main}>
@@ -361,7 +364,7 @@ const Profile: React.FC = () => {
                           Feet
                         </Text>
                         <NumberInput
-                          value={heightFeet}
+                          value={heightFeet !== undefined ? heightFeet : ""}
                           onChange={handleHeightFeetChange}
                           min={0}
                           max={8}
@@ -376,7 +379,7 @@ const Profile: React.FC = () => {
                           Inches
                         </Text>
                         <NumberInput
-                          value={heightInches}
+                          value={heightInches !== undefined ? heightInches : ""}
                           onChange={handleHeightInchesChange}
                           min={0}
                           max={11}
@@ -467,7 +470,7 @@ const Profile: React.FC = () => {
                   )}
                 </CardBody>
               </Card>
-              <WeightLogger/>
+              <WeightLogger />
             </div>
           </>
         )}
