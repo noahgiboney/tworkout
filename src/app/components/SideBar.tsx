@@ -4,7 +4,6 @@ import { Box, VStack, Button, Avatar, Image } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/context/userContext";
 
-
 const SideBar = () => {
   const router = useRouter();
 
@@ -27,6 +26,7 @@ const SideBar = () => {
   return (
     <Box h="100vh" bg="#5A457F" w="300px" padding="20px" marginRight="20px">
       <VStack>
+        <Avatar marginTop="30px" marginBottom="30px" size="2xl" />
         <Button
           bg="#C7B3DC"
           color="black"
