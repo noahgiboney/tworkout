@@ -14,8 +14,9 @@ export interface Workout {
   exercises: {
     name: string;
     type: "Cardio" | "Weights";
-    sets?: { weight: number }[];
+    sets?: { weight: number; reps: number }[];
     distance?: number;
+    duration?: number;
   }[];
 }
 
@@ -23,7 +24,6 @@ const Calendar = () => {
   const [exercises, setExercises] = useState<string[]>([]);
   const [workouts, setWorkouts] = useState<Workout[]>([]);
   const { userId } = useUser();
-
 
   console.log(userId);
   useEffect(() => {
