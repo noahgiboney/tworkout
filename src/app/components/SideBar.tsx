@@ -45,18 +45,15 @@ const SideBar = () => {
           if (!response.ok) {
             throw new Error(`Error: ${response.statusText}`);
           }
-          const data: User = await response.json();
-          
-          console.log(avatarId);
+          const data = await response.json();
           setAvatarId(data.avatarId);
-          console.log(avatarId);
         } catch (error) {
           console.error("Error fetching user data:", error);
         } 
       }
       };
     fetchUserData();
-  }, [userId, avatarId]);
+  }, [userId]);
 
   return (
     <Box h="100vh" bg="#5A457F" w="300px" padding="20px" marginRight="20px">

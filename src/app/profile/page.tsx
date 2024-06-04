@@ -38,10 +38,7 @@ const Profile: React.FC = () => {
   const [selectedAvatarId, setSelectedAvatarId] = useState<number | undefined>(
     undefined
   );
-  const getAvatarPathById = (id: number): string | undefined => {
-    const avatar = avatars.find((avatar) => avatar.id === id);
-    return avatar ? avatar.path : undefined;
-  };
+
 
   const [isEditingField, setIsEditingField] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);

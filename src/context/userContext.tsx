@@ -17,26 +17,26 @@ interface UserContextType {
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
-  const [userId, setUserIdState] = useState<string>("");
-  const [avatarId, setAvatarIdState] = useState<number | undefined>(undefined);
+  const [user, setUser] = useState<{ userId: string; avatarId: number | undefined }>({
+    userId: "",
+    avatarId: undefined
+  });
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedUserId = localStorage.getItem("userId");
-      if (storedUserId) {
-        setUserIdState(storedUserId);
-      }
-
       const storedAvatarId = localStorage.getItem("avatarId");
-      if (storedAvatarId) {
-        setAvatarIdState(parseInt(storedAvatarId, 10));
-      }
+
+      setUser({
+        userId: storedUserId || "",
+        avatarId: storedAvatarId ? parseInt(storedAvatarId, 10) : undefined,
+      });
     }
   }, []);
 
   const setUserId = (userId: string) => {
     localStorage.setItem("userId", userId);
-    setUserIdState(userId);
+    setUser(prev => ({ ...prev, userId }));
   };
 
   const setAvatarId = (avatarId: number | undefined) => {
@@ -45,11 +45,11 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     } else {
       localStorage.setItem("avatarId", avatarId.toString());
     }
-    setAvatarIdState(avatarId);
+    setUser(prev => ({ ...prev, avatarId }));
   };
 
   return (
-    <UserContext.Provider value={{ userId, setUserId, avatarId, setAvatarId }}>
+    <UserContext.Provider value={{ userId: user.userId, avatarId: user.avatarId, setUserId, setAvatarId }}>
       {children}
     </UserContext.Provider>
   );
