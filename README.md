@@ -6,7 +6,7 @@ For anyone who goes to the gym, our app helps make going to the gym easier, more
 
 - Kendrick Tran 
 - Martin Wise
-- Melika Dabri
+- Melika Dabiri
 - Noah Giboney
 - Sadie Fisher
 
