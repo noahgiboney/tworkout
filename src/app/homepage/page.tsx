@@ -21,8 +21,12 @@ import {
   Center,
   Input,
   HStack,
+  Card,
+  CardHeader,
+  CardBody,
 } from "@chakra-ui/react";
 import { AddIcon, CloseIcon } from "@chakra-ui/icons";
+import styles from "./homepage.module.css"
 
 const currentDate = new Date();
 
@@ -201,42 +205,20 @@ const Homepage: React.FC = () => {
   };
 
   return (
-    <Flex>
-      <SideBar />
-      <Box
-        flex="1"
-        p={5}
-        flexDirection="column"
-        bg="#130030"
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-      >
-        <Text alignItems="left" color="white" fontSize="50" pb="60px" pt="40px">
+    <div className={styles.main}>
+      <SideBar/>
+      <div className={styles.body}>
+        <div className={styles.title}>
           {monthDictionary[month]} {day}th {year}
-        </Text>
-        <Box
-          flex="1"
-          p={3}
-          borderRadius="15px"
-          display="flex"
-          flexDirection="column"
-          width="95%"
-          justifyContent="flex-start"
-          paddingTop="20px"
-          padding="50px"
-          alignItems="left"
-          bg="#E9E4F2"
-        >
-          <Text fontSize="50" color="#130030" fontWeight="bold">
-            Planned Today
-          </Text>
-          <Box
-            overflowY="auto"
-            height="500px"
-            flexDirection="row"
-            display="flex"
-          >
+        </div>
+        <div className={styles.cards}>
+        <Card marginTop="1rem" marginBottom="1rem" bgColor="#E9E4F2">
+          <CardHeader justifyContent="center" textAlign="center" paddingBottom="0px">
+            <Text fontSize={30} color="black" >
+              Planned Today
+            </Text>
+          </CardHeader>
+          <CardBody paddingTop="0px">
             <Box width={"100%"}>
               <Accordion allowToggle allowMultiple>
                 {titlesState.map((title, index) => (
@@ -377,10 +359,12 @@ const Homepage: React.FC = () => {
                 />
               </Center>
             </Box>
-          </Box>
-        </Box>
-      </Box>
-    </Flex>
+            </CardBody>
+        </Card>
+        </div>
+        </div>
+      </div>
+    
   );
 };
 
