@@ -23,6 +23,7 @@ import {
   HStack,
 } from "@chakra-ui/react";
 import { AddIcon, CloseIcon } from "@chakra-ui/icons";
+import styles from "./homepage.module.css"
 
 const currentDate = new Date();
 
@@ -201,20 +202,14 @@ const Homepage: React.FC = () => {
   };
 
   return (
-    <Flex>
-      <SideBar />
-      <Box
-        flex="1"
-        p={5}
-        flexDirection="column"
-        bg="#130030"
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-      >
-        <Text alignItems="left" color="white" fontSize="50" pb="60px" pt="40px">
+    <div className={styles.main}>
+      <div>
+        <SideBar/>
+      </div>
+      <div className={styles.body}>
+        <div className={styles.title}>
           {monthDictionary[month]} {day}th {year}
-        </Text>
+        </div>
         <Box
           flex="1"
           p={3}
@@ -379,8 +374,9 @@ const Homepage: React.FC = () => {
             </Box>
           </Box>
         </Box>
-      </Box>
-    </Flex>
+        </div>
+      </div>
+    
   );
 };
 
