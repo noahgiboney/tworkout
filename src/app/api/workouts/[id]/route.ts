@@ -66,7 +66,7 @@ export async function PATCH(
       return new NextResponse("No workout found with this ID", { status: 404 });
     }
 
-    return NextResponse.json("Workout updated", { status: 200 });
+    return NextResponse.json(updatedDoc, { status: 200 });
   } catch (error) {
     return NextResponse.json(
       { error: (error as Error).message },
