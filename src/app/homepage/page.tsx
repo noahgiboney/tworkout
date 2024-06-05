@@ -21,10 +21,14 @@ import {
   Center,
   Input,
   HStack,
+  Card,
+  CardHeader,
+  CardBody,
 } from "@chakra-ui/react";
 import { AddIcon, CloseIcon } from "@chakra-ui/icons";
 import { useUser } from "@/context/userContext";
 import WeightLogger from "../components/WeightLogger";
+import styles from "./homepage.module.css";
 
 export interface Workout {
   _id: string;
@@ -179,7 +183,7 @@ const AddSet: React.FC<AddSetProps> = ({
     <Modal isOpen={isOpen2} onClose={onClose} isCentered motionPreset="scale">
       <ModalOverlay />
       <ModalContent bg="#5A457F">
-        <ModalHeader textColor="#ECE8F1" fontSize="48">
+        <ModalHeader textColor="#ECE8F1" fontSize="40">
           Add Set
         </ModalHeader>
         <ModalCloseButton />
@@ -599,216 +603,194 @@ const Homepage: React.FC = () => {
   };
 
   return (
-    <Flex>
+    <div className={styles.main}>
       <SideBar />
-      <Box
-        flex="1"
-        p={1}
-        flexDirection="column"
-        bg="#130030"
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-      >
-        <Text alignItems="left" color="white" fontSize="50" pb="60px" pt="40px">
+      <div className={styles.body}>
+        <div className={styles.title}>
           {monthDictionary[month]} {day}th {year}
-        </Text>
-        <WeightLogger showStreak={true}/>
-        <Box
-          flex="1"
-          p={3}
-          borderRadius="15px"
-          display="flex"
-          flexDirection="column"
-          width="95%"
-          justifyContent="flex-start"
-          paddingTop="20px"
-          marginTop= "30px"
-          padding="50px"
-          alignItems="left"
-          bg="#E9E4F2"
-        >
-          <Text fontSize="50" color="#130030" fontWeight="bold">
-            Planned Today
-          </Text>
-          <Box
-            overflowY="auto"
-            height="500px"
-            flexDirection="row"
-            display="flex"
-          >
-            <Box width={"100%"}>
-              <Accordion allowToggle>
-                {workouts &&
-                  workouts.map((workout) =>
-                    workout.exercises.map((exercise, exerciseIndex) => (
-                      <AccordionItem mt={3} padding={1} key={exerciseIndex}>
-                        <h2>
-                          <Box display="flex" alignItems="center">
-                            <AccordionButton
-                              bg="#C7B3DC"
-                              borderRadius="10px"
-                              _hover={{ bg: "#d5c0ec" }}
-                              _expanded={{ bg: "#C7B3DC" }}
-                            >
-                              <Box as="span" flex="1" textAlign="left">
-                                <Text fontWeight="bold" fontSize="20">
-                                  {exercise.name}
-                                </Text>
-                              </Box>
-                              <AccordionIcon display="none" />
-                            </AccordionButton>
-                            <Button
-                              aspectRatio={1}
-                              borderRadius="50%"
-                              backgroundColor="gray.400"
-                              ml={3}
-                              padding={0}
-                              minWidth="24px"
-                              display="flex"
-                              alignItems="center"
-                              justifyContent="center"
-                              bg="#5A457F"
-                              _hover={{ bg: "#6c5399" }}
-                              onClick={function (event) {
-                                eraseExercise(workout._id, exercise.name);
-                              }}
-                            >
-                              <Box
-                                width="75%"
-                                height="5%"
-                                backgroundColor="gray.700"
-                                borderRadius="full"
-                                bg="#ECE8F1"
-                              />
-                            </Button>
-                          </Box>
-                        </h2>
-                        <AccordionPanel
-                          fontWeight="bold"
-                          fontSize="20"
-                          pb={4}
-                          display="flex"
-                          flexDirection="column"
-                        >
-                          {exercise.sets &&
-                            exercise.sets.map((set, setIndex) => (
-                              <Flex flexWrap="wrap" key={setIndex}>
-                                <Box
-                                  borderRadius="10px"
-                                  width="10%"
-                                  mt={3}
-                                  ml={10}
-                                  mr={5}
-                                  bg="#C7B3DC"
-                                  textColor="black"
-                                  textAlign="center"
-                                  padding={2}
-                                >
-                                  Set {setIndex + 1}
+        </div>
+        <div className={styles.cards}>
+          <WeightLogger showStreak={true}/>
+          <Card marginTop="2rem" marginBottom="1rem" bgColor="#E9E4F2">
+            <CardHeader paddingBottom="0rem">
+              <Text fontSize={24} color="black">
+                Planned Today
+              </Text>
+            </CardHeader>
+            <CardBody>
+              <Box width={"100%"}>
+                <Accordion allowToggle>
+                  {workouts &&
+                    workouts.map((workout) =>
+                      workout.exercises.map((exercise, exerciseIndex) => (
+                        <AccordionItem mt={3} padding={1} key={exerciseIndex}>
+                          <h2>
+                            <Box display="flex" alignItems="center">
+                              <AccordionButton
+                                bg="#C7B3DC"
+                                borderRadius="10px"
+                                _hover={{ bg: "#d5c0ec" }}
+                                _expanded={{ bg: "#C7B3DC" }}
+                              >
+                                <Box as="span" flex="1" textAlign="left">
+                                  <Text fontWeight="bold" fontSize="20">
+                                    {exercise.name}
+                                  </Text>
                                 </Box>
-
+                                <AccordionIcon display="none" />
+                              </AccordionButton>
+                              <Button
+                                aspectRatio={1}
+                                borderRadius="50%"
+                                backgroundColor="gray.400"
+                                ml={3}
+                                padding={0}
+                                minWidth="24px"
+                                display="flex"
+                                alignItems="center"
+                                justifyContent="center"
+                                bg="#5A457F"
+                                _hover={{ bg: "#6c5399" }}
+                                onClick={function (event) {
+                                  eraseExercise(workout._id, exercise.name);
+                                }}
+                              >
                                 <Box
-                                  borderRadius="10px"
-                                  width="15%"
-                                  mt={3}
-                                  mr={5}
-                                  bg="#C7B3DC"
-                                  textColor="black"
-                                  textAlign="left"
-                                  padding={2}
-                                >
-                                  Weight: {set.weight} lbs
-                                </Box>
-                                <Box
-                                  borderRadius="10px"
-                                  width="15%"
-                                  mt={3}
-                                  mr={4}
-                                  bg="#C7B3DC"
-                                  textColor="black"
-                                  textAlign="left"
-                                  padding={2}
-                                >
-                                  Reps: {set.reps}
-                                </Box>
-                                <Button
-                                  mt={4}
-                                  width="10px"
-                                  borderRadius="115px"
-                                  bg="#5A457F"
-                                  textColor={"#ECE8F1"}
-                                  alignContent={"center"}
-                                  textAlign={"center"}
-                                  onClick={() =>
-                                    deleteSet(
-                                      workout._id,
-                                      exercise.name,
-                                      setIndex
-                                    )
-                                  }
-                                >
-                                  <CloseIcon />
-                                </Button>
-                              </Flex>
-                            ))}
-
-                          <Button
-                            mt={4}
-                            ml={10}
-                            width="20%"
-                            bg="#5A457F"
-                            textColor={"#ECE8F1"}
-                            alignContent={"center"}
-                            textAlign={"center"}
-                            onClick={toggleAddSetPopup}
+                                  width="75%"
+                                  height="5%"
+                                  backgroundColor="gray.700"
+                                  borderRadius="full"
+                                  bg="#ECE8F1"
+                                />
+                              </Button>
+                            </Box>
+                          </h2>
+                          <AccordionPanel
+                            fontWeight="bold"
+                            fontSize="20"
+                            pb={4}
+                            display="flex"
+                            flexDirection="column"
                           >
-                            Add Set...
-                          </Button>
-                          <Center>
-                            <AddSet
-                              isOpen2={isOpen2}
-                              onClose={toggleAddSetPopup}
-                              workouts={workouts}
-                              setWorkouts={setWorkouts}
-                              selectedExercise={exercise.name}
-                            />
-                          </Center>
-                        </AccordionPanel>
-                      </AccordionItem>
-                    ))
-                  )}
-              </Accordion>
-              <Box
-                bg="#5A457F"
-                textColor={"#ECE8F1"}
-                alignContent={"center"}
-                textAlign={"center"}
-                width="96.5%"
-                height="40px"
-                borderRadius="10px"
-                fontSize="20"
-                _hover={{ bg: "#6a0084" }}
-                onClick={togglePopup}
-                mt={5}
-              >
-                Add Exercise...
+                            {exercise.sets &&
+                              exercise.sets.map((set, setIndex) => (
+                                <Flex flexWrap="wrap" key={setIndex}>
+                                  <Box
+                                    borderRadius="10px"
+                                    width="10%"
+                                    mt={3}
+                                    ml={10}
+                                    mr={5}
+                                    bg="#C7B3DC"
+                                    textColor="black"
+                                    textAlign="center"
+                                    padding={2}
+                                  >
+                                    Set {setIndex + 1}
+                                  </Box>
+
+                                  <Box
+                                    borderRadius="10px"
+                                    width="15%"
+                                    mt={3}
+                                    mr={5}
+                                    bg="#C7B3DC"
+                                    textColor="black"
+                                    textAlign="left"
+                                    padding={2}
+                                  >
+                                    Weight: {set.weight} lbs
+                                  </Box>
+                                  <Box
+                                    borderRadius="10px"
+                                    width="15%"
+                                    mt={3}
+                                    mr={4}
+                                    bg="#C7B3DC"
+                                    textColor="black"
+                                    textAlign="left"
+                                    padding={2}
+                                  >
+                                    Reps: {set.reps}
+                                  </Box>
+                                  <Button
+                                    mt={4}
+                                    width="10px"
+                                    borderRadius="115px"
+                                    bg="#5A457F"
+                                    textColor={"#ECE8F1"}
+                                    alignContent={"center"}
+                                    textAlign={"center"}
+                                    onClick={() =>
+                                      deleteSet(
+                                        workout._id,
+                                        exercise.name,
+                                        setIndex
+                                      )
+                                    }
+                                  >
+                                    <CloseIcon />
+                                  </Button>
+                                </Flex>
+                              ))}
+
+                            <Button
+                              mt={4}
+                              ml={10}
+                              width="20%"
+                              bg="#600086"
+                              textColor={"#ECE8F1"}
+                              alignContent={"center"}
+                              textAlign={"center"}
+                              onClick={toggleAddSetPopup}
+                            >
+                              Add Set...
+                            </Button>
+                            <Center>
+                              <AddSet
+                                isOpen2={isOpen2}
+                                onClose={toggleAddSetPopup}
+                                workouts={workouts}
+                                setWorkouts={setWorkouts}
+                                selectedExercise={exercise.name}
+                              />
+                            </Center>
+                          </AccordionPanel>
+                        </AccordionItem>
+                      ))
+                    )}
+                </Accordion>
+                <Box
+                  bg="#600086"
+                  textColor={"#ECE8F1"}
+                  alignContent={"center"}
+                  textAlign={"center"}
+                  width="96.5%"
+                  height="40px"
+                  borderRadius="10px"
+                  fontSize="20"
+                  _hover={{ bg: "#6a0084" }}
+                  onClick={togglePopup}
+                  mt={5}
+                >
+                  Add Exercise...
+                </Box>
+                <Center>
+                  <AddEx
+                    isOpen={isOpen}
+                    onClose={togglePopup}
+                    titles={titlesState}
+                    addTitle={addTitle}
+                    workouts={workouts}
+                    setWorkouts={setWorkouts}
+                  />
+                </Center>
               </Box>
-              <Center>
-                <AddEx
-                  isOpen={isOpen}
-                  onClose={togglePopup}
-                  titles={titlesState}
-                  addTitle={addTitle}
-                  workouts={workouts}
-                  setWorkouts={setWorkouts}
-                />
-              </Center>
-            </Box>
-          </Box>
-        </Box>
-      </Box>
-    </Flex>
+            </CardBody>
+            </Card>
+          </div>
+      </div>
+    </div>
   );
 };
 

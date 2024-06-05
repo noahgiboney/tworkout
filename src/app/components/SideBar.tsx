@@ -124,7 +124,7 @@ const SideBar = () => {
           <CircularProgress isIndeterminate color="purple.500" />
         ) : (
           <>
-          <Box position="relative" boxSize="120px">
+          <Box marginTop="10px" marginBottom="10px" position="relative" boxSize="120px">
           <Box
               boxSize="120px"
               borderRadius="full"
