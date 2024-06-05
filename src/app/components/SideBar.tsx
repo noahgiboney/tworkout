@@ -118,7 +118,7 @@ const SideBar = () => {
   }, [userId]);
 
   return (
-    <Box h="100vh" bg="#5A457F" w="300px" padding="20px" marginRight="20px">
+    <Box h="100vh" bg="#5A457F" w="300px" padding="20px" marginRight="0px">
       <VStack>
         {isLoading ? (
           <CircularProgress isIndeterminate color="purple.500" />
