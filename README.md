@@ -12,11 +12,11 @@ For anyone who goes to the gym, our app helps make going to the gym easier, more
 
 ## UI Prototype
 
-Our [UI Prototype](https://www.figma.com/design/wVXWMdEo0yLpJXAPOgD2Ni/Tworkout?node-id=0-1&t=cawFrs1So6fO68zR-0) was last updated May 28th, 2024.
+Our [UI Prototype](https://www.figma.com/design/wVXWMdEo0yLpJXAPOgD2Ni/Tworkout?node-id=0-1&t=cawFrs1So6fO68zR-0) were last updated May 28th, 2024.
 
 ## Diagrams 
 
-Our [UML Diagmram] last updated on June 4th, 2024.
+Our [UML Diagmram and Sequence Diagrams](https://github.com/noahgiboney/tworkout/blob/main/docs/wikipage.md) were last updated on June 4th, 2024.
 
 ## Installation
 
