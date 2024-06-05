@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
     const newWorkout = new Workout(workout);
 
     await newWorkout.save();
-    return NextResponse.json("Workout added", {
+    return NextResponse.json(newWorkout, {
       status: 200,
     });
   } catch (error) {
