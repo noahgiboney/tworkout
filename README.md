@@ -2,6 +2,14 @@
 
 For anyone who goes to the gym, our app helps make going to the gym easier, more enjoyable, and more effective. Unlike mainstream workout trackers, our product is free.
 
+## Developers
+
+- Kendrick Tran 
+- Martin Wise
+- Melika Dabri
+- Noah Giboney
+- Sadie Fisher
+
 ## Installation
 
 ### Prerequisites
