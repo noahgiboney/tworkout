@@ -22,6 +22,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import styles from "./progress.module.css"
 
 ChartJS.register(
   CategoryScale,
@@ -229,20 +230,20 @@ const Progress = () => {
         position: "top" as const,
       },
       title: {
-        display: true,
+        display: false,
         text: "Progress Over Time",
       },
     },
   };
 
   return (
-    <Flex h="100vh" bg={backgroundColor} color={textColor}>
+    <div className={styles.main}>
       <SideBar />
-      <Box flex="1" p="4">
-        <Text fontSize="2xl" mb="4">
+      <div className={styles.body}>
+        <div className={styles.title}>
           Track Progress
-        </Text>
-        <VStack spacing={4} align="stretch">
+        </div>
+        <div className={styles.cards}>
           <Select
             icon={<TriangleDownIcon />}
             onChange={handleExerciseChange}
@@ -281,13 +282,13 @@ const Progress = () => {
             borderRadius="md"
             shadow="md"
             w="100%"
-            h="700px"
+            h="500px"
           >
             <Line data={data} options={chartOptions} />
           </Box>
-        </VStack>
-      </Box>
-    </Flex>
+        </div>
+      </div>
+    </div>
   );
 };
 

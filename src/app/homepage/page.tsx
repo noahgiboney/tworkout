@@ -206,9 +206,7 @@ const Homepage: React.FC = () => {
 
   return (
     <div className={styles.main}>
-      <div>
-        <SideBar/>
-      </div>
+      <SideBar/>
       <div className={styles.body}>
         <div className={styles.title}>
           {monthDictionary[month]} {day}th {year}

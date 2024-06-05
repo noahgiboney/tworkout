@@ -10,6 +10,7 @@
     background-color: #130030;
     gap: 20px;
     height: 100vh;
+    padding-bottom: 20px;
     overflow-y: auto;
   }
 
@@ -24,10 +25,7 @@
   .cards {
     width: 90%;
     margin: 0 auto;
+    margin-top: 15px;
   }
 
-  .exercises {
-    height: "auto";
-    display: "flex";
-    flex-direction: "row";
-  }
+  
