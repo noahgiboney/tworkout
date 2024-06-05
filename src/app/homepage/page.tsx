@@ -24,6 +24,7 @@ import {
 } from "@chakra-ui/react";
 import { AddIcon, CloseIcon } from "@chakra-ui/icons";
 import { useUser } from "@/context/userContext";
+import WeightLogger from "../components/WeightLogger";
 
 export interface Workout {
   _id: string;
@@ -602,7 +603,7 @@ const Homepage: React.FC = () => {
       <SideBar />
       <Box
         flex="1"
-        p={5}
+        p={1}
         flexDirection="column"
         bg="#130030"
         display="flex"
@@ -612,6 +613,7 @@ const Homepage: React.FC = () => {
         <Text alignItems="left" color="white" fontSize="50" pb="60px" pt="40px">
           {monthDictionary[month]} {day}th {year}
         </Text>
+        <WeightLogger showStreak={true}/>
         <Box
           flex="1"
           p={3}
@@ -621,6 +623,7 @@ const Homepage: React.FC = () => {
           width="95%"
           justifyContent="flex-start"
           paddingTop="20px"
+          marginTop= "30px"
           padding="50px"
           alignItems="left"
           bg="#E9E4F2"
