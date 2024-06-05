@@ -51,7 +51,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
       );
     }
 
-    const token = await generateAccessToken(email);
+    const token = await generateAccessToken(user.email);
     cookies().set({
       name: "token",
       value: token,
@@ -63,10 +63,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
       { message: "Login successful", userId: user._id },
       { status: 200 }
     );
-    response.headers.set(
-      "Set-Cookie",
-      `token=${token}; HttpOnly; Path=/; Secure; SameSite=lax; Max-Age=86400`
-    );
+
     return response;
   } catch (error) {
     console.error(error);

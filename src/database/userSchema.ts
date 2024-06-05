@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema({
   },
   name: {
     type: String,
-    required: true
+    required: true,
   },
   password: {
     type: String,
@@ -29,6 +29,7 @@ const userSchema = new mongoose.Schema({
   weight: {
     type: [weightEntrySchema],
     required: false,
+    default: [], 
   },
   heightFeet: {
     type: Number,
@@ -44,7 +45,7 @@ const userSchema = new mongoose.Schema({
   },
   avatarId: {
     type: Number,
-    required: false,
+    require: false,
   },
 });
 

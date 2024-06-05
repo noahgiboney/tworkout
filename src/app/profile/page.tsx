@@ -22,15 +22,21 @@ import {
 } from "@chakra-ui/react";
 import { EditIcon } from "@chakra-ui/icons";
 import { useUser } from "@/context/userContext";
+import WeightLogger from "../components/WeightLogger";
 
 interface User {
   email: string;
   name: string;
-  weight?: number;
+  weight?: WeightEntry[];
   heightFeet?: number;
   heightInches?: number;
   age?: number;
   avatarId?: number;
+}
+
+interface WeightEntry {
+  weight: number;
+  date: Date;
 }
 
 type Avatar = {
@@ -55,9 +61,9 @@ const Profile: React.FC = () => {
   );
   const [age, setAge] = useState<number | undefined>(undefined);
   const [avatarId, setAvatarId] = useState<number | undefined>(undefined);
-  const [selectedAvatarId, setSelectedAvatarId] = useState<
-    number | undefined
-  >(undefined);
+  const [selectedAvatarId, setSelectedAvatarId] = useState<number | undefined>(
+    undefined
+  );
   const getAvatarPathById = (id: number): string | undefined => {
     const avatar = avatars.find((avatar) => avatar.id === id);
     return avatar ? avatar.path : undefined;
@@ -105,7 +111,9 @@ const Profile: React.FC = () => {
           setIsEditingField(null);
           break;
         case "weight":
-          setWeight(user.weight);
+          setWeight(
+            user.weight ? user.weight[user.weight.length - 1].weight : undefined
+          );
           setIsEditingField(null);
           break;
         case "height":
@@ -136,7 +144,12 @@ const Profile: React.FC = () => {
             updates.name = name;
             break;
           case "weight":
-            updates.weight = weight;
+            if (weight !== undefined) {
+              updates.weight = [
+                ...(user?.weight || []),
+                { weight, date: new Date() },
+              ];
+            }
             break;
           case "height":
             updates.heightFeet = heightFeet;
@@ -190,7 +203,10 @@ const Profile: React.FC = () => {
           const data: User = await response.json();
           setUser(data);
           setName(data.name || "");
-          setWeight(data.weight);
+          const latestWeight = data.weight
+            ? data.weight[data.weight.length - 1].weight
+            : undefined;
+          setWeight(latestWeight);
           setHeightFeet(data.heightFeet);
           setHeightInches(data.heightInches);
           setAge(data.age);
@@ -225,67 +241,6 @@ const Profile: React.FC = () => {
           </Box>
         ) : (
           <>
-            <div className={styles.avatar}>
-              {avatarId !== undefined ? (
-                <Box
-                  boxSize={130}
-                  borderRadius="full"
-                  overflow="hidden"
-                  bg="white"
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                >
-                  <Image src={getAvatarPathById(avatarId)} boxSize={110} />
-                </Box>
-              ) : (
-                <Avatar size="2xl" />
-              )}
-
-              <IconButton
-                aria-label="Edit Avatar"
-                icon={<EditIcon />}
-                size="sm"
-                mt={2}
-                color="#E9E4F2"
-                onClick={() => setIsEditingField("avatar")}
-              />
-              {isEditingField === "avatar" && (
-                <Card mt={2} width="auto" bgColor="#C7B3DC">
-                  <CardHeader padding={2}></CardHeader>
-                  <div className={styles.avatarCards}>
-                    {avatars.map((avatar) => (
-                      <div key={avatar.id} onClick={() => handleAvatarSelection(avatar.id)}>
-                        <Button
-                          bg={selectedAvatarId === avatar.id ? "#600086" : "#E9E4F2"}
-                          _hover={{ bg: "#A759C6" }}
-                          _active={{ bg: "#450061" }}
-                          p="0"
-                          width="50px"
-                          height="50px"
-                        >
-                          <Image src={avatar.path} boxSize="45px" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                  <CardBody
-                    padding={2}
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                    gap={2}
-                  >
-                    <Button colorScheme="blue" onClick={handleSubmit}>
-                      Save
-                    </Button>
-                    <Button colorScheme="red" onClick={() => handleCancel("avatar")}>
-                      Cancel
-                    </Button>
-                  </CardBody>
-                </Card>
-              )}
-            </div>
             <div className={styles.cards}>
               <Card marginTop="1rem" marginBottom="1rem" bgColor="#E9E4F2">
                 <CardHeader paddingBottom="0rem">
@@ -325,7 +280,11 @@ const Profile: React.FC = () => {
                           onChange={handleNameChange}
                           placeholder="Update your name"
                         />
-                        <Button colorScheme="blue" mt={2} onClick={handleSubmit}>
+                        <Button
+                          colorScheme="blue"
+                          mt={2}
+                          onClick={handleSubmit}
+                        >
                           Save
                         </Button>
                         <Button
@@ -356,49 +315,6 @@ const Profile: React.FC = () => {
                   </Text>
                 </CardHeader>
                 <CardBody>
-                  <Text paddingTop="1rem" fontSize={18} color="black">
-                    Weight
-                    <IconButton
-                      aria-label="Edit weight"
-                      icon={<EditIcon />}
-                      size="sm"
-                      ml={2}
-                      bg="#E9E4F2"
-                      color="#130030"
-                      onClick={() => setIsEditingField("weight")}
-                    />
-                  </Text>
-                  {isEditingField === "weight" ? (
-                    <Card bgColor="#C7B3DC">
-                      <CardHeader>
-                        <Input
-                          type="number"
-                          value={weight !== undefined ? weight.toString() : ""}
-                          onChange={handleWeightChange}
-                          placeholder="Enter your weight"
-                        />
-                        <Button colorScheme="blue" mt={2} onClick={handleSubmit}>
-                          Save
-                        </Button>
-                        <Button
-                          colorScheme="red"
-                          mt={2}
-                          onClick={() => handleCancel("weight")}
-                          marginLeft="5"
-                        >
-                          Cancel
-                        </Button>
-                      </CardHeader>
-                    </Card>
-                  ) : (
-                    <Card bgColor="#C7B3DC">
-                      <CardHeader>
-                        <Text fontSize={18} color="black">
-                          {weight !== undefined ? `${weight} lbs` : "Update your weight"}
-                        </Text>
-                      </CardHeader>
-                    </Card>
-                  )}
                   <Text paddingTop="1rem" fontSize={18} color="black">
                     Height
                     <IconButton
@@ -444,7 +360,11 @@ const Profile: React.FC = () => {
                             <NumberDecrementStepper />
                           </NumberInputStepper>
                         </NumberInput>
-                        <Button colorScheme="blue" mt={2} onClick={handleSubmit}>
+                        <Button
+                          colorScheme="blue"
+                          mt={2}
+                          onClick={handleSubmit}
+                        >
                           Save
                         </Button>
                         <Button
@@ -461,7 +381,8 @@ const Profile: React.FC = () => {
                     <Card bgColor="#C7B3DC">
                       <CardHeader>
                         <Text fontSize={18} color="black">
-                          {heightFeet !== undefined && heightInches !== undefined
+                          {heightFeet !== undefined &&
+                          heightInches !== undefined
                             ? `${heightFeet}' ${heightInches}"`
                             : "Update your height"}
                         </Text>
@@ -489,7 +410,11 @@ const Profile: React.FC = () => {
                           onChange={handleAgeChange}
                           placeholder="Update your age"
                         />
-                        <Button colorScheme="blue" mt={2} onClick={handleSubmit}>
+                        <Button
+                          colorScheme="blue"
+                          mt={2}
+                          onClick={handleSubmit}
+                        >
                           Save
                         </Button>
                         <Button
@@ -506,13 +431,16 @@ const Profile: React.FC = () => {
                     <Card bgColor="#C7B3DC">
                       <CardHeader>
                         <Text fontSize={18} color="black">
-                          {age !== undefined ? `${age} years old` : "Update your age"}
+                          {age !== undefined
+                            ? `${age} years old`
+                            : "Update your age"}
                         </Text>
                       </CardHeader>
                     </Card>
                   )}
                 </CardBody>
               </Card>
+              <WeightLogger/>
             </div>
           </>
         )}
