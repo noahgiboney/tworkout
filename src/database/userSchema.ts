@@ -1,27 +1,54 @@
 import mongoose from "mongoose";
 
-// Define the user schema
+const weightEntrySchema = new mongoose.Schema({
+  weight: {
+    type: Number,
+    required: true,
+  },
+  date: {
+    type: Date,
+    required: true,
+    default: Date.now,
+  },
+});
+
 const userSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
+  },
+  name: {
+    type: String,
+    required: true,
   },
   password: {
     type: String,
-    required: true
+    required: true,
   },
   weight: {
-    type: number,
-    required: false
+    type: [weightEntrySchema],
+    required: false,
+    default: [], 
   },
-  height: {
-    type: number, 
-    required: false
-  }
+  heightFeet: {
+    type: Number,
+    required: false,
+  },
+  heightInches: {
+    type: Number,
+    required: false,
+  },
+  age: {
+    type: Number,
+    required: false,
+  },
+  avatarId: {
+    type: Number,
+    require: false,
+  },
 });
 
-// Create a model from the schema
-const User = mongoose.models.User || mongoose.model('User', userSchema);
+const User = mongoose.models.User || mongoose.model("User", userSchema);
 
 export default User;

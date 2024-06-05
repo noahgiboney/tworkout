@@ -28,7 +28,7 @@ export default function Home() {
       </Text>
 
       <Image
-        src="/images/landing-page.webp"
+        src="/images/landing-page.png"
         alt="man and woman working out"
         width={800}
         height={800}

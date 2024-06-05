@@ -3,7 +3,7 @@ import Workout, { IWorkout } from "@/database/workoutSchema";
 import { NextResponse, NextRequest } from "next/server";
 
 // get all workouts in the collection
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
     await connectDB();
     const workouts = await Workout.find({});
@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
     await connectDB();
 
     const workout: IWorkout = await req.json();
-    const newWorkout = new Workout(workout)
+    const newWorkout = new Workout(workout);
 
     await newWorkout.save();
     return NextResponse.json("Workout added", {

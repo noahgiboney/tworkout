@@ -1,0 +1,34 @@
+.reactCalendar {
+  border: 3px solid #600086;
+  width: 100%;
+  border-radius: 20px;
+  box-sizing: border-box !important;
+  background-color: #e9e4f2;
+  padding: 30px;
+  margin-left: 20px;
+  margin-right: 50px;
+}
+
+.reactCalendar__tile {
+  background-color: #e9e4f2;
+  border: 3px solid #600086 !important;
+  box-sizing: border-box !important;
+  margin: -1.5px !important;
+  padding: 20px;
+  padding-top: 50px;
+  padding-bottom: 50px;
+  min-height: 150px;
+  max-height: 150px;
+  text-align: center;
+  transition: background 0.3s ease;
+}
+
+.reactCalendar__tile:disabled {
+  background-color: #5a457fac !important;
+}
+
+
+
+.reactCalendar__tile:hover {
+  background: #c7b3dc !important;
+}

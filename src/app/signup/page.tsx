@@ -1,5 +1,6 @@
 "use client";
 import React, { FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
 import styles from "./signup.module.css";
 import {
   Button,
@@ -11,13 +12,21 @@ import {
   Input,
   Text,
   VStack,
+  Link,
 } from "@chakra-ui/react";
 import Image from "next/image";
+import NextLink from "next/link";
 import SignInButton from "../components/SignInButton";
+import { useUser } from "@/context/userContext";
 
 const Signup = () => {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [signupFailed, setSignupFailed] = useState(false);
+  const [error, setError] = useState("");
+  const router = useRouter();
+  const { userId, setUserId } = useUser();
 
   const handleSubmit = async (e: FormEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -27,16 +36,23 @@ const Signup = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ name, email, password }),
       });
       if (response.ok) {
         const data = await response.json();
-        console.log("Signup successful. Token:", data.token);
+        //console.log("mongodb id", data.userId);
+        setUserId(data.userId);
+        console.log("Signup successful");
+        router.push("/homepage");
       } else {
-        console.error("Signup failed:", await response.text());
+        const errorData = await response.json();
+        setError(errorData.error || "Signup failed");
+        setSignupFailed(true);
+        console.error("Signup failed:", errorData);
       }
     } catch (error) {
       console.error("Signup error:", error);
+      setSignupFailed(true);
     }
   };
 
@@ -48,12 +64,26 @@ const Signup = () => {
             <Text fontSize={40} fontWeight="extrabold">
               WELCOME
             </Text>
-            <Text color="#636364">
-              Welcome! Please enter your details.
-            </Text>
+            <Text color="#636364">Welcome! Please enter your details.</Text>
           </CardHeader>
           <CardBody>
             <VStack as="form" onSubmit={handleSubmit}>
+              <FormControl>
+                <FormLabel fontSize={18} fontWeight="bold" marginBottom={1}>
+                  Name
+                </FormLabel>
+                <Input
+                  type="name"
+                  placeholder="Enter your name"
+                  bgColor="rgba(251, 251, 251, .5)"
+                  borderColor="black"
+                  marginBottom={5}
+                  fontSize={15}
+                  padding={25}
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </FormControl>
               <FormControl>
                 <FormLabel fontSize={18} fontWeight="bold" marginBottom={1}>
                   Email
@@ -96,7 +126,24 @@ const Signup = () => {
               >
                 Sign Up
               </Button>
+              {signupFailed && (
+                <Text fontWeight="bold" color="red.500">
+                  {error}
+                </Text>
+              )}
               <SignInButton />
+              <Link
+                margin={3}
+                fontSize={14}
+                textAlign={"center"}
+                as={NextLink}
+                color={"black"}
+                fontWeight={"bold"}
+                href="/login"
+              >
+                Already have an account? <br />
+                Click here to log in.
+              </Link>
             </VStack>
           </CardBody>
         </div>
@@ -111,5 +158,5 @@ const Signup = () => {
     </div>
   );
 };
- 
+
 export default Signup;

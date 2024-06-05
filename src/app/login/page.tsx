@@ -1,6 +1,6 @@
 "use client";
 import React, { FormEvent, useState } from "react";
-import styles from "./login.module.css";
+import { useRouter } from "next/navigation";
 import {
   Button,
   Card,
@@ -16,12 +16,20 @@ import {
 import NextLink from "next/link";
 import Image from "next/image";
 import SignInButton from "../components/SignInButton";
-import { useRouter } from "next/router";
+import { useUser } from "@/context/userContext";
+import styles from "./login.module.css";
+
+
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loginFailed, setLoginFailed] = useState(false);
+  const [error, setError] = useState("");
+  const router = useRouter();
+  const { setUserId } = useUser();
 
+  
   const handleSubmit = async (e: FormEvent<HTMLDivElement>) => {
     e.preventDefault();
     try {
@@ -34,12 +42,18 @@ const Login = () => {
       });
       if (response.ok) {
         const data = await response.json();
-        console.log("Login successful. Token:", data.token);
+        setUserId(data.userId); // Assume the API response contains the userId
+        console.log("Login successful");
+        router.push("/homepage");
       } else {
-        console.error("Login failed:", await response.text());
+        const errorData = await response.json();
+        setError(errorData.error || "Login failed");
+        console.error("Login failed:", errorData);
+        setLoginFailed(true);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Login error:", error);
+      setLoginFailed(true);
     }
   };
 
@@ -99,6 +113,7 @@ const Login = () => {
               >
                 Sign in
               </Button>
+              {loginFailed  && <Text fontWeight="bold" color="red.500">{error}</Text>}
               <SignInButton />
               <Link
                 margin={3}

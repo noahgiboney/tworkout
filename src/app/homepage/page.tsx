@@ -23,17 +23,17 @@ import {
   HStack,
 } from "@chakra-ui/react";
 import { AddIcon, CloseIcon } from "@chakra-ui/icons";
-import { useUser } from "@/context/userConext";
+import { useUser } from "@/context/userContext";
 
 export interface Workout {
-  Id: string;
+  _id: string;
   userId: string;
   date: Date;
   name: string;
   exercises: {
     name: string;
     type: "Cardio" | "Weights";
-    sets?: { weight: number }[];
+    sets?: { reps: number; weight: number }[];
     distance?: number;
   }[];
 }
@@ -83,6 +83,131 @@ interface AddExProps {
   setWorkouts: React.Dispatch<React.SetStateAction<Workout[]>>;
 }
 
+interface AddSetProps {
+  isOpen2: boolean;
+  onClose: () => void;
+  workouts: Workout[];
+  setWorkouts: React.Dispatch<React.SetStateAction<Workout[]>>;
+}
+
+const AddSet: React.FC<AddSetProps> = ({
+  isOpen2,
+  onClose,
+  workouts,
+  setWorkouts,
+}) => {
+  const [weight, setWeight] = useState<number>(0);
+  const [reps, setReps] = useState<number>(0);
+
+  const handleConfirmClick = async () => {
+    if (weight > 0 && reps > 0) {
+      try {
+        // Construct the new set
+        const newSet = { weight, reps };
+
+        // Find the index of the last exercise in the last workout
+        const lastWorkoutIndex = workouts.length - 1;
+        const lastWorkout = workouts[lastWorkoutIndex];
+        if (!lastWorkout) {
+          console.error("No workouts found.");
+          return;
+        }
+
+        const lastExerciseIndex = lastWorkout.exercises.length - 1;
+        const lastExercise = lastWorkout.exercises[lastExerciseIndex];
+        if (!lastExercise) {
+          console.error("No exercises found in the last workout.");
+          return;
+        }
+
+        // Ensure 'sets' property exists before pushing newSet
+        if (!lastExercise.sets) {
+          lastExercise.sets = [];
+        }
+        lastExercise.sets.push(newSet);
+
+        // Update the workout with the new set
+        const updatedWorkouts = [...workouts];
+        updatedWorkouts[lastWorkoutIndex].exercises[lastExerciseIndex] =
+          lastExercise;
+        setWorkouts(updatedWorkouts);
+
+        const response = await fetch(
+          `/api/workouts/${updatedWorkouts[lastWorkoutIndex]._id}`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(updatedWorkouts[lastWorkoutIndex]),
+          }
+        );
+
+        if (!response.ok) {
+          console.error(
+            "Failed to update workout in database:",
+            await response.json()
+          );
+        }
+
+        onClose();
+
+        onClose();
+      } catch (error) {
+        console.error("Error adding set:", error);
+      }
+    }
+  };
+  return (
+    <Modal isOpen={isOpen2} onClose={onClose} isCentered motionPreset="scale">
+      <ModalOverlay />
+      <ModalContent bg="#5A457F">
+        <ModalHeader textColor="#ECE8F1" fontSize="48">
+          Add Set
+        </ModalHeader>
+        <ModalCloseButton />
+        <ModalBody flex="1">
+          <Box flexDirection="column">
+            <Flex padding={2} mb={2} >
+              <Flex fontSize = {20} bg="#C7B3DC" borderRadius="10px" px={4} py={2} mr={4} height="80%" >
+                Weight
+              </Flex>
+              <Input
+                type="number"
+                placeholder="Weight"
+                _hover={{ bg: "#d5c0e0" }}
+                bg="#C7B3DC"
+                value={weight}
+                onChange={(e) => setWeight(parseInt(e.target.value))}
+                mb={4}
+              />
+            </Flex>
+            <Flex >
+              <Box fontSize = {20} bg="#C7B3DC" borderRadius="10px" px={4} py={2} mr={4} height="80%">
+                Reps
+              </Box>
+              <Input
+                type="number"
+                placeholder="Reps"
+                bg="#C7B3DC"
+                _hover={{ bg: "#d5c0e0" }}
+                value={reps}
+                onChange={(e) => setReps(parseInt(e.target.value))}
+              />
+            </Flex>
+          </Box>
+        </ModalBody>
+        <ModalFooter>
+          <Button colorScheme="blue" mr={3} onClick={handleConfirmClick}>
+            Save
+          </Button>
+          <Button onClick={onClose}>Cancel</Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+  );
+};
+
 const AddEx: React.FC<AddExProps> = ({
   isOpen,
   onClose,
@@ -95,6 +220,7 @@ const AddEx: React.FC<AddExProps> = ({
   const [isOpen1, setIsOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [inputValue, setInputValue] = useState<string>("");
+  const [inputType, setInputType] = useState<string>("");
   const { userId } = useUser();
 
   const handleButtonClick = (label: any) => {
@@ -113,20 +239,26 @@ const AddEx: React.FC<AddExProps> = ({
 
   const handleConfirmClick = async () => {
     if (inputValue.trim()) {
-      const newExercise = { name: inputValue, type: "Weights", sets: [{reps: 0, weight:0}] }; // Adjust the exercise structure as needed
-
-      // Check if a workout exists for the current day
-      const currentWorkout = workouts.find((workout) => {
-        const workoutDate = new Date(workout.date);
-
-
-        return workoutDate == currentDate;
-      });
+      const newExercise = {
+        name: inputValue,
+        type: "Weights",
+        sets: [{}],
+      };
 
       try {
+        // Check if a workout exists for the current day
+        const currentWorkout = workouts.find((workout) => {
+          const workoutDate = new Date(workout.date);
+          return (
+            workoutDate.getFullYear() === currentDate.getFullYear() &&
+            workoutDate.getMonth() === currentDate.getMonth() &&
+            workoutDate.getDate() === currentDate.getDate()
+          );
+        });
+
         if (currentWorkout) {
           // Update existing workout
-          const response = await fetch(`/api/workouts/${currentWorkout.Id}/`, {
+          const response = await fetch(`/api/workouts/${currentWorkout._id}/`, {
             method: "PATCH",
             headers: {
               "Content-Type": "application/json",
@@ -139,27 +271,24 @@ const AddEx: React.FC<AddExProps> = ({
 
           if (response.ok) {
             const updatedWorkout = await response.json();
-            setWorkouts(
-              workouts.map((workout) =>
-                workout.Id === updatedWorkout.Id ? updatedWorkout : workout
+            setWorkouts((prevWorkouts) =>
+              prevWorkouts.map((workout) =>
+                workout._id === updatedWorkout._id ? updatedWorkout : workout
               )
             );
-            addTitle(newExercise.name);
-            setAccordionLabel(newExercise.name);
-            setIsEditing(false);
           } else {
             console.error("Failed to update workout:", await response.json());
           }
         } else {
           // Add new workout
           const newWorkout = {
-            userId,
-            name: currentDate.toDateString, 
+            userId: userId,
+            name: currentDate,
             exercises: [newExercise],
             date: currentDate,
           };
 
-          const response = await fetch(`/api/workouts/${userId}/`, {
+          const response = await fetch(`/api/workouts/`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -169,14 +298,16 @@ const AddEx: React.FC<AddExProps> = ({
 
           if (response.ok) {
             const addedWorkout = await response.json();
-            setWorkouts([...workouts, addedWorkout]);
-            addTitle(newExercise.name);
-            setAccordionLabel(newExercise.name);
-            setIsEditing(false);
+            setWorkouts((prevWorkouts) => [...prevWorkouts, addedWorkout]);
           } else {
             console.error("Failed to add workout:", await response.json());
           }
         }
+
+        // Update local state for UI
+        addTitle(newExercise.name);
+        setAccordionLabel(newExercise.name);
+        setIsEditing(false);
       } catch (error) {
         console.error("Error saving exercise:", error);
       }
@@ -292,6 +423,7 @@ const AddEx: React.FC<AddExProps> = ({
 
 const Homepage: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpen2, setIsOpen2] = useState(false);
   const [workouts, setWorkouts] = useState<Workout[]>([]);
   const { userId } = useUser();
 
@@ -303,20 +435,23 @@ const Homepage: React.FC = () => {
           if (response.ok) {
             const workoutList: Workout[] = await response.json();
             const filteredWorkouts = workoutList.filter((workout) => {
-              // HERE \/
               const workoutDate = new Date(workout.date);
+              console.log("workout date: ", workoutDate);
+              console.log("current date:", currentDate);
+              console.log(
+                workoutDate.getFullYear() == currentDate.getFullYear()
+              );
+              console.log(workoutDate.getMonth() == currentDate.getMonth());
+              console.log(workoutDate.getDate() == currentDate.getDate());
 
-              return workoutDate.getFullYear == currentDate.getFullYear 
-                  && workoutDate.getMonth == currentDate.getMonth 
-                  && workoutDate.getDay == currentDate.getDay;
-                  
-              // HERE /\
+              return (
+                workoutDate.getFullYear() == currentDate.getFullYear() &&
+                workoutDate.getMonth() == currentDate.getMonth() &&
+                workoutDate.getDate() == currentDate.getDate()
+              );
             });
             setWorkouts(filteredWorkouts);
 
-
-
-            
             const uniqueExercises = new Set<string>();
             workoutList.forEach((workout) => {
               workout.exercises.forEach((exercise) => {
@@ -337,6 +472,107 @@ const Homepage: React.FC = () => {
 
   const togglePopup = () => {
     setIsOpen(!isOpen);
+  };
+
+  const toggleAddSetPopup = () => {
+    setIsOpen2(!isOpen2);
+  };
+
+  const deleteSet = async (
+    workoutId: string,
+    exerciseName: string,
+    setIndex: number
+  ) => {
+    try {
+      // Find the workout by ID
+      const workout = workouts.find((workout) => workout._id === workoutId);
+      if (!workout) return;
+
+      // Find the exercise by name
+      const exerciseIndex = workout.exercises.findIndex(
+        (exercise) => exercise.name === exerciseName
+      );
+      if (exerciseIndex === -1 || !workout.exercises[exerciseIndex]?.sets)
+        return;
+
+      // Remove the set from the exercise if sets are defined
+      const updatedSets = workout.exercises[exerciseIndex]?.sets?.filter(
+        (_, index) => index !== setIndex
+      );
+
+      // Update the exercise with the new sets
+      const updatedExercise = {
+        ...workout.exercises[exerciseIndex],
+        sets: updatedSets,
+      };
+
+      // Update the workout with the updated exercise
+      const updatedExercises = [...workout.exercises];
+      updatedExercises[exerciseIndex] = updatedExercise;
+
+      const updatedWorkout = {
+        ...workout,
+        exercises: updatedExercises,
+      };
+
+      // Send the updated workout to the API
+      const response = await fetch(`/api/workouts/${workoutId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedWorkout),
+      });
+
+      if (!response.ok) {
+        console.error("Failed to update workout:", await response.json());
+        return;
+      }
+
+      // Update the state with the new workout list
+      setWorkouts((prevWorkouts) =>
+        prevWorkouts.map((w) => (w._id === workoutId ? updatedWorkout : w))
+      );
+    } catch (error) {
+      console.error("Error deleting set:", error);
+    }
+  };
+
+  const eraseExercise = async (workoutId: string, exerciseName: string) => {
+    try {
+      // Find the workout by ID
+      const workout = workouts.find((workout) => workout._id === workoutId);
+      if (!workout) return;
+
+      // Filter out the exercise to be deleted
+      const updatedExercises = workout.exercises.filter(
+        (exercise) => exercise.name !== exerciseName
+      );
+
+      // Update the workout with the new list of exercises
+      const updatedWorkout = { ...workout, exercises: updatedExercises };
+
+      // Send the updated workout to the API
+      const response = await fetch(`/api/workouts/${workoutId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedWorkout),
+      });
+
+      if (!response.ok) {
+        console.error("Failed to update workout:", await response.json());
+        return;
+      }
+
+      // Update the state with the new workout list
+      setWorkouts((prevWorkouts) =>
+        prevWorkouts.map((w) => (w._id === workoutId ? updatedWorkout : w))
+      );
+    } catch (error) {
+      console.error("Error deleting exercise:", error);
+    }
   };
 
   const [titlesState, setTitlesState] = useState<string[]>(initialTitles);
@@ -383,122 +619,145 @@ const Homepage: React.FC = () => {
             display="flex"
           >
             <Box width={"100%"}>
-              <Accordion allowToggle allowMultiple>
-                {workouts
-                  .flatMap((workout) => workout.exercises)
-                  .map((exercise, index) => (
-                    <AccordionItem mt={3} padding={1} key={index}>
-                      <h2>
-                        <Box display="flex" alignItems="center">
-                          <AccordionButton
-                            bg="#C7B3DC"
-                            borderRadius="10px"
-                            _hover={{ bg: "#d5c0ec" }}
-                            _expanded={{ bg: "#C7B3DC" }}
-                          >
-                            <Box as="span" flex="1" textAlign="left">
-                              <Text fontWeight="bold" fontSize="20">
-                                {exercise.name}
-                              </Text>
-                            </Box>
-                            <AccordionIcon display="none" />
-                          </AccordionButton>
-                          <Button
-                            aspectRatio={1}
-                            borderRadius="50%"
-                            backgroundColor="gray.400"
-                            ml={3}
-                            padding={0}
-                            minWidth="24px"
-                            display="flex"
-                            alignItems="center"
-                            justifyContent="center"
-                            bg="#5A457F"
-                            _hover={{ bg: "#6c5399" }}
-                          >
-                            <Box
-                              width="75%"
-                              height="5%"
-                              backgroundColor="gray.700"
-                              borderRadius="full"
-                              bg="#ECE8F1"
-                            />
-                          </Button>
-                        </Box>
-                      </h2>
-                      <AccordionPanel
-                        fontWeight="bold"
-                        fontSize="20"
-                        pb={4}
-                        display="flex"
-                        flexDirection="column"
-                      >
-                        <Flex flexWrap="wrap">
-                          <Box
-                            borderRadius="10px"
-                            width="10%"
-                            mt={3}
-                            ml={10}
-                            mr={5}
-                            bg="#C7B3DC"
-                            textColor="black"
-                            textAlign="center"
-                            padding={2}
-                          >
-                            Set 1
+              <Accordion allowToggle>
+                {workouts &&
+                  workouts.map((workout) =>
+                    workout.exercises.map((exercise, exerciseIndex) => (
+                      <AccordionItem mt={3} padding={1} key={exerciseIndex}>
+                        <h2>
+                          <Box display="flex" alignItems="center">
+                            <AccordionButton
+                              bg="#C7B3DC"
+                              borderRadius="10px"
+                              _hover={{ bg: "#d5c0ec" }}
+                              _expanded={{ bg: "#C7B3DC" }}
+                            >
+                              <Box as="span" flex="1" textAlign="left">
+                                <Text fontWeight="bold" fontSize="20">
+                                  {exercise.name}
+                                </Text>
+                              </Box>
+                              <AccordionIcon display="none" />
+                            </AccordionButton>
+                            <Button
+                              aspectRatio={1}
+                              borderRadius="50%"
+                              backgroundColor="gray.400"
+                              ml={3}
+                              padding={0}
+                              minWidth="24px"
+                              display="flex"
+                              alignItems="center"
+                              justifyContent="center"
+                              bg="#5A457F"
+                              _hover={{ bg: "#6c5399" }}
+                              onClick={function (event) {
+                                eraseExercise(workout._id, exercise.name);
+                              }}
+                            >
+                              <Box
+                                width="75%"
+                                height="5%"
+                                backgroundColor="gray.700"
+                                borderRadius="full"
+                                bg="#ECE8F1"
+                              />
+                            </Button>
                           </Box>
+                        </h2>
+                        <AccordionPanel
+                          fontWeight="bold"
+                          fontSize="20"
+                          pb={4}
+                          display="flex"
+                          flexDirection="column"
+                        >
+                          {exercise.sets &&
+                            exercise.sets.map((set, setIndex) => (
+                              <Flex flexWrap="wrap" key={setIndex}>
+                                <Box
+                                  borderRadius="10px"
+                                  width="10%"
+                                  mt={3}
+                                  ml={10}
+                                  mr={5}
+                                  bg="#C7B3DC"
+                                  textColor="black"
+                                  textAlign="center"
+                                  padding={2}
+                                >
+                                  Set {setIndex + 1}
+                                </Box>
 
-                          <Box
-                            borderRadius="10px"
-                            width="15%"
-                            mt={3}
-                            mr={5}
-                            bg="#C7B3DC"
-                            textColor="black"
-                            textAlign="left"
-                            padding={2}
-                          >
-                            Weight: 55
-                          </Box>
-                          <Box
-                            borderRadius="10px"
-                            width="15%"
-                            mt={3}
-                            mr={4}
-                            bg="#C7B3DC"
-                            textColor="black"
-                            textAlign="left"
-                            padding={2}
-                          >
-                            Reps: 12
-                          </Box>
+                                <Box
+                                  borderRadius="10px"
+                                  width="15%"
+                                  mt={3}
+                                  mr={5}
+                                  bg="#C7B3DC"
+                                  textColor="black"
+                                  textAlign="left"
+                                  padding={2}
+                                >
+                                  Weight: {set.weight} lbs
+                                </Box>
+                                <Box
+                                  borderRadius="10px"
+                                  width="15%"
+                                  mt={3}
+                                  mr={4}
+                                  bg="#C7B3DC"
+                                  textColor="black"
+                                  textAlign="left"
+                                  padding={2}
+                                >
+                                  Reps: {set.reps}
+                                </Box>
+                                <Button
+                                  mt={4}
+                                  width="10px"
+                                  borderRadius="115px"
+                                  bg="#5A457F"
+                                  textColor={"#ECE8F1"}
+                                  alignContent={"center"}
+                                  textAlign={"center"}
+                                  onClick={() =>
+                                    deleteSet(
+                                      workout._id,
+                                      exercise.name,
+                                      setIndex
+                                    )
+                                  }
+                                >
+                                  <CloseIcon />
+                                </Button>
+                              </Flex>
+                            ))}
+
                           <Button
                             mt={4}
-                            width="10px"
-                            borderRadius="115px"
+                            ml={10}
+                            width="20%"
                             bg="#5A457F"
                             textColor={"#ECE8F1"}
                             alignContent={"center"}
                             textAlign={"center"}
+                            onClick={toggleAddSetPopup}
                           >
-                            <CloseIcon />
+                            Add Set...
                           </Button>
-                        </Flex>
-
-                        <Button
-                          mt={4}
-                          ml={10}
-                          width="20%"
-                          bg="#5A457F"
-                          textColor={"#ECE8F1"}
-                          alignContent={"center"}
-                          textAlign={"center"}
-                        >
-                          Add Set...
-                        </Button>
-                      </AccordionPanel>
-                    </AccordionItem>
-                  ))}
+                          <Center>
+                            <AddSet
+                              isOpen2={isOpen2}
+                              onClose={toggleAddSetPopup}
+                              workouts={workouts}
+                              setWorkouts={setWorkouts}
+                            />
+                          </Center>
+                        </AccordionPanel>
+                      </AccordionItem>
+                    ))
+                  )}
               </Accordion>
               <Box
                 bg="#5A457F"
