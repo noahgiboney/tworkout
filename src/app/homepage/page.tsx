@@ -182,18 +182,21 @@ const AddSet: React.FC<AddSetProps> = ({
   return (
     <Modal isOpen={isOpen2} onClose={onClose} isCentered motionPreset="scale">
       <ModalOverlay />
-      <ModalContent bg="#5A457F">
+      <ModalContent height="300px" bg="#5A457F">
         <ModalHeader textColor="#ECE8F1" fontSize="40">
           Add Set
         </ModalHeader>
         <ModalCloseButton />
-        <ModalBody flex="1">
-          <Box flexDirection="column">
-            <Flex padding={2} mb={2}>
-              <Flex fontSize = {20} bg="#C7B3DC" borderRadius="10px" px={4} py={2} mr={4} height="80%">
+        <ModalBody paddingTop={0} alignContent="center">
+          <div className={styles.addSetOptions}>
+            <div className={styles.weightLabel}>
+              <Box fontSize={20} bg="#C7B3DC" borderRadius="10px" px={4} py={2} mr={4}>
                 Weight
-              </Flex>
+              </Box>
+            </div>
+            <div className={styles.weightInput}>
               <Input
+                height="100%"
                 type="number"
                 placeholder="Weight"
                 _hover={{ bg: "#d5c0e0" }}
@@ -202,12 +205,15 @@ const AddSet: React.FC<AddSetProps> = ({
                 onChange={(e) => setWeight(parseInt(e.target.value))}
                 mb={4}
               />
-            </Flex>
-            <Flex >
-              <Box fontSize = {20} bg="#C7B3DC" borderRadius="10px" px={4} py={2} mr={4} height="80%">
+            </div>
+            <div className={styles.repsLabel}>
+              <Box fontSize = {20} bg="#C7B3DC" borderRadius="10px" px={4} py={2} mr={4}>
                 Reps
               </Box>
+            </div>
+            <div className={styles.repsInput}>
               <Input
+                height="100%"
                 type="number"
                 placeholder="Reps"
                 bg="#C7B3DC"
@@ -215,8 +221,8 @@ const AddSet: React.FC<AddSetProps> = ({
                 value={reps}
                 onChange={(e) => setReps(parseInt(e.target.value))}
               />
-            </Flex>
-          </Box>
+            </div>
+          </div>
         </ModalBody>
         <ModalFooter>
           <Button colorScheme="blue" mr={3} onClick={handleConfirmClick}>
