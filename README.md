@@ -1,6 +1,6 @@
 # Tworkout
 
-For anyone who goes to the gym, our app helps make going to the gym easier, more enjoyable, and more effective. Unlike mainstream workout trackers, our product is free.
+For anyone who goes to the gym, our app helps make going to the gym easier, more enjoyable, and more effective. Unlike mainstream workout trackers, our product is free. Tworkout had full login/logout authentication, where you can log your daily workouts, view a comprehensive calendar or daily view and track your progress. Other features include a personalized profile with avatar selection and a tracker to see your daily workout streak.
 
 ## Developers
 
@@ -9,6 +9,14 @@ For anyone who goes to the gym, our app helps make going to the gym easier, more
 - Melika Dabri
 - Noah Giboney
 - Sadie Fisher
+
+## UI Prototype
+
+Our [UI Prototype](https://www.figma.com/design/wVXWMdEo0yLpJXAPOgD2Ni/Tworkout?node-id=0-1&t=cawFrs1So6fO68zR-0) was last updated May 28th, 2024.
+
+## Diagrams 
+
+Our [UML Diagmram] last updated on June 4th, 2024.
 
 ## Installation
 
