@@ -1,8 +1,9 @@
 import Calendar from "react-calendar";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import "react-calendar/dist/Calendar.css";
 import styles from "./Calendar.module.css";
-import { Box, Text, VStack } from "@chakra-ui/react";
+import PopoverComponent from "./PopoverComponent";
+import { Box, Text, useDisclosure } from "@chakra-ui/react";
 import { Kumbh_Sans } from "next/font/google";
 import {
   FaAngleDoubleLeft,
@@ -18,9 +19,12 @@ type Value = ValuePiece | [ValuePiece, ValuePiece];
 
 interface Props {
   getWorkoutForDate: (date: Date) => Workout | null;
+  onSave: (savedWorkout: Workout) => void;
 }
 
-const CustomCalendar = ({ getWorkoutForDate }: Props) => {
+const CustomCalendar = ({ getWorkoutForDate, onSave }: Props) => {
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const { isOpen, onOpen, onClose, onToggle } = useDisclosure();
   const [value, onChange] = useState<Value>(new Date());
   const colors = ["#E79BD3", "#D7A1F0"];
   const monthNames = [
@@ -41,13 +45,21 @@ const CustomCalendar = ({ getWorkoutForDate }: Props) => {
   const getRandomColor = () => {
     const randomIndex = Math.floor(Math.random() * colors.length);
     return colors[randomIndex];
-  }
+  };
+
+  const handleDayClick = (date: Date) => {
+    setSelectedDate(date);
+  };
+
+  const isSelectedDate = (date: Date) => {
+    return date.getTime() === selectedDate?.getTime();
+  };
 
   return (
     <Box height="100vh">
       <Calendar
         className={styles.reactCalendar}
-        onChange={onChange}
+        onClickDay={(value) => handleDayClick(value)}
         value={value}
         view="month"
         navigationLabel={({ date }) => {
@@ -67,16 +79,24 @@ const CustomCalendar = ({ getWorkoutForDate }: Props) => {
         }}
         tileContent={({ date }) => {
           const workoutForDate = getWorkoutForDate(date);
-          if (!workoutForDate) return "";
+
           return (
-            <Box borderRadius="5px" bg={getRandomColor()}>
-              <Text
-                padding="5px"
-                fontWeight="semibold"
-                fontFamily={kumbhSans.style.fontFamily}
+            <Box display="flex" flexDirection="column" position="relative">
+              {isSelectedDate(date) && (
+                <PopoverComponent date={date} onSave={onSave} workoutForDate={workoutForDate} />
+              )}
+              <Box
+                borderRadius="5px"
+                bg={workoutForDate ? getRandomColor() : ""}
               >
-                {workoutForDate ? workoutForDate.name : ""}
-              </Text>
+                <Text
+                  padding="5px"
+                  fontWeight="semibold"
+                  fontFamily={kumbhSans.style.fontFamily}
+                >
+                  {workoutForDate ? workoutForDate.name : ""}
+                </Text>
+              </Box>
             </Box>
           );
         }}
