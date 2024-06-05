@@ -32,3 +32,13 @@
 .reactCalendar__tile:hover {
   background: #c7b3dc !important;
 }
+
+.listItem {
+  padding-left: 10px;
+  margin-bottom: 10px;
+}
+
+.menuButton:hover {
+  background-color: #e9e4f2;
+  color: #600086;
+}

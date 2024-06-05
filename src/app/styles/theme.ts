@@ -1,8 +1,8 @@
 import { extendTheme } from "@chakra-ui/react";
 import { avatarTheme } from "./avatarTheme";
-import { Kumbh_Sans } from 'next/font/google';
+import { Kumbh_Sans } from "next/font/google";
 
-const kumbhSans = Kumbh_Sans({ subsets: ['latin'] });
+const kumbhSans = Kumbh_Sans({ subsets: ["latin"] });
 
 const customTheme = extendTheme({
   components: {
@@ -15,7 +15,7 @@ const customTheme = extendTheme({
         },
       },
     },
-    Avatar: avatarTheme
+    Avatar: avatarTheme,
   },
   brand: {
     50: "#E9E4F2",
@@ -26,8 +26,8 @@ const customTheme = extendTheme({
   },
   fonts: {
     heading: kumbhSans.style.fontFamily,
-    body: kumbhSans.style.fontFamily
-  }
+    body: kumbhSans.style.fontFamily,
+  },
 });
 
 export default customTheme;

@@ -88,6 +88,7 @@ interface AddSetProps {
   onClose: () => void;
   workouts: Workout[];
   setWorkouts: React.Dispatch<React.SetStateAction<Workout[]>>;
+  selectedExercise: String
 }
 
 const AddSet: React.FC<AddSetProps> = ({
@@ -95,69 +96,84 @@ const AddSet: React.FC<AddSetProps> = ({
   onClose,
   workouts,
   setWorkouts,
+  selectedExercise
 }) => {
   const [weight, setWeight] = useState<number>(0);
   const [reps, setReps] = useState<number>(0);
 
   const handleConfirmClick = async () => {
+    if (!workouts) {
+      console.error("Workouts list is undefined.");
+      return;
+    }
+  
     if (weight > 0 && reps > 0) {
       try {
         // Construct the new set
         const newSet = { weight, reps };
-
-        // Find the index of the last exercise in the last workout
-        const lastWorkoutIndex = workouts.length - 1;
-        const lastWorkout = workouts[lastWorkoutIndex];
-        if (!lastWorkout) {
-          console.error("No workouts found.");
+  
+        // Find the workout containing the selected exercise
+        const workoutIndex = workouts.findIndex(workout =>
+          workout.exercises?.some(exercise => exercise.name === selectedExercise)
+        );
+        if (workoutIndex === -1) {
+          console.error("Selected exercise not found in any workout.");
           return;
         }
-
-        const lastExerciseIndex = lastWorkout.exercises.length - 1;
-        const lastExercise = lastWorkout.exercises[lastExerciseIndex];
-        if (!lastExercise) {
-          console.error("No exercises found in the last workout.");
+  
+        // Find the selected exercise within the workout
+        const workout = workouts[workoutIndex];
+        const exerciseIndex = workout.exercises?.findIndex(
+          exercise => exercise.name === selectedExercise
+        );
+        if (exerciseIndex === -1) {
+          console.error("Selected exercise not found in the workout.");
           return;
         }
-
-        // Ensure 'sets' property exists before pushing newSet
-        if (!lastExercise.sets) {
-          lastExercise.sets = [];
+  
+        // Ensure exercises is not undefined before accessing its properties
+        const sets = workout.exercises && workout.exercises[exerciseIndex]?.sets;
+        if (!sets) {
+          console.error("Sets array is undefined.");
+          return;
         }
-        lastExercise.sets.push(newSet);
-
-        // Update the workout with the new set
+  
+        // Add the new set to the selected exercise
+        sets.push(newSet);
+  
+        // Update the workout with the new sets for the selected exercise
         const updatedWorkouts = [...workouts];
-        updatedWorkouts[lastWorkoutIndex].exercises[lastExerciseIndex] =
-          lastExercise;
-        setWorkouts(updatedWorkouts);
-
+        updatedWorkouts[workoutIndex].exercises![exerciseIndex!].sets = sets;
+  
+        // Update the workout in the database
         const response = await fetch(
-          `/api/workouts/${updatedWorkouts[lastWorkoutIndex]._id}`,
+          `/api/workouts/${updatedWorkouts[workoutIndex]._id}`,
           {
             method: "PATCH",
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify(updatedWorkouts[lastWorkoutIndex]),
+            body: JSON.stringify(updatedWorkouts[workoutIndex]),
           }
         );
-
+  
         if (!response.ok) {
           console.error(
             "Failed to update workout in database:",
             await response.json()
           );
         }
-
-        onClose();
-
+  
         onClose();
       } catch (error) {
         console.error("Error adding set:", error);
       }
     }
   };
+  
+  
+  
+  
   return (
     <Modal isOpen={isOpen2} onClose={onClose} isCentered motionPreset="scale">
       <ModalOverlay />
@@ -168,8 +184,8 @@ const AddSet: React.FC<AddSetProps> = ({
         <ModalCloseButton />
         <ModalBody flex="1">
           <Box flexDirection="column">
-            <Flex padding={2} mb={2} >
-              <Flex fontSize = {20} bg="#C7B3DC" borderRadius="10px" px={4} py={2} mr={4} height="80%" >
+            <Flex padding={2} mb={2}>
+              <Flex fontSize = {20} bg="#C7B3DC" borderRadius="10px" px={4} py={2} mr={4} height="80%">
                 Weight
               </Flex>
               <Input
@@ -242,7 +258,7 @@ const AddEx: React.FC<AddExProps> = ({
       const newExercise = {
         name: inputValue,
         type: "Weights",
-        sets: [{}],
+        sets: [{ reps: 0, weight: 0 }],
       };
 
       try {
@@ -752,6 +768,7 @@ const Homepage: React.FC = () => {
                               onClose={toggleAddSetPopup}
                               workouts={workouts}
                               setWorkouts={setWorkouts}
+                              selectedExercise={exercise.name}
                             />
                           </Center>
                         </AccordionPanel>

@@ -440,7 +440,7 @@ const Profile: React.FC = () => {
                   )}
                 </CardBody>
               </Card>
-              <WeightLogger/>
+              <WeightLogger showStreak={false}/>
             </div>
           </>
         )}
