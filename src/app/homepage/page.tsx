@@ -679,47 +679,46 @@ const Homepage: React.FC = () => {
                         >
                           {exercise.sets &&
                             exercise.sets.map((set, setIndex) => (
-                              <Flex flexWrap="wrap" key={setIndex}>
+                              <Flex alignItems="center" mt={3} flexWrap="nowrap" key={setIndex}>
                                 <Box
                                   borderRadius="10px"
-                                  width="10%"
-                                  mt={3}
+                                  width="auto"
                                   ml={10}
                                   mr={5}
                                   bg="#C7B3DC"
                                   textColor="black"
                                   textAlign="center"
                                   padding={2}
+                                  alignContent="center"
                                 >
                                   Set {setIndex + 1}
                                 </Box>
 
                                 <Box
                                   borderRadius="10px"
-                                  width="15%"
-                                  mt={3}
+                                  width="auto"
                                   mr={5}
                                   bg="#C7B3DC"
                                   textColor="black"
                                   textAlign="left"
                                   padding={2}
+                                  alignContent="center"
                                 >
                                   Weight: {set.weight} lbs
                                 </Box>
                                 <Box
                                   borderRadius="10px"
-                                  width="15%"
-                                  mt={3}
+                                  width="auto"
                                   mr={4}
                                   bg="#C7B3DC"
                                   textColor="black"
                                   textAlign="left"
                                   padding={2}
+                                  alignContent="center"
                                 >
                                   Reps: {set.reps}
                                 </Box>
                                 <Button
-                                  mt={4}
                                   width="10px"
                                   borderRadius="115px"
                                   bg="#5A457F"
