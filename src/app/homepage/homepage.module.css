@@ -31,3 +31,31 @@
     display: "flex";
     flex-direction: "row";
   }
+
+  .addSetOptions {
+    display: grid;
+    height: 100px;
+    grid-template-columns: 1fr 3fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .weightLabel {
+    grid-column: 1 / span 1;
+    grid-row: 1 / span 1;
+  }
+
+  .weightInput {
+    grid-column: 2 / span 1;
+    grid-row: 1 / span 1;
+  }
+
+  .repsInput {
+    grid-column: 2 / span 1;
+    grid-row: 2 / span 1;
+  }
+
+  .repsLabel {
+    grid-column: 1 / span 1;
+    grid-row: 2 / span 1;
+  }
