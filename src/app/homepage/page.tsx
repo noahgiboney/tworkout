@@ -27,6 +27,7 @@ import {
 } from "@chakra-ui/react";
 import { AddIcon, CloseIcon } from "@chakra-ui/icons";
 import { useUser } from "@/context/userContext";
+import WeightLogger from "../components/WeightLogger";
 import styles from "./homepage.module.css";
 
 export interface Workout {
@@ -617,6 +618,7 @@ const Homepage: React.FC = () => {
           {monthDictionary[month]} {day}th {year}
         </div>
         <div className={styles.cards}>
+        <WeightLogger showStreak={true}/>
         <Card marginTop="2rem" marginBottom="1rem" bgColor="#E9E4F2">
             <CardHeader display="flex" justifyContent="center" paddingBottom="0rem">
               <Text fontSize={32} color="#130030" fontWeight="bold">

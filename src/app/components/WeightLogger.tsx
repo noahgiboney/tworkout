@@ -76,28 +76,47 @@ const WeightLogger: React.FC<WeightLoggerProps> = ({ showStreak = false }) => {
     }
   };
 
-  const calculateStreak = (workouts: Workout[]): { currentStreak: number, maxStreak: number } => {
+  const calculateStreak = (workouts: Workout[]): { currentStreak: number; maxStreak: number } => {
     if (workouts.length === 0) return { currentStreak: 0, maxStreak: 0 };
-
-    workouts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-
+  
+    console.log("Original workouts:", workouts);
+  
+    // Sort workouts by date in ascending order
+    workouts.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  
+    console.log("Sorted workouts:", workouts);
+  
     let currentStreak = 1;
     let maxStreak = 1;
     let tempStreak = 1;
-
+  
     for (let i = 1; i < workouts.length; i++) {
-      const diff = (new Date(workouts[i - 1].date).getTime() - new Date(workouts[i].date).getTime()) / (1000 * 60 * 60 * 24);
-      if (diff === 1) {
+      const prevDate = new Date(workouts[i - 1].date);
+      const currDate = new Date(workouts[i].date);
+  
+      // Calculate difference in calendar days
+      const diff = (currDate.getTime() - prevDate.getTime()) / (1000 * 60 * 60 * 24);
+      const calendarDiff = currDate.getDate() - prevDate.getDate();
+  
+      console.log(`Date difference between ${workouts[i].date} and ${workouts[i - 1].date}: ${calendarDiff} days`);
+  
+      if (calendarDiff === 1) {
         tempStreak++;
         if (tempStreak > maxStreak) {
           maxStreak = tempStreak;
         }
-      } else if (diff > 1) {
+      } else if (calendarDiff > 1) {
         tempStreak = 1;
       }
+  
+      console.log(`Temporary streak: ${tempStreak}`);
+      console.log(`Current max streak: ${maxStreak}`);
     }
     currentStreak = tempStreak;
-
+  
+    console.log(`Final current streak: ${currentStreak}`);
+    console.log(`Final max streak: ${maxStreak}`);
+  
     return { currentStreak, maxStreak };
   };
 
