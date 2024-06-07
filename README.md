@@ -16,7 +16,7 @@ Our [UI Prototype](https://www.figma.com/design/wVXWMdEo0yLpJXAPOgD2Ni/Tworkout?
 
 ## Diagrams 
 
-Our [UML Diagmram and Sequence Diagrams](https://github.com/noahgiboney/tworkout/blob/main/docs/wikipage.md) were last updated on June 4th, 2024.
+Our [UML Diagmram, Sequence Diagrams, and test coverage](https://github.com/noahgiboney/tworkout/blob/main/docs/wikipage.md) were last updated on June 4th, 2024.
 
 ## Installation
 

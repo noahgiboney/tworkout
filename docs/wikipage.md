@@ -6,3 +6,7 @@
 # UML Class Diagram
 
 ![token_seq](/public/Tworkout-2.jpg)
+
+# Testing Coverage
+
+![coverage](public/images/test_coverage.jpg)
