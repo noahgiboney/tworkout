@@ -27,6 +27,7 @@ import {
 } from "@chakra-ui/react";
 import { AddIcon, CloseIcon } from "@chakra-ui/icons";
 import { useUser } from "@/context/userContext";
+import WeightLogger from "../components/WeightLogger";
 import styles from "./homepage.module.css";
 
 export interface Workout {
