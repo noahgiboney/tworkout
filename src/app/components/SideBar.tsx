@@ -11,6 +11,7 @@ import {
   CardBody,
   CardHeader,
   CircularProgress,
+  Flex,
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/context/userContext";
@@ -119,6 +120,7 @@ const SideBar = () => {
 
   return (
     <Box h="100vh" bg="#5A457F" w="300px" padding="20px" marginRight="0px">
+      <Flex h="100%" justifyContent="space-between" alignItems="center" flexDirection="column">
       <VStack>
         {isLoading ? (
           <CircularProgress isIndeterminate color="purple.500" />
@@ -253,17 +255,19 @@ const SideBar = () => {
         >
           My Profile
         </Button>
-        <Button
-          bg="#C7B3DC"
-          color="black"
-          padding={30}
-          width="13rem"
-          margin={1}
-          onClick={handleLogout}
-        >
-          Logout
-        </Button>
+        
       </VStack>
+      <Button
+        bg="#C7B3DC"
+        color="black"
+        padding={30}
+        width="13rem"
+        margin={1}
+        onClick={handleLogout}
+      >
+        Logout
+      </Button>
+      </Flex>
     </Box>
   );
 };
