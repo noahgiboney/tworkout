@@ -9,4 +9,4 @@
 
 # Testing Coverage
 
-![coverage](public/images/test_coverage.jpg)
+![coverage](/public/images/test_coverage.jpg)
