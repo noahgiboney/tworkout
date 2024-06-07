@@ -21,10 +21,14 @@ import {
   Center,
   Input,
   HStack,
+  Card,
+  CardHeader,
+  CardBody,
 } from "@chakra-ui/react";
 import { AddIcon, CloseIcon } from "@chakra-ui/icons";
 import { useUser } from "@/context/userContext";
 import WeightLogger from "../components/WeightLogger";
+import styles from "./homepage.module.css";
 
 export interface Workout {
   _id: string;
@@ -178,40 +182,48 @@ const AddSet: React.FC<AddSetProps> = ({
   return (
     <Modal isOpen={isOpen2} onClose={onClose} isCentered motionPreset="scale">
       <ModalOverlay />
-      <ModalContent bg="#5A457F">
-        <ModalHeader textColor="#ECE8F1" fontSize="48">
+      <ModalContent height="300px" bg="#5A457F">
+        <ModalHeader textColor="#ECE8F1" fontSize="40">
           Add Set
         </ModalHeader>
         <ModalCloseButton />
-        <ModalBody flex="1">
+        <ModalBody paddingTop={0} alignContent="center">
           <Box flexDirection="column">
-            <Flex padding={2} mb={2}>
-              <Flex fontSize = {20} bg="#C7B3DC" borderRadius="10px" px={4} py={2} mr={4} height="80%">
-                Weight
-              </Flex>
-              <Input
-                type="number"
-                placeholder="Weight"
-                _hover={{ bg: "#d5c0e0" }}
-                bg="#C7B3DC"
-                value={weight}
-                onChange={(e) => setWeight(parseInt(e.target.value))}
-                mb={4}
-              />
-            </Flex>
-            <Flex >
-              <Box fontSize = {20} bg="#C7B3DC" borderRadius="10px" px={4} py={2} mr={4} height="80%">
-                Reps
-              </Box>
-              <Input
-                type="number"
-                placeholder="Reps"
-                bg="#C7B3DC"
-                _hover={{ bg: "#d5c0e0" }}
-                value={reps}
-                onChange={(e) => setReps(parseInt(e.target.value))}
-              />
-            </Flex>
+            <div className={styles.addSetOptions}>
+              <div className={styles.weightLabel}>
+                <Box fontSize={20} bg="#C7B3DC" borderRadius="10px" px={4} py={2} mr={4}>
+                  Weight
+                </Box>
+              </div>
+              <div className={styles.weightInput}>
+                <Input
+                  height="100%"
+                  type="number"
+                  placeholder="Weight"
+                  _hover={{ bg: "#d5c0e0" }}
+                  bg="#C7B3DC"
+                  value={weight}
+                  onChange={(e) => setWeight(parseInt(e.target.value))}
+                  mb={4}
+                />
+              </div>
+              <div className={styles.repsLabel}>
+                <Box fontSize = {20} bg="#C7B3DC" borderRadius="10px" px={4} py={2} mr={4}>
+                  Reps
+                </Box>
+              </div>
+              <div className={styles.repsInput}>
+                <Input
+                  height="100%"
+                  type="number"
+                  placeholder="Reps"
+                  bg="#C7B3DC"
+                  _hover={{ bg: "#d5c0e0" }}
+                  value={reps}
+                  onChange={(e) => setReps(parseInt(e.target.value))}
+                />
+              </div>
+            </div>
           </Box>
         </ModalBody>
         <ModalFooter>
@@ -599,50 +611,27 @@ const Homepage: React.FC = () => {
   };
 
   return (
-    <Flex>
+    <div className={styles.main}>
       <SideBar />
-      <Box
-        flex="1"
-        p={1}
-        flexDirection="column"
-        bg="#130030"
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-      >
-        <Text alignItems="left" color="white" fontSize="50" pb="60px" pt="40px">
+      <div className={styles.body}>
+        <div className={styles.title}>
           {monthDictionary[month]} {day}th {year}
-        </Text>
+        </div>
+        <div className={styles.cards}>
         <WeightLogger showStreak={true}/>
-        <Box
-          flex="1"
-          p={3}
-          borderRadius="15px"
-          display="flex"
-          flexDirection="column"
-          width="95%"
-          justifyContent="flex-start"
-          paddingTop="20px"
-          marginTop= "30px"
-          padding="50px"
-          alignItems="left"
-          bg="#E9E4F2"
-        >
-          <Text fontSize="50" color="#130030" fontWeight="bold">
-            Planned Today
-          </Text>
-          <Box
-            overflowY="auto"
-            height="500px"
-            flexDirection="row"
-            display="flex"
-          >
+        <Card marginTop="2rem" marginBottom="1rem" bgColor="#E9E4F2">
+            <CardHeader display="flex" justifyContent="center" paddingBottom="0rem">
+              <Text fontSize={32} color="#130030" fontWeight="bold">
+                Planned Today
+              </Text>
+            </CardHeader>
+            <CardBody>
             <Box width={"100%"}>
               <Accordion allowToggle>
                 {workouts &&
                   workouts.map((workout) =>
                     workout.exercises.map((exercise, exerciseIndex) => (
-                      <AccordionItem mt={3} padding={1} key={exerciseIndex}>
+                      <AccordionItem mt={0} padding={1} key={exerciseIndex}>
                         <h2>
                           <Box display="flex" alignItems="center">
                             <AccordionButton
@@ -661,15 +650,14 @@ const Homepage: React.FC = () => {
                             <Button
                               aspectRatio={1}
                               borderRadius="50%"
-                              backgroundColor="gray.400"
                               ml={3}
                               padding={0}
-                              minWidth="24px"
+                              width="24px"
                               display="flex"
                               alignItems="center"
                               justifyContent="center"
-                              bg="#5A457F"
-                              _hover={{ bg: "#6c5399" }}
+                              bg="#600086"
+                              _hover={{ bg: "#A759C6" }}
                               onClick={function (event) {
                                 eraseExercise(workout._id, exercise.name);
                               }}
@@ -693,47 +681,46 @@ const Homepage: React.FC = () => {
                         >
                           {exercise.sets &&
                             exercise.sets.map((set, setIndex) => (
-                              <Flex flexWrap="wrap" key={setIndex}>
+                              <Flex alignItems="center" mt={3} flexWrap="nowrap" key={setIndex}>
                                 <Box
                                   borderRadius="10px"
-                                  width="10%"
-                                  mt={3}
+                                  width="auto"
                                   ml={10}
                                   mr={5}
                                   bg="#C7B3DC"
                                   textColor="black"
                                   textAlign="center"
                                   padding={2}
+                                  alignContent="center"
                                 >
                                   Set {setIndex + 1}
                                 </Box>
 
                                 <Box
                                   borderRadius="10px"
-                                  width="15%"
-                                  mt={3}
+                                  width="auto"
                                   mr={5}
                                   bg="#C7B3DC"
                                   textColor="black"
                                   textAlign="left"
                                   padding={2}
+                                  alignContent="center"
                                 >
                                   Weight: {set.weight} lbs
                                 </Box>
                                 <Box
                                   borderRadius="10px"
-                                  width="15%"
-                                  mt={3}
+                                  width="auto"
                                   mr={4}
                                   bg="#C7B3DC"
                                   textColor="black"
                                   textAlign="left"
                                   padding={2}
+                                  alignContent="center"
                                 >
                                   Reps: {set.reps}
                                 </Box>
                                 <Button
-                                  mt={4}
                                   width="10px"
                                   borderRadius="115px"
                                   bg="#5A457F"
@@ -780,7 +767,7 @@ const Homepage: React.FC = () => {
                   )}
               </Accordion>
               <Box
-                bg="#5A457F"
+                bg="#600086"
                 textColor={"#ECE8F1"}
                 alignContent={"center"}
                 textAlign={"center"}
@@ -788,7 +775,7 @@ const Homepage: React.FC = () => {
                 height="40px"
                 borderRadius="10px"
                 fontSize="20"
-                _hover={{ bg: "#6a0084" }}
+                _hover={{ bg: "#A759C6" }}
                 onClick={togglePopup}
                 mt={5}
               >
@@ -805,10 +792,11 @@ const Homepage: React.FC = () => {
                 />
               </Center>
             </Box>
-          </Box>
-        </Box>
-      </Box>
-    </Flex>
+            </CardBody>
+          </Card>
+        </div>
+      </div>
+    </div>
   );
 };
 
