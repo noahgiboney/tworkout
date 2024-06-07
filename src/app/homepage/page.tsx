@@ -92,7 +92,8 @@ interface AddSetProps {
   onClose: () => void;
   workouts: Workout[];
   setWorkouts: React.Dispatch<React.SetStateAction<Workout[]>>;
-  selectedExercise: String
+  selectedExercise1: string | null;
+  selectedWorkout: string | null;
 }
 
 const AddSet: React.FC<AddSetProps> = ({
@@ -100,55 +101,55 @@ const AddSet: React.FC<AddSetProps> = ({
   onClose,
   workouts,
   setWorkouts,
-  selectedExercise
+  selectedExercise1,
+  selectedWorkout,
 }) => {
   const [weight, setWeight] = useState<number>(0);
   const [reps, setReps] = useState<number>(0);
 
   const handleConfirmClick = async () => {
-    if (!workouts) {
-      console.error("Workouts list is undefined.");
-      return;
-    }
-  
     if (weight > 0 && reps > 0) {
       try {
         // Construct the new set
         const newSet = { weight, reps };
-  
-        // Find the workout containing the selected exercise
-        const workoutIndex = workouts.findIndex(workout =>
-          workout.exercises?.some(exercise => exercise.name === selectedExercise)
+
+        // Find the workout by ID
+        const workoutIndex = workouts.findIndex(
+          (workout) => workout._id == selectedWorkout
         );
         if (workoutIndex === -1) {
-          console.error("Selected exercise not found in any workout.");
+          console.error("Workout not found.");
           return;
         }
-  
-        // Find the selected exercise within the workout
+
+        // Find the exercise by name within the workout
         const workout = workouts[workoutIndex];
-        const exerciseIndex = workout.exercises?.findIndex(
-          exercise => exercise.name === selectedExercise
+        const exerciseIndex = workout.exercises.findIndex(
+          (exercise) => exercise.name === selectedExercise1
         );
         if (exerciseIndex === -1) {
-          console.error("Selected exercise not found in the workout.");
+          console.error("Exercise not found in the workout.");
           return;
         }
-  
-        // Ensure exercises is not undefined before accessing its properties
-        const sets = workout.exercises && workout.exercises[exerciseIndex]?.sets;
-        if (!sets) {
-          console.error("Sets array is undefined.");
-          return;
-        }
-  
-        // Add the new set to the selected exercise
-        sets.push(newSet);
-  
-        // Update the workout with the new sets for the selected exercise
+        console.log(workoutIndex);
+        console.log(workout);
+        console.log(selectedExercise1);
+        console.log(exerciseIndex);
+
+        // Initialize sets array if it doesn't exist
         const updatedWorkouts = [...workouts];
-        updatedWorkouts[workoutIndex].exercises![exerciseIndex!].sets = sets;
-  
+        const selectedExercise =
+          updatedWorkouts[workoutIndex].exercises[exerciseIndex];
+        if (!selectedExercise.sets) {
+          selectedExercise.sets = [];
+        }
+
+        // Add the new set to the specified exercise
+        selectedExercise.sets.push(newSet);
+
+        // Update the state with the new workouts array
+        setWorkouts(updatedWorkouts);
+
         // Update the workout in the database
         const response = await fetch(
           `/api/workouts/${updatedWorkouts[workoutIndex]._id}`,
@@ -160,24 +161,21 @@ const AddSet: React.FC<AddSetProps> = ({
             body: JSON.stringify(updatedWorkouts[workoutIndex]),
           }
         );
-  
+
         if (!response.ok) {
           console.error(
             "Failed to update workout in database:",
             await response.json()
           );
         }
-  
+
         onClose();
       } catch (error) {
         console.error("Error adding set:", error);
       }
     }
   };
-  
-  
-  
-  
+
   return (
     <Modal isOpen={isOpen2} onClose={onClose} isCentered motionPreset="scale">
       <ModalOverlay />
@@ -190,7 +188,14 @@ const AddSet: React.FC<AddSetProps> = ({
           <Box flexDirection="column">
             <div className={styles.addSetOptions}>
               <div className={styles.weightLabel}>
-                <Box fontSize={20} bg="#C7B3DC" borderRadius="10px" px={4} py={2} mr={4}>
+                <Box
+                  fontSize={20}
+                  bg="#C7B3DC"
+                  borderRadius="10px"
+                  px={4}
+                  py={2}
+                  mr={4}
+                >
                   Weight
                 </Box>
               </div>
@@ -207,7 +212,14 @@ const AddSet: React.FC<AddSetProps> = ({
                 />
               </div>
               <div className={styles.repsLabel}>
-                <Box fontSize = {20} bg="#C7B3DC" borderRadius="10px" px={4} py={2} mr={4}>
+                <Box
+                  fontSize={20}
+                  bg="#C7B3DC"
+                  borderRadius="10px"
+                  px={4}
+                  py={2}
+                  mr={4}
+                >
                   Reps
                 </Box>
               </div>
@@ -248,7 +260,6 @@ const AddEx: React.FC<AddExProps> = ({
   const [isOpen1, setIsOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [inputValue, setInputValue] = useState<string>("");
-  const [inputType, setInputType] = useState<string>("");
   const { userId } = useUser();
 
   const handleButtonClick = (label: any) => {
@@ -453,6 +464,8 @@ const Homepage: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isOpen2, setIsOpen2] = useState(false);
   const [workouts, setWorkouts] = useState<Workout[]>([]);
+  const [selectedExercise, setSelectedExercise] = useState<string | null>(null);
+  const [selectedWorkout, setSelectedWorkout] = useState<string | null>(null);
   const { userId } = useUser();
 
   useEffect(() => {
@@ -502,7 +515,9 @@ const Homepage: React.FC = () => {
     setIsOpen(!isOpen);
   };
 
-  const toggleAddSetPopup = () => {
+  const toggleAddSetPopup = (workoutId?: string, exerciseName?: string) => {
+    setSelectedWorkout(workoutId || null);
+    setSelectedExercise(exerciseName || null);
     setIsOpen2(!isOpen2);
   };
 
@@ -617,179 +632,191 @@ const Homepage: React.FC = () => {
           {monthDictionary[month]} {day}th {year}
         </div>
         <div className={styles.cards}>
-        <Card marginTop="2rem" marginBottom="1rem" bgColor="#E9E4F2">
-            <CardHeader display="flex" justifyContent="center" paddingBottom="0rem">
+          <Card marginTop="2rem" marginBottom="1rem" bgColor="#E9E4F2">
+            <CardHeader
+              display="flex"
+              justifyContent="center"
+              paddingBottom="0rem"
+            >
               <Text fontSize={32} color="#130030" fontWeight="bold">
                 Planned Today
               </Text>
             </CardHeader>
             <CardBody>
-            <Box width={"100%"}>
-              <Accordion allowToggle>
-                {workouts &&
-                  workouts.map((workout) =>
-                    workout.exercises.map((exercise, exerciseIndex) => (
-                      <AccordionItem mt={0} padding={1} key={exerciseIndex}>
-                        <h2>
-                          <Box display="flex" alignItems="center">
-                            <AccordionButton
-                              bg="#C7B3DC"
-                              borderRadius="10px"
-                              _hover={{ bg: "#d5c0ec" }}
-                              _expanded={{ bg: "#C7B3DC" }}
-                            >
-                              <Box as="span" flex="1" textAlign="left">
-                                <Text fontWeight="bold" fontSize="20">
-                                  {exercise.name}
-                                </Text>
-                              </Box>
-                              <AccordionIcon display="none" />
-                            </AccordionButton>
-                            <Button
-                              aspectRatio={1}
-                              borderRadius="50%"
-                              ml={3}
-                              padding={0}
-                              width="24px"
-                              display="flex"
-                              alignItems="center"
-                              justifyContent="center"
-                              bg="#600086"
-                              _hover={{ bg: "#A759C6" }}
-                              onClick={function (event) {
-                                eraseExercise(workout._id, exercise.name);
-                              }}
-                            >
-                              <Box
-                                width="75%"
-                                height="5%"
-                                backgroundColor="gray.700"
-                                borderRadius="full"
-                                bg="#ECE8F1"
-                              />
-                            </Button>
-                          </Box>
-                        </h2>
-                        <AccordionPanel
-                          fontWeight="bold"
-                          fontSize="20"
-                          pb={4}
-                          display="flex"
-                          flexDirection="column"
-                        >
-                          {exercise.sets &&
-                            exercise.sets.map((set, setIndex) => (
-                              <Flex alignItems="center" mt={3} flexWrap="nowrap" key={setIndex}>
-                                <Box
-                                  borderRadius="10px"
-                                  width="auto"
-                                  ml={10}
-                                  mr={5}
-                                  bg="#C7B3DC"
-                                  textColor="black"
-                                  textAlign="center"
-                                  padding={2}
-                                  alignContent="center"
-                                >
-                                  Set {setIndex + 1}
+              <Box width={"100%"}>
+                <Accordion allowToggle>
+                  {workouts &&
+                    workouts.map((workout) =>
+                      workout.exercises.map((exercise, exerciseIndex) => (
+                        <AccordionItem mt={0} padding={1} key={exerciseIndex}>
+                          <h2>
+                            <Box display="flex" alignItems="center">
+                              <AccordionButton
+                                bg="#C7B3DC"
+                                borderRadius="10px"
+                                _hover={{ bg: "#d5c0ec" }}
+                                _expanded={{ bg: "#C7B3DC" }}
+                              >
+                                <Box as="span" flex="1" textAlign="left">
+                                  <Text fontWeight="bold" fontSize="20">
+                                    {exercise.name}
+                                  </Text>
                                 </Box>
-
+                                <AccordionIcon display="none" />
+                              </AccordionButton>
+                              <Button
+                                aspectRatio={1}
+                                borderRadius="50%"
+                                ml={3}
+                                padding={0}
+                                width="24px"
+                                display="flex"
+                                alignItems="center"
+                                justifyContent="center"
+                                bg="#600086"
+                                _hover={{ bg: "#A759C6" }}
+                                onClick={function (event) {
+                                  eraseExercise(workout._id, exercise.name);
+                                }}
+                              >
                                 <Box
-                                  borderRadius="10px"
-                                  width="auto"
-                                  mr={5}
-                                  bg="#C7B3DC"
-                                  textColor="black"
-                                  textAlign="left"
-                                  padding={2}
-                                  alignContent="center"
-                                >
-                                  Weight: {set.weight} lbs
-                                </Box>
-                                <Box
-                                  borderRadius="10px"
-                                  width="auto"
-                                  mr={4}
-                                  bg="#C7B3DC"
-                                  textColor="black"
-                                  textAlign="left"
-                                  padding={2}
-                                  alignContent="center"
-                                >
-                                  Reps: {set.reps}
-                                </Box>
-                                <Button
-                                  width="10px"
-                                  borderRadius="115px"
-                                  bg="#5A457F"
-                                  textColor={"#ECE8F1"}
-                                  alignContent={"center"}
-                                  textAlign={"center"}
-                                  onClick={() =>
-                                    deleteSet(
-                                      workout._id,
-                                      exercise.name,
-                                      setIndex
-                                    )
-                                  }
-                                >
-                                  <CloseIcon />
-                                </Button>
-                              </Flex>
-                            ))}
-
-                          <Button
-                            mt={4}
-                            ml={10}
-                            width="20%"
-                            bg="#5A457F"
-                            textColor={"#ECE8F1"}
-                            alignContent={"center"}
-                            textAlign={"center"}
-                            onClick={toggleAddSetPopup}
+                                  width="75%"
+                                  height="5%"
+                                  backgroundColor="gray.700"
+                                  borderRadius="full"
+                                  bg="#ECE8F1"
+                                />
+                              </Button>
+                            </Box>
+                          </h2>
+                          <AccordionPanel
+                            fontWeight="bold"
+                            fontSize="20"
+                            pb={4}
+                            display="flex"
+                            flexDirection="column"
                           >
-                            Add Set...
-                          </Button>
-                          <Center>
-                            <AddSet
-                              isOpen2={isOpen2}
-                              onClose={toggleAddSetPopup}
-                              workouts={workouts}
-                              setWorkouts={setWorkouts}
-                              selectedExercise={exercise.name}
-                            />
-                          </Center>
-                        </AccordionPanel>
-                      </AccordionItem>
-                    ))
-                  )}
-              </Accordion>
-              <Box
-                bg="#600086"
-                textColor={"#ECE8F1"}
-                alignContent={"center"}
-                textAlign={"center"}
-                width="96.5%"
-                height="40px"
-                borderRadius="10px"
-                fontSize="20"
-                _hover={{ bg: "#A759C6" }}
-                onClick={togglePopup}
-                mt={5}
-              >
-                Add Exercise...
+                            {exercise.sets &&
+                              exercise.sets.map((set, setIndex) => (
+                                <Flex
+                                  alignItems="center"
+                                  mt={3}
+                                  flexWrap="nowrap"
+                                  key={setIndex}
+                                >
+                                  <Box
+                                    borderRadius="10px"
+                                    width="auto"
+                                    ml={10}
+                                    mr={5}
+                                    bg="#C7B3DC"
+                                    textColor="black"
+                                    textAlign="center"
+                                    padding={2}
+                                    alignContent="center"
+                                  >
+                                    Set {setIndex + 1}
+                                  </Box>
+
+                                  <Box
+                                    borderRadius="10px"
+                                    width="auto"
+                                    mr={5}
+                                    bg="#C7B3DC"
+                                    textColor="black"
+                                    textAlign="left"
+                                    padding={2}
+                                    alignContent="center"
+                                  >
+                                    Weight: {set.weight} lbs
+                                  </Box>
+                                  <Box
+                                    borderRadius="10px"
+                                    width="auto"
+                                    mr={4}
+                                    bg="#C7B3DC"
+                                    textColor="black"
+                                    textAlign="left"
+                                    padding={2}
+                                    alignContent="center"
+                                  >
+                                    Reps: {set.reps}
+                                  </Box>
+                                  <Button
+                                    width="10px"
+                                    borderRadius="115px"
+                                    bg="#5A457F"
+                                    textColor={"#ECE8F1"}
+                                    alignContent={"center"}
+                                    textAlign={"center"}
+                                    onClick={() =>
+                                      deleteSet(
+                                        workout._id,
+                                        exercise.name,
+                                        setIndex
+                                      )
+                                    }
+                                  >
+                                    <CloseIcon />
+                                  </Button>
+                                </Flex>
+                              ))}
+
+                            <Button
+                              mt={4}
+                              ml={10}
+                              width="20%"
+                              bg="#5A457F"
+                              textColor={"#ECE8F1"}
+                              alignContent={"center"}
+                              textAlign={"center"}
+                              onClick={() =>
+                                toggleAddSetPopup(workout._id, exercise.name)
+                              }
+                            >
+                              Add Set...
+                            </Button>
+                            <Center>
+                              <AddSet
+                                isOpen2={isOpen2}
+                                onClose={toggleAddSetPopup}
+                                workouts={workouts}
+                                setWorkouts={setWorkouts}
+                                selectedWorkout={selectedWorkout}
+                                selectedExercise1={selectedExercise}
+                              />
+                            </Center>
+                          </AccordionPanel>
+                        </AccordionItem>
+                      ))
+                    )}
+                </Accordion>
+                <Box
+                  bg="#600086"
+                  textColor={"#ECE8F1"}
+                  alignContent={"center"}
+                  textAlign={"center"}
+                  width="96.5%"
+                  height="40px"
+                  borderRadius="10px"
+                  fontSize="20"
+                  _hover={{ bg: "#A759C6" }}
+                  onClick={togglePopup}
+                  mt={5}
+                >
+                  Add Exercise...
+                </Box>
+                <Center>
+                  <AddEx
+                    isOpen={isOpen}
+                    onClose={togglePopup}
+                    titles={titlesState}
+                    addTitle={addTitle}
+                    workouts={workouts}
+                    setWorkouts={setWorkouts}
+                  />
+                </Center>
               </Box>
-              <Center>
-                <AddEx
-                  isOpen={isOpen}
-                  onClose={togglePopup}
-                  titles={titlesState}
-                  addTitle={addTitle}
-                  workouts={workouts}
-                  setWorkouts={setWorkouts}
-                />
-              </Center>
-            </Box>
             </CardBody>
           </Card>
         </div>
